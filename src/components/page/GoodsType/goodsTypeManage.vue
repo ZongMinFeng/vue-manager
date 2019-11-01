@@ -197,7 +197,7 @@
                 this.addForm = {
                     Id: '',
                     Name: '',
-                    sortOrder:this.tableDateArray.length
+                    sortOrder:this.tableDateArray.length+1
                 };
             },
             // 用户新增
@@ -391,7 +391,6 @@
 
                 send.name = this.addForm.Name;
                 send.categoryPid = '99';
-                send.sortOrder = 1;
                 send.sortOrder=this.addForm.sortOrder;
 
                 urlParams.header = {

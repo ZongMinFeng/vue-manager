@@ -5,8 +5,8 @@ module.exports = {
     //	交易码，返回码定义
     service: {
         //图片地址
-        uploadUrl:'http://111.231.202.32:10080',//测试
-        // uploadUrl:'http://139.196.162.158:10080',//生产
+        // uploadUrl:'http://111.231.202.32:10080',//测试
+        uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
         // uploadUrl:Vue.prototype.baseConfig.PictureBaseUrl,
 
         project: "/mall/",
@@ -187,6 +187,17 @@ module.exports = {
             txnId: "30036"
         },
 
+        saveShop:{
+            url: "MallPcMng",
+            action: "saveShop",
+            txnId: "30037"
+        },
+
+        getMallShop: {
+            url: "MallPcMng",
+            action: "getMallShop",
+            txnId: "30038"
+        },
 
 
     },

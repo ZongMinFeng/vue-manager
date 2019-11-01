@@ -158,7 +158,7 @@ const getGoodsParamsById = (me, goodsId) => {
 //     })
 // };
 
-const getGoodsInfoById=(me, params)=>{
+const getGoodsInfoById = (me, params) => {
     return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
@@ -184,7 +184,7 @@ const getGoodsInfoById=(me, params)=>{
     });
 };
 
-const uptGoodsStock=(me, productId, stockNum, lockNum)=>{
+const uptGoodsStock = (me, productId, stockNum, lockNum) => {
     return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
@@ -192,27 +192,27 @@ const uptGoodsStock=(me, productId, stockNum, lockNum)=>{
         urlParams.txnId = cfg.service.uptGoodsStock.txnId;
 
         send.productId = productId;
-        if(stockNum==null&&lockNum==null){
+        if (stockNum == null && lockNum == null) {
             reject(false); // 失败回调
             return false;
         }
 
-        let signArray={
-            productId:productId,
+        let signArray = {
+            productId: productId,
         };
 
-        if(stockNum!=null){
+        if (stockNum != null) {
             send.stockNum = stockNum;
-            signArray.stockNum=stockNum;
+            signArray.stockNum = stockNum;
         }
 
-        if(lockNum!=null){
+        if (lockNum != null) {
             send.lockNum = lockNum;
-            signArray.lockNum=lockNum;
+            signArray.lockNum = lockNum;
         }
 
         urlParams.send = send;
-        urlParams.signArray=signArray;
+        urlParams.signArray = signArray;
 
         common.sendServer(urlParams, me).then(
             (res) => {
@@ -230,7 +230,7 @@ const uptGoodsStock=(me, productId, stockNum, lockNum)=>{
     });
 };
 
-const delMallIndexById=(me, id)=>{
+const delMallIndexById = (me, id) => {
     return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
@@ -239,12 +239,12 @@ const delMallIndexById=(me, id)=>{
 
         send.id = id;
 
-        let signArray={
-            id:id,
+        let signArray = {
+            id: id,
         };
 
         urlParams.send = send;
-        urlParams.signArray=signArray;
+        urlParams.signArray = signArray;
 
         common.sendServer(urlParams, me).then(
             (res) => {
@@ -262,53 +262,53 @@ const delMallIndexById=(me, id)=>{
     });
 };
 
-const qryGoodsInfo=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const qryGoodsInfo = (me, params) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
-        if(params.CurPage==null||params.CurPage===''){
-            params.CurPage=params.page;
+        if (params.CurPage == null || params.CurPage === '') {
+            params.CurPage = params.page;
         }
-        if(params.limitNum==null||params.limitNum===''){
-            params.limitNum=params.pageSize;
+        if (params.limitNum == null || params.limitNum === '') {
+            params.limitNum = params.pageSize;
         }
         urlParams.url = cfg.service.project + cfg.service.qryGoodsInfo.url + '/' + cfg.service.qryGoodsInfo.action;
         urlParams.txnId = cfg.service.qryGoodsInfo.txnId;
         urlParams.url += '?page=' + params.CurPage + '&pageSize=' + params.limitNum;
-        if(params.categoryId!=null&&params.categoryId!==''){
-            send.categoryId=params.categoryId;
+        if (params.categoryId != null && params.categoryId !== '') {
+            send.categoryId = params.categoryId;
         }
-        if(params.name!=null&&params.name!==''){
-            send.name=params.name;
+        if (params.name != null && params.name !== '') {
+            send.name = params.name;
         }
-        if(params.sellPoint!=null&&params.sellPoint!==''){
-            send.sellPoint=params.sellPoint;
+        if (params.sellPoint != null && params.sellPoint !== '') {
+            send.sellPoint = params.sellPoint;
         }
-        if(params.isSerial!=null&&params.isSerial!==''){
-            send.isSerial=params.isSerial;
+        if (params.isSerial != null && params.isSerial !== '') {
+            send.isSerial = params.isSerial;
         }
-        if(params.begPrice!=null){
-            send.begPrice=params.begPrice;
+        if (params.begPrice != null) {
+            send.begPrice = params.begPrice;
         }
-        if(params.endPrice!=null){
-            send.endPrice=params.endPrice;
+        if (params.endPrice != null) {
+            send.endPrice = params.endPrice;
         }
-        if(params.begNowPrice!=null){
-            send.begNowPrice=params.begNowPrice;
+        if (params.begNowPrice != null) {
+            send.begNowPrice = params.begNowPrice;
         }
-        if(params.endNowPrice!=null){
-            send.endNowPrice=params.endNowPrice;
+        if (params.endNowPrice != null) {
+            send.endNowPrice = params.endNowPrice;
         }
-        if(params.begSellCount!=null){
-            send.begSellCount=params.begSellCount;
+        if (params.begSellCount != null) {
+            send.begSellCount = params.begSellCount;
         }
-        if(params.endSellCount!=null){
-            send.endSellCount=params.endSellCount;
+        if (params.endSellCount != null) {
+            send.endSellCount = params.endSellCount;
         }
-        if(params.endSellCount!=null){
-            send.endSellCount=params.endSellCount;
+        if (params.endSellCount != null) {
+            send.endSellCount = params.endSellCount;
         }
-        urlParams.send=send;
+        urlParams.send = send;
 
         common.sendServer(urlParams, me).then(
             (res) => {
@@ -326,16 +326,16 @@ const qryGoodsInfo=(me, params)=>{
     });
 };
 
-const getSysMallConfig=(me)=>{
-    return new Promise((resolve, reject)=>{
+const getSysMallConfig = (me) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.getSysMallConfig.url + '/' + cfg.service.getSysMallConfig.action;
         urlParams.txnId = cfg.service.getSysMallConfig.txnId;
-        urlParams.send=send;
+        urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
-                console.log('res',res);
+                console.log('res', res);
                 // 成功
                 if (res.status !== 200 && res.status !== 400) {
                     reject(res); // 失败回调
@@ -350,13 +350,13 @@ const getSysMallConfig=(me)=>{
     });
 };
 
-const getMallContent=(me)=>{
-    return new Promise((resolve, reject)=>{
+const getMallContent = (me) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.getMallContent.url + '/' + cfg.service.getMallContent.action;
         urlParams.txnId = cfg.service.getMallContent.txnId;
-        urlParams.send=send;
+        urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -373,35 +373,35 @@ const getMallContent=(me)=>{
     });
 };
 
-const saveMallContent=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const saveMallContent = (me, params) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.saveMallContent.url + '/' + cfg.service.saveMallContent.action;
         urlParams.txnId = cfg.service.saveMallContent.txnId;
 
-        send.userId=params.userId;
-        send.argName=params.argName;
-        send.argValue=params.argValue;
+        send.userId = params.userId;
+        send.argName = params.argName;
+        send.argValue = params.argValue;
 
-        let signArray={
-            userId:send.userId,
-            argName:send.argName,
+        let signArray = {
+            userId: send.userId,
+            argName: send.argName,
         };
-        console.log('params.signFlag',params.signFlag);
+        console.log('params.signFlag', params.signFlag);
         //根据signFlag决定argValue是否要签名
-        if(params.signFlag!=null&&params.signFlag==='Y'){
-            console.log('params.signFlag',params.signFlag);
-            signArray.argValue=params.argValue;
+        if (params.signFlag != null && params.signFlag === 'Y') {
+            console.log('params.signFlag', params.signFlag);
+            signArray.argValue = params.argValue;
         }
 
-        if(params.pictureUrl!=null&&params.pictureUrl!==''){
-            send.pictureUrl=params.pictureUrl;
-            signArray.pictureUrl=send.pictureUrl;
+        if (params.pictureUrl != null && params.pictureUrl !== '') {
+            send.pictureUrl = params.pictureUrl;
+            signArray.pictureUrl = send.pictureUrl;
         }
 
-        urlParams.send=send;
-        urlParams.signArray=signArray;
+        urlParams.send = send;
+        urlParams.signArray = signArray;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -418,23 +418,23 @@ const saveMallContent=(me, params)=>{
     });
 };
 
-const delMallContentById=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const delMallContentById = (me, params) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.delMallContentById.url + '/' + cfg.service.delMallContentById.action;
         urlParams.txnId = cfg.service.delMallContentById.txnId;
 
-        send.userId=params.userId;
-        send.id=params.id;
+        send.userId = params.userId;
+        send.id = params.id;
 
-        let signArray={
-            userId:send.userId,
-            id:params.id
+        let signArray = {
+            userId: send.userId,
+            id: params.id
         };
 
-        urlParams.send=send;
-        urlParams.signArray=signArray;
+        urlParams.send = send;
+        urlParams.signArray = signArray;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -451,34 +451,34 @@ const delMallContentById=(me, params)=>{
     });
 };
 
-const uptMallContent=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const uptMallContent = (me, params) => {
+    return new Promise((resolve, reject) => {
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.uptMallContent.url + '/' + cfg.service.uptMallContent.action;
         urlParams.txnId = cfg.service.uptMallContent.txnId;
 
-        send.userId=params.userId;
-        send.id=params.id;
-        send.argValue=params.argValue;
+        send.userId = params.userId;
+        send.id = params.id;
+        send.argValue = params.argValue;
 
-        let signArray={
-            userId:send.userId,
-            id:params.id,
+        let signArray = {
+            userId: send.userId,
+            id: params.id,
         };
 
         //根据signFlag决定argValue是否要签名
-        if(params.signFlag!=null&&params.signFlag==='Y'){
-            signArray.argValue=params.argValue;
+        if (params.signFlag != null && params.signFlag === 'Y') {
+            signArray.argValue = params.argValue;
         }
 
-        if(params.pictureUrl!=null&&params.pictureUrl!==''){
-            send.pictureUrl=params.pictureUrl;
-            signArray.pictureUrl=params.pictureUrl;
+        if (params.pictureUrl != null && params.pictureUrl !== '') {
+            send.pictureUrl = params.pictureUrl;
+            signArray.pictureUrl = params.pictureUrl;
         }
 
-        urlParams.send=send;
-        urlParams.signArray=signArray;
+        urlParams.send = send;
+        urlParams.signArray = signArray;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -495,17 +495,17 @@ const uptMallContent=(me, params)=>{
     });
 };
 
-const putOnOffBatch=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const putOnOffBatch = (me, params) => {
+    return new Promise((resolve, reject) => {
         console.log("params", params);//debug
         let urlParams = {};
         urlParams.url = cfg.service.project + cfg.service.putOnOffGoods.url + '/' + cfg.service.putOnOffGoods.action;
         urlParams.txnId = cfg.service.putOnOffGoods.txnId;
 
-        urlParams.header={};
-        urlParams.header.operFlag=params.operFlag;
-        urlParams.send=params.goods;
-        urlParams.UnUserId=true;
+        urlParams.header = {};
+        urlParams.header.operFlag = params.operFlag;
+        urlParams.send = params.goods;
+        urlParams.UnUserId = true;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -522,23 +522,23 @@ const putOnOffBatch=(me, params)=>{
     });
 };
 
-const delGoodsInfoById=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const delGoodsInfoById = (me, params) => {
+    return new Promise((resolve, reject) => {
         console.log("params", params);//debug
         let urlParams = {};
-        let send={};
+        let send = {};
         urlParams.url = cfg.service.project + cfg.service.delGoodsInfoById.url + '/' + cfg.service.delGoodsInfoById.action;
         urlParams.txnId = cfg.service.delGoodsInfoById.txnId;
 
-        send.goodsId=params.goodsId;
-        send.userId=params.userId;
+        send.goodsId = params.goodsId;
+        send.userId = params.userId;
 
-        let signArray={
-            goodsId:send.goodsId
+        let signArray = {
+            goodsId: send.goodsId
         };
 
-        urlParams.send=send;
-        urlParams.signArray=signArray;
+        urlParams.send = send;
+        urlParams.signArray = signArray;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -556,25 +556,25 @@ const delGoodsInfoById=(me, params)=>{
 };
 
 //公共交易处理模块
-const qryOrders=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const qryOrders = (me, params) => {
+    return new Promise((resolve, reject) => {
         console.log("params", params);//debug
         let urlParams = {};
-        let send={};
+        let send = {};
         urlParams.url = cfg.serviceApi.project + cfg.serviceApi.qryOrders.url + '/' + cfg.serviceApi.qryOrders.action;
         urlParams.txnId = cfg.serviceApi.qryOrders.txnId;
-        urlParams.url+='?page='+params.page;
-        urlParams.url+='&pageSize='+params.pageSize;
+        urlParams.url += '?page=' + params.page;
+        urlParams.url += '&pageSize=' + params.pageSize;
 
-        if(params.userId!=null&&params.userId!==''){
-            send.userId=params.userId;
+        if (params.userId != null && params.userId !== '') {
+            send.userId = params.userId;
         }
 
-        if(params.status!=null&&params.status!==''){
-            send.status=params.status;
+        if (params.status != null && params.status !== '') {
+            send.status = params.status;
         }
 
-        urlParams.send=send;
+        urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -592,17 +592,17 @@ const qryOrders=(me, params)=>{
 };
 
 //1.5.12	根据订单id查询订单– 查询 – 不验签
-const qryOrderById=(me, params)=>{
-    return new Promise((resolve, reject)=>{
+const qryOrderById = (me, params) => {
+    return new Promise((resolve, reject) => {
         console.log("params", params);//debug
         let urlParams = {};
-        let send={};
+        let send = {};
         urlParams.url = cfg.serviceApi.project + cfg.serviceApi.qryOrderById.url + '/' + cfg.serviceApi.qryOrderById.action;
         urlParams.txnId = cfg.serviceApi.qryOrderById.txnId;
 
-        send.orderId=params.orderId;
+        send.orderId = params.orderId;
 
-        urlParams.send=send;
+        urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
@@ -618,6 +618,96 @@ const qryOrderById=(me, params)=>{
         );
     });
 };
+
+/**
+ * 1.3.37	商城店铺--新增--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const saveShop = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.saveShop.url + '/' + cfg.service.saveShop.action;
+        urlParams.txnId = cfg.service.saveShop.txnId;
+
+        send.userId = params.userId;
+        signArray.userId=params.userId;
+
+        if(params.province!=null){
+            send.province=params.province;
+        }
+        if(params.city!=null){
+            send.city=params.city;
+        }
+        if(params.area!=null){
+            send.area=params.area;
+        }
+        if(params.street!=null){
+            send.street=params.street;
+        }
+        if(params.shopName!=null){
+            send.shopName=params.shopName;
+        }
+        if(params.shopAddress!=null){
+            send.shopAddress=params.shopAddress;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+/**
+ * 1.3.38    根据商城查询店铺列表 –不验签
+ * @param me
+ * @returns {Promise<any>}
+ */
+const getMallShop = (me, params) => {
+    return new Promise((resolve, reject) => {
+        let urlParams = {};
+        let send = {};
+        let signArray={};
+        urlParams.url = cfg.service.project + cfg.service.getMallShop.url + '/' + cfg.service.getMallShop.action;
+        urlParams.txnId = cfg.service.getMallShop.txnId;
+
+        send.shopId="123";//debug 后台bug，必须送一个，后期修改
+
+        urlParams.send = send;
+        urlParams.signArray=signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+
 
 export {
     getCateParamByCateId,
@@ -636,7 +726,8 @@ export {
     uptMallContent,
     putOnOffBatch,
     delGoodsInfoById,
-
     qryOrders,
     qryOrderById,
+    getMallShop,
+    saveShop,
 };

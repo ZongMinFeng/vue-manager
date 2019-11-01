@@ -288,6 +288,15 @@ module.exports = {
                         title: '超时设置',
                     }
                 },
+
+                {
+                    // 店铺列表
+                    path: '/shopList',
+                    component: resolve => require(['../components/page/shop/ShopList'], resolve),
+                    meta: {
+                        title: '店铺列表',
+                    }
+                },
             ]
         },
         {
@@ -377,6 +386,17 @@ module.exports = {
                     title: '超时设置',
                 },
 
+            ]
+        },
+        {
+            icon: 'el-icon-box',
+            index: '4',
+            title: '店铺管理',
+            subs: [
+                {
+                    index: 'shopList',
+                    title: '店铺列表',
+                },
             ]
         },
     ]
