@@ -270,7 +270,9 @@
             };
             let checkStock = (rule, stockNum, callback) => {
                 if (this.AddForm.stockNum) {
-                    let reg = /^[0-9]*[1-9][0-9]*$/;
+                    // let reg = /^[0-9]*[1-9][0-9]*$/;
+                    //允许两位小数
+                    let reg=/^\d+(\.\d{0,2})?$/;
                     if (!reg.test(stockNum)) {
                         callback(new Error('请输入大于等于0的数字'));
                     }

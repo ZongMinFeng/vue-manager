@@ -256,7 +256,8 @@
                     callback(new Error('库存不能比原来小!'));
                     return false;
                 }
-                let reg = /^[0-9]*[0-9][0-9]*$/;
+                // let reg = /^[0-9]*[0-9][0-9]*$/;
+                let reg=/^\d+(\.\d{0,2})?$/;
                 if (!reg.test(stockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                 }
@@ -268,7 +269,8 @@
                     callback(new Error('锁定库存不能比当前库存大!'));
                     return false;
                 }
-                let reg = /^[0-9]*[0-9][0-9]*$/;
+                // let reg = /^[0-9]*[0-9][0-9]*$/;
+                let reg=/^\d+(\.\d{0,2})?$/;
                 if (!reg.test(lockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                 }
