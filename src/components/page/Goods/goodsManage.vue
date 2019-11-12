@@ -1194,10 +1194,9 @@
                     if(this.allPage<=this.allTotal){
                         this.GoodsQryAll();
                     }else{
-                        console.log("所有商品数据", this.allData);//debug
                         import('@/vendor/Export2Excel').then(excel => {
-                            const tHeader=['商品ID', '名称', '价格', '现价', '销量', '总库存', '锁定库存', '状态'];
-                            const filterVal=['goodsId', 'name', 'price', 'nowPrice', 'sellCount', 'stockNum', 'lockNum', 'status'];
+                            const tHeader=['商品ID', '名称', '价格','起售价格', '现价', '销量', '总库存', '锁定库存', '状态'];
+                            const filterVal=['goodsId', 'name', 'price', 'minPrice', 'nowPrice', 'sellCount', 'stockNum', 'lockNum', 'status'];
                             const list=this.allData;
                             const data=this.formatJson(filterVal, list);
                             excel.export_json_to_excel({

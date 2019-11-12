@@ -656,6 +656,19 @@ const saveShop = (me, params) => {
             send.shopAddress=params.shopAddress;
         }
 
+        //debug写死测试 b1egin
+        params.latitude=30.108904;
+        params.longitude=117.03571;
+        if(params.latitude!=null){
+            send.latitude=params.latitude;
+            signArray.latitude=params.latitude;
+        }
+        if(params.longitude!=null){
+            send.longitude=params.longitude;
+            signArray.longitude=params.longitude;
+        }
+        //debug写死测试 end
+
         urlParams.send = send;
         urlParams.signArray = signArray;
         common.sendServer(urlParams, me).then(
@@ -687,7 +700,7 @@ const getMallShop = (me, params) => {
         urlParams.url = cfg.service.project + cfg.service.getMallShop.url + '/' + cfg.service.getMallShop.action;
         urlParams.txnId = cfg.service.getMallShop.txnId;
 
-        send.shopId="123";//debug 后台bug，必须送一个，后期修改
+        // send.shopId="123";//debug 后台bug，必须送一个，后期修改
 
         urlParams.send = send;
         urlParams.signArray=signArray;

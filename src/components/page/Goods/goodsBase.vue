@@ -66,6 +66,12 @@
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
+                    <el-form-item label="起售金额" prop="minPrice">
+                        <el-input maxlength="64" placeholder="请输入起售金额,如：1.00"
+                                  v-model="AddForm.minPrice" @change="onChangeTap"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="卖点" prop="sellPoint">
                         <el-input maxlength="64" placeholder="请输入商品卖点"
                                   v-model="AddForm.sellPoint" @change="onChangeTap"></el-input>
@@ -172,6 +178,7 @@
         getGoodsInfoById
     } from '../../../util/module';
     import pageBus from "../PageBus";
+    import GwRegular from '@/Gw/GwRegular.js';
     export default {
         name: "goodsBase",
         props:{
@@ -285,6 +292,17 @@
                     callback();
                 }
             };
+            let checkMinPrice=(rule, minPrice, callback)=>{
+                if (this.AddForm.minPrice) {
+                    //允许两位小数
+                    if (!GwRegular.num2.test(minPrice)) {
+                        callback(new Error('格式0.00'));
+                    }
+                    callback();
+                } else {
+                    callback();
+                }
+            };
             let checkSafePeriod = (rule, SafePeriod, callback) => {
                 if (this.AddForm.ExpFlag) {
                     let reg = /^[0-9]*[1-9][0-9]*$/;
@@ -356,9 +374,13 @@
                         {required: true, message: '请输入商品库存', trigger: 'blur'},
                         {validator: checkStock, trigger: 'blur'}
                     ],
+                    minPrice:[
+                        {required: true, message: '请输入起售金额', trigger: 'blur'},
+                        {validator: checkMinPrice, trigger: 'blur'}
+                    ],
                 },
                 goodsTypeArray: [],
-                unitArray: ['件', '个', '只', '双', '套', '打', '箱', '卷', '袋', '包', '米', '厘米', '平方', '克', '千克', '斤'],
+                unitArray: ['件', '个', '只', '双', '套', '打', '箱', '卷', '袋', '包', '米', '厘米', '平方', '斤'],
                 AddForm:{
                     goodsId: '',
                     categoryId: '',
@@ -373,7 +395,8 @@
                     nowPrice: '',
                     memo: '',
                     rsv2: '',
-                    GoodsMemo:''
+                    GoodsMemo:'',
+                    minPrice:'0.00',
                 },
                 uploadUrl:'',
                 dragOptions: {
@@ -400,13 +423,6 @@
 
         created(){
             console.log("hello, goodsBase created");//debug
-            // pageBus.$on("goodId",
-            //     (goodId)=>{
-            //         console.log("hello, goodsBase");
-            //         this.goodId=goodId;
-            //         this.initData();
-            //     }
-            // );
 
             pageBus.$on("goodId", this.goodId);
 
@@ -469,6 +485,7 @@
                         nowPrice: '',
                         memo: '',
                         rsv2: '',
+                        minPrice:'0.00',
                     };
                     this.AddForm=AddForm;
                     //获取goodsId号
@@ -500,6 +517,7 @@
                         nowPrice: '',
                         memo: '',
                         rsv2: '',
+                        minPrice:'0.00',
                     };
                     this.AddForm=AddForm;
                     //根据goodId获取good详细信息
@@ -1017,6 +1035,7 @@
                 send.stockNum = this.AddForm.stockNum;
                 send.price = price;
                 send.nowPrice = nowPrice;
+                send.minPrice=this.AddForm.minPrice;
                 send.memo = this.AddForm.memo;
                 if(this.AddForm.videos!=null&&this.AddForm.videos!==''){
                     send.videos=this.AddForm.videos;
@@ -1032,6 +1051,7 @@
                     price: price,
                     picture: send.picture,
                     nowPrice: nowPrice,
+                    minPrice:send.minPrice
                 };
 
                 if(this.AddForm.videos!=null&&this.AddForm.videos!==''){
@@ -1042,6 +1062,7 @@
                         price: price,
                         picture: send.picture,
                         nowPrice: nowPrice,
+                        minPrice:send.minPrice,
                         videos:this.AddForm.videos
                     };
                 }
@@ -1051,6 +1072,7 @@
                 }
 
                 urlParams.send = send;
+                console.log("send", send);//debug
                 let that = this;
                 sendServer(urlParams, this).then(
                     (res) => {
@@ -1092,6 +1114,8 @@
                 send.PayBank = this.AddForm.PayBank;
                 send.PayAccount = this.AddForm.PayAcc;
                 send.Status = this.AddForm.Status;
+                send.minPrice=this.AddForm.minPrice;
+
                 send.Memo = this.AddForm.Memo;
                 urlParams.send = send;
                 let that = this;

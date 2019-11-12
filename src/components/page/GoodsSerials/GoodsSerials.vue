@@ -32,6 +32,13 @@
                     </el-col>
 
                     <el-col :sm="24" :md="12" :xl="8">
+                        <el-form-item label="起售金额" prop="specMinPrice">
+                            <el-input maxlength="64" placeholder="请输入起售金额,如：1.00"
+                                      v-model="AddFormSerial.specMinPrice"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="24" :md="12" :xl="8">
                         <el-form-item label="系列价格" prop="specPrice">
                             <el-input maxlength="9" placeholder="请输入系列价格,如：1.00"
                                       v-model="AddFormSerial.specPrice"></el-input>
@@ -80,7 +87,7 @@
                 <template slot-scope="scope"><img v-if="scope.row.specPic!=null&&scope.row.specPic!==''"  :preview="scope.$index" style="height: 80px; width: 80px;background-color: white;" :src="uploadUrl + '/'+scope.row.specPic"></template>
             </el-table-column>
             <el-table-column label="颜色" prop="specColor"></el-table-column>
-            <el-table-column label="尺寸" prop="specSize"></el-table-column>
+            <el-table-column label="尺寸" prop="specSize" width="80px"></el-table-column>
             <el-table-column label="原价">
                 <template slot-scope="props">
                     <p>{{formatPrice(props.row.specPrice)}}元</p>
@@ -89,6 +96,11 @@
             <el-table-column label="现价">
                 <template slot-scope="props">
                     <p>{{formatPrice(props.row.specNowPrice)}}元</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="起售金额">
+                <template slot-scope="props">
+                    <p>{{formatPrice(props.row.specMinPrice)}}元</p>
                 </template>
             </el-table-column>
             <el-table-column  label="库存" width="165" >
@@ -168,6 +180,7 @@
         uptGoodsStock,
     } from '../../../util/module';
     import _String from '../../../util/string';
+    import GwRegular from '@/Gw/GwRegular.js';
     export default {
         props:{
             data:{}
@@ -236,6 +249,18 @@
                 }
                 callback();
             };
+
+            let checkMinPrice=(rule, specMinPrice, callback)=>{
+                if (this.AddFormSerial.specMinPrice) {
+                    //允许两位小数
+                    if (!GwRegular.num2.test(specMinPrice)) {
+                        callback(new Error('格式0.00'));
+                    }
+                    callback();
+                } else {
+                    callback();
+                }
+            };
             return{
                 goodId:null,
                 mastGoodInfo:{
@@ -255,7 +280,8 @@
                     specSize:'',
                     stockNum:'',
                     specPrice:'',
-                    specNowPrice:''
+                    specNowPrice:'',
+                    specMinPrice:'0.00',
                 },
                 stockRules:{
                     stockNum:[
@@ -279,7 +305,11 @@
                     ],
                     specNowPrice:[
                         {validator:checkAmt, trigger: 'blur'}
-                    ]
+                    ],
+                    specMinPrice:[
+                        {required: true, message: '请输入起售金额', trigger: 'blur'},
+                        {validator: checkMinPrice, trigger: 'blur'}
+                    ],
                 },
                 oper: 1, // 1:新增，2:修改
                 goodsId:'',
@@ -338,7 +368,6 @@
                     return;
                 }
                 this.tableDataArray=[];
-                console.log("哈哈", this.uploadUrl+ '/'+ this.AddFormSerial.specPic+'?'+this.time);//debug
                 this.getGoodsSerials(this.goodId);
                 let mallId = localStorage.getItem('mallId') || '';
                 this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/' + this.goodId ;
@@ -381,12 +410,6 @@
 
             // 系列信息新增
             onAddItemNewTap(goodsId) {
-                // let that = this;
-                // let Params = {
-                //     goodsId: goodsId,
-                //     oper: 1    // 1:新增，2:修改
-                // };
-                // that.$router.push({path: '/addGoodsSerialsTab', query: Params});
                 this.oper=1;
                 this.isDisplayNon=false;
                 this.addVisible=false;
@@ -398,7 +421,8 @@
                     stockNum:'',
                     specPrice:'',
                     specNowPrice:'',
-                    specPic:''
+                    specPic:'',
+                    specMinPrice:'0.00',
                 };
                 this.AddFormSerial=AddFormSerial;
             },
@@ -416,9 +440,9 @@
                 this.AddFormSerial.specSellCount=serial.specSellCount;
                 this.AddFormSerial.specSize=serial.specSize;
                 this.AddFormSerial.stockNum=serial.stockNum;
+                this.AddFormSerial.specMinPrice=serial.specMinPrice;
                 if(serial.specPic==null){
                     this.AddFormSerial.specPic='';
-                    console.log("lallallaalal");//debug
                 }else{
                     this.AddFormSerial.specPic=serial.specPic;
                 }
@@ -538,6 +562,11 @@
                 goodsSerialsItem.specPrice = parseFloat(this.AddFormSerial.specPrice).toFixed(2);
                 goodsSerialsItem.specNowPrice = parseFloat(this.AddFormSerial.specNowPrice).toFixed(2);
                 goodsSerialsItem.userId=userId;
+                goodsSerialsItem.specMinPrice=this.AddFormSerial.specMinPrice;
+                if (goodsSerialsItem.specPic!==null&&goodsSerialsItem.specPic!=='')
+                {
+                    goodsSerialsItem.specPic=this.AddFormSerial.specPic;
+                }
                 let goodsSerials=[];
                 goodsSerials.push(goodsSerialsItem);
                 send=goodsSerials;
@@ -577,6 +606,7 @@
                 send.specNowPrice = parseFloat(this.AddFormSerial.specNowPrice).toFixed(2);
                 send.userId=userId;
                 send.goodsId=this.AddFormSerial.goodsId;
+                send.specMinPrice=this.AddFormSerial.specMinPrice;
                 if(this.AddFormSerial.specPic!=null&&this.AddFormSerial.specPic!==''){
                     send.specPic=this.AddFormSerial.specPic;
                     urlParams.signArray={
@@ -585,7 +615,8 @@
                         specPic:send.specPic,
                         specPrice:send.specPrice,
                         specNowPrice:send.specNowPrice,
-                        userId:send.userId
+                        userId:send.userId,
+                        specMinPrice:send.specMinPrice,
                     };
                 }else{
                     urlParams.signArray={
@@ -593,7 +624,8 @@
                         goodsId:send.goodsId,
                         specPrice:send.specPrice,
                         specNowPrice:send.specNowPrice,
-                        userId:send.userId
+                        userId:send.userId,
+                        specMinPrice:send.specMinPrice,
                     };
                 }
 

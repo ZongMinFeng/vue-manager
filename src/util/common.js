@@ -78,7 +78,6 @@ const sendServer = (urlParams, me, flag) => {
 
         console.log("url:", urlParams.url);//debug
         axios.post(urlParams.url, params, {headers:header}).then((res) => {
-            console.log('res111111111111111',JSON.stringify(res))
             if (res.status === 200) {
                 // if (params.TxnId !== cfg.service.getLoginId.txnId) {
                 //     sign = jsonSha256.mathJsonSha(res.data, sha256Key, 2);
