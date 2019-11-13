@@ -375,6 +375,7 @@ const getMallContent = (me) => {
 
 const saveMallContent = (me, params) => {
     return new Promise((resolve, reject) => {
+        console.log("saveMallContent", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.saveMallContent.url + '/' + cfg.service.saveMallContent.action;

@@ -128,7 +128,8 @@
                     chnExplain:null,
                     mallId:null,
                     pictureUrl:null,
-                    status:null
+                    status:null,
+                    signFlag:null,
                 },
                 options:[],
                 rules:{
@@ -178,6 +179,7 @@
                         item.chnExplain=value.chnExplain;
                         item.status=1;
                         item.pictureUrl='';
+                        item.signFlag=value.signFlag;
                         this.allItems.push(item);
                     });
                     console.log("allItems", this.allItems);//debug
@@ -226,7 +228,8 @@
                     chnExplain:null,
                     mallId:null,
                     pictureUrl:null,
-                    status:null
+                    status:null,
+                    signFlag:null,
                 };
             },
 
@@ -239,7 +242,8 @@
                     chnExplain:item.chnExplain,
                     mallId:item.mallId,
                     pictureUrl:item.pictureUrl,
-                    status:item.status
+                    status:item.status,
+                    signFlag:item.signFlag,
                 };
             },
 
@@ -249,6 +253,7 @@
                         this.itemForm.argName=item.argName;
                         this.itemForm.chnExplain=item.chnExplain;
                         this.itemForm.status=item.status;
+                        this.itemForm.signFlag=item.signFlag;
                         this.itemForm.mallId=localStorage.getItem("mallId")||'';
                     }
                 });
@@ -282,7 +287,8 @@
                 let params={
                     userId:localStorage.getItem("usrId")||'',
                     argName:this.itemForm.argName,
-                    argValue:this.itemForm.argValue
+                    argValue:this.itemForm.argValue,
+                    signFlag:this.itemForm.signFlag,
                 };
                 if(this.itemForm.pictureUrl!=null){
                     params.pictureUrl=this.itemForm.pictureUrl;
