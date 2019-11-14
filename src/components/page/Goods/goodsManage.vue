@@ -620,12 +620,6 @@
                 if(this.selectForm.endSellCount!=null&&this.selectForm.endSellCount!==""){
                     send.endSellCount=this.selectForm.endSellCount;
                 }
-                // send.OrderBy = this.OrderBy;
-                // send.OrderFlag = this.OrderFlag;
-                // let signArray = {
-                //     categoryPid: '99'
-                // };
-                // urlParams.signArray = signArray;
 
                 urlParams.send = send;
                 let that = this;
@@ -636,12 +630,14 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res)
-                        // res.Users.forEach(item => {
-                        //     item.CreateDate = item.CreateDate.replace(/-/g, " ");
-                        //     item.ModifyDate = item.ModifyDate.replace(/-/g, " ");
-                        // });
+                        console.log("res:", res);
                         that.tableDateArray = res.data.rows;
+                        //后台很坑的设置了重量单位为克，下发单位“斤”，数量却是“克”
+                        this.tableDateArray.forEach(item=>{
+                            if (item.unit === '斤') {
+                                item.stockNum=item.stockNum/500;
+                            }
+                        });
                         console.log("tableDateArray", this.tableDateArray);//debug
                         that.AllCount = parseInt(res.data.records);
                     }, (res) => {
@@ -1056,11 +1052,20 @@
                 console.log("stockForm", this.stockForm);//debug
                 let stockNum=this.stockForm.stockNum;
                 let lockNum=this.stockForm.lockNum;
-                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.01){
+                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.00001){
                     stockNum=null;
                 }
-                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.01){
+                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.00001){
                     lockNum=null;
+                }
+                //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
+                if (this.goodInfo.unit === '斤') {
+                    if (stockNum !== null) {
+                        stockNum=stockNum*500;
+                    }
+                    if (lockNum !== null) {
+                        lockNum=lockNum*500;
+                    }
                 }
                 uptGoodsStock(this, this.stockForm.goodsId, stockNum, lockNum).then(
                     (res)=>{

@@ -192,8 +192,7 @@
                     callback(new Error('库存不能比原来小!'));
                     return true;
                 }
-                // let reg = /^[0-9]*[0-9][0-9]*$/;
-                let reg=/^\d+(\.\d{0,2})?$/;
+                let reg=/^\d+(\.\d{0,5})?$/;
                 if (!reg.test(stockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                     return true;
@@ -205,12 +204,11 @@
             };
 
             let checkLockNum=(rule, lockNum, callback)=>{
-                if(lockNum-this.goodInfo.stockNum>0.01){
+                if(lockNum-this.goodInfo.stockNum>0.00001){
                     callback(new Error('锁定库存不能比当前库存大!'));
                     return true;
                 }
-                // let reg = /^[0-9]*[0-9][0-9]*$/;
-                let reg=/^\d+(\.\d{0,2})?$/;
+                let reg=/^\d+(\.\d{0,5})?$/;
                 if (!reg.test(lockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                     return true;
@@ -329,10 +327,10 @@
                 //stockNumUp，lockNumUp值被改变为true
                 let stockNumUp=false;
                 let lockNumUp=false;
-                if(Math.abs(this.stockForm.stockNum-this.goodInfo.stockNum)>0.01){
+                if(Math.abs(this.stockForm.stockNum-this.goodInfo.stockNum)>0.00001){
                     stockNumUp = true;
                 }
-                if(Math.abs(this.stockForm.lockNum-this.goodInfo.lockNum)>0.01){
+                if(Math.abs(this.stockForm.lockNum-this.goodInfo.lockNum)>0.00001){
                     lockNumUp = true;
                 }
                 if(stockNumUp||lockNumUp){
@@ -395,7 +393,12 @@
                         if(res.data["isSerial"]!=null&&res.data["isSerial"]==="Y"){
                             //有系列信息，返回系列详细信息
                             that.tableDataArray=res.data["goodsSerials"];
-                            console.log("返回空空看", this.AddFormSerial.specPic);//debug
+                            //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
+                            this.tableDataArray.forEach(item=>{
+                                if (this.mastGoodInfo.unit === '斤') {
+                                    item.stockNum=item.stockNum/500;
+                                }
+                            });
                             return res.data["goodsSerials"];
                         }else{
                             //没有系列系列信息，返回空
@@ -518,11 +521,20 @@
                 console.log("stockForm", this.stockForm);//debug
                 let stockNum=this.stockForm.stockNum;
                 let lockNum=this.stockForm.lockNum;
-                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.01){
+                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.00001){
                     stockNum=null;
                 }
-                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.01){
+                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.00001){
                     lockNum=null;
+                }
+                //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
+                if (this.mastGoodInfo.unit === '斤') {
+                    if (stockNum !== null) {
+                        stockNum=stockNum*500;
+                    }
+                    if (lockNum !== null) {
+                        lockNum=lockNum*500;
+                    }
                 }
                 uptGoodsStock(this, this.stockForm.specGoodsId, stockNum, lockNum).then(
                     (res)=>{
@@ -558,7 +570,12 @@
                 goodsSerialsItem.goodsId=this.goodsId;
                 goodsSerialsItem.specColor=this.AddFormSerial.specColor;
                 goodsSerialsItem.specSize=this.AddFormSerial.specSize;
-                goodsSerialsItem.stockNum=this.AddFormSerial.stockNum;
+                //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
+                if (this.mastGoodInfo.unit === '斤') {
+                    goodsSerialsItem.stockNum=this.AddFormSerial.stockNum*500;
+                }else{
+                    goodsSerialsItem.stockNum=this.AddFormSerial.stockNum;
+                }
                 goodsSerialsItem.specPrice = parseFloat(this.AddFormSerial.specPrice).toFixed(2);
                 goodsSerialsItem.specNowPrice = parseFloat(this.AddFormSerial.specNowPrice).toFixed(2);
                 goodsSerialsItem.userId=userId;

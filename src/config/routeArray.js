@@ -297,6 +297,15 @@ module.exports = {
                         title: '店铺列表',
                     }
                 },
+
+                {
+                    // 操作员列表
+                    path: '/tellerList',
+                    component: resolve => require(['../components/page/teller/TellerList'], resolve),
+                    meta: {
+                        title: '操作员列表',
+                    }
+                },
             ]
         },
         {
@@ -396,6 +405,17 @@ module.exports = {
                 {
                     index: 'shopList',
                     title: '店铺列表',
+                },
+            ]
+        },
+        {
+            icon: 'el-icon-user',
+            index: '5',
+            title: '操作员管理',
+            subs: [
+                {
+                    index: 'tellerList',
+                    title: '操作员列表',
                 },
             ]
         },

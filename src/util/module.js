@@ -701,8 +701,6 @@ const getMallShop = (me, params) => {
         urlParams.url = cfg.service.project + cfg.service.getMallShop.url + '/' + cfg.service.getMallShop.action;
         urlParams.txnId = cfg.service.getMallShop.txnId;
 
-        // send.shopId="123";//debug 后台bug，必须送一个，后期修改
-
         urlParams.send = send;
         urlParams.signArray=signArray;
         common.sendServer(urlParams, me).then(
@@ -721,7 +719,82 @@ const getMallShop = (me, params) => {
     });
 };
 
+/**
+ * 1.3.41	生成操作员信息--新增--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const saveOper = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.saveOper.url + '/' + cfg.service.saveOper.action;
+        urlParams.txnId = cfg.service.saveOper.txnId;
 
+        send.userId = params.userId;
+        signArray.userId=params.userId;
+
+        if(params.userPhone!=null){
+            send.userPhone=params.userPhone;
+            signArray.userPhone=send.userPhone;
+        }
+
+        if(params.userName!=null){
+            send.userName=params.userName;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+/**
+ * 1.3.42	查询操作员信息–不验签(分页)
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const getOper = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("getOper params", params);//debug
+        let urlParams = {};
+        let send = {};
+        urlParams.url = cfg.service.project + cfg.service.getOper.url + '/' + cfg.service.getOper.action;
+        urlParams.txnId = cfg.service.getOper.txnId;
+        urlParams.url += '?page=' + params.page;
+        urlParams.url += '&pageSize=' + params.pageSize;
+        urlParams.send = send;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
 
 export {
     getCateParamByCateId,
@@ -744,4 +817,6 @@ export {
     qryOrderById,
     getMallShop,
     saveShop,
+    saveOper,
+    getOper,
 };

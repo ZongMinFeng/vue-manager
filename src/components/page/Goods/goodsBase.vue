@@ -530,6 +530,10 @@
                                 return false;
                             }
                             let goodInfo=res.data;
+                            //后台很坑的设置了重量单位为克，下发单位“斤”，数量却是“克”
+                            if (goodInfo.unit==='斤'){
+                                goodInfo.stockNum=goodInfo.stockNum/500;
+                            }
                             this.AddForm=goodInfo;
                             let imgsTmp = goodInfo.imgs;
                             if (imgsTmp) {
@@ -542,6 +546,7 @@
                             let mallId = localStorage.getItem('mallId') || '';
                             this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/' + this.AddForm.goodsId + '/';
                             console.log("AddForm", this.AddForm);//debug
+
                         },
                         (res)=>{
                             this.$message.error("查询商品信息失败");
@@ -980,7 +985,6 @@
                         }
                         that.goodsAdd();
                     } else {
-                        console.log('items', items);//debug
                         //错误定位
                         if(items.name!=null){
                             this.$refs.AddFormName.focus();
@@ -1032,7 +1036,12 @@
                 send.picture = this.AddForm.picture;
                 send.imgs = imgs;
                 send.unit = this.AddForm.unit;
-                send.stockNum = this.AddForm.stockNum;
+                //因为后台重量类型使用“克”保存库存，所有单位是“斤”的库存要进行换算
+                if (this.AddForm.unit === '斤') {
+                    send.stockNum=this.AddForm.stockNum*500;
+                }else{
+                    send.stockNum = this.AddForm.stockNum;
+                }
                 send.price = price;
                 send.nowPrice = nowPrice;
                 send.minPrice=this.AddForm.minPrice;
@@ -1068,7 +1077,7 @@
                 }
 
                 if (oper === 1) {
-                    urlParams.signArray.stockNum = this.AddForm.stockNum;
+                    urlParams.signArray.stockNum = send.stockNum;
                 }
 
                 urlParams.send = send;

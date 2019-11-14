@@ -160,6 +160,8 @@
                 goodsSerialsItem.goodsId=this.goodsId;
                 goodsSerialsItem.specColor=this.AddForm.specColor;
                 goodsSerialsItem.specSize=this.AddForm.specSize;
+                //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
+
                 goodsSerialsItem.stockNum=this.AddForm.stockNum;
                 goodsSerialsItem.specPrice = parseFloat(this.AddForm.specPrice).toFixed(2);
                 goodsSerialsItem.specNowPrice = parseFloat(this.AddForm.specNowPrice).toFixed(2);

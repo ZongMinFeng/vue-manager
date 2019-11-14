@@ -199,6 +199,17 @@ module.exports = {
             txnId: "30038"
         },
 
+        saveOper: {
+            url: "MallPcMng",
+            action: "saveOper",
+            txnId: "30041"
+        },
+
+        getOper: {
+            url: "MallPcMng",
+            action: "getOper",
+            txnId: "30042"
+        },
 
     },
 
