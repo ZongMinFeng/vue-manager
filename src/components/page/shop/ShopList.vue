@@ -7,7 +7,6 @@
         </div>
 
         <el-table :data="tableData"
-                  size="medium"
                   stripe
                   border>
             <el-table-column prop="shopName" label="名称"></el-table-column>
@@ -26,6 +25,11 @@
                 <template slot-scope="props">
                     <span v-if="props.row.status!==1" style="color: red;">{{getStatus(props.row.status)}}</span>
                     <span v-else>{{getStatus(props.row.status)}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="props">
+                    <el-button type="danger" @click="deleteTap(props.row.shopId)" >删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -232,6 +236,10 @@
                         }
                     }
                 ).catch();
+            },
+
+            deleteTap(id){
+
             },
         }
     }

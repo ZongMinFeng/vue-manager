@@ -397,6 +397,7 @@
                             this.tableDataArray.forEach(item=>{
                                 if (this.mastGoodInfo.unit === '斤') {
                                     item.stockNum=item.stockNum/500;
+                                    item.lockNum=item.lockNum/500;
                                 }
                             });
                             return res.data["goodsSerials"];

@@ -6,8 +6,8 @@
             </el-button>
         </div>
         <el-table :data="tableData"
-                  size="medium"
                   stripe
+                  size='medium'
                   border>
             <el-table-column prop="userPhone" label="手机号"></el-table-column>
             <el-table-column prop="userName" label="名称"></el-table-column>

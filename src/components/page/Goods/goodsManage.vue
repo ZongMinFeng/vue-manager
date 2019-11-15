@@ -636,6 +636,7 @@
                         this.tableDateArray.forEach(item=>{
                             if (item.unit === '斤') {
                                 item.stockNum=item.stockNum/500;
+                                item.lockNum=item.lockNum/500;
                             }
                         });
                         console.log("tableDateArray", this.tableDateArray);//debug
