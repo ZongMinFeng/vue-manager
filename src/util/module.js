@@ -132,31 +132,6 @@ const getGoodsParamsById = (me, goodsId) => {
         );
     });
 };
-// const getCateParamByCateId = (me, categoryId) => {
-//     return new Promise((resolve, reject) => {
-//         let urlParams = {};
-//         let send = {};
-//         urlParams.url = cfg.service.project + cfg.service.getCateParamByCateId.url + '/' + cfg.service.getCateParamByCateId.action;
-//         urlParams.txnId = cfg.service.getCateParamByCateId.txnId;
-//
-//         send.categoryId = categoryId;
-//
-//         urlParams.send = send;
-//         common.sendServer(urlParams, me).then(
-//             (res) => {
-//                 // 成功
-//                 if (res.status !== 200 && res.status !== 400) {
-//                     reject(false); // 失败回调
-//                     return false;
-//                 }
-//                 resolve(res)
-//             }, (res) => {
-//                 // 失败
-//                 reject(false)
-//             }
-//         );
-//     })
-// };
 
 const getGoodsInfoById = (me, params) => {
     return new Promise((resolve, reject) => {
@@ -720,6 +695,112 @@ const getMallShop = (me, params) => {
 };
 
 /**
+ * 1.3.39	店铺信息—修改--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const uptShop = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.uptShop.url + '/' + cfg.service.uptShop.action;
+        urlParams.txnId = cfg.service.uptShop.txnId;
+
+        if(params.shopId!=null){
+            send.shopId=params.shopId;
+            signArray.shopId=send.shopId;
+        }
+        if(params.province!=null){
+            send.province=params.province;
+        }
+        if(params.city!=null){
+            send.city=params.city;
+        }
+        if(params.area!=null){
+            send.area=params.area;
+        }
+        if(params.street!=null){
+            send.street=params.street;
+        }
+        if(params.shopName!=null){
+            send.shopName=params.shopName;
+        }
+        if(params.shopAddress!=null){
+            send.shopAddress=params.shopAddress;
+        }
+
+        //debug写死测试 b1egin
+        params.latitude=30.108904;
+        params.longitude=117.03571;
+        if(params.latitude!=null){
+            send.latitude=params.latitude;
+            signArray.latitude=params.latitude;
+        }
+        if(params.longitude!=null){
+            send.longitude=params.longitude;
+            signArray.longitude=params.longitude;
+        }
+        //debug写死测试 end
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+/**
+ * 1.3.40	店铺信息—删除--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const delShopById = (me, params) => {
+    return new Promise((resolve, reject) => {
+        let urlParams = {};
+        let send = {};
+        urlParams.url = cfg.service.project + cfg.service.delShopById.url + '/' + cfg.service.delShopById.action;
+        urlParams.txnId = cfg.service.delShopById.txnId;
+
+        send.shopId = params.shopId;
+
+        let signArray = {
+            shopId: send.shopId,
+        };
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+/**
  * 1.3.41	生成操作员信息--新增--验签
  * @param me
  * @param params
@@ -796,6 +877,44 @@ const getOper = (me, params) => {
     });
 };
 
+/**
+ *
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const delOperById = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("delOperById params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.delOperById.url + '/' + cfg.service.delOperById.action;
+        urlParams.txnId = cfg.service.delOperById.txnId;
+
+        if(params.specUserId !=null){
+            send.specUserId =params.specUserId;
+            signArray.specUserId =send.specUserId ;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
 export {
     getCateParamByCateId,
     getMallCategory,
@@ -819,4 +938,7 @@ export {
     saveShop,
     saveOper,
     getOper,
+    delShopById,
+    uptShop,
+    delOperById,
 };

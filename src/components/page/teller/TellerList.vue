@@ -9,9 +9,15 @@
                   stripe
                   size='medium'
                   border>
-            <el-table-column prop="userPhone" label="手机号"></el-table-column>
             <el-table-column prop="userName" label="名称"></el-table-column>
-            <el-table-column prop="mallId" label="mallId"></el-table-column>
+            <el-table-column prop="userPhone" label="手机号"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="props">
+                    <div>
+                        <el-button type="danger" @click="deleteTap(props.row.userId)" >删除</el-button>
+                    </div>
+                </template>
+            </el-table-column>
         </el-table>
         <div class="pagination">
             <el-pagination @current-change="handleCurrentChange"
@@ -53,7 +59,7 @@
 
 <script>
     import GwRegular from '@/Gw/GwRegular.js';
-    import {saveOper, getOper} from '@/util/module.js';
+    import {saveOper, getOper, delOperById} from '@/util/module.js';
     export default {
         name: "TellerList.vue",
         data() {
@@ -155,6 +161,38 @@
             handleSizeChange(options) {
                 this.pageSize = options;
                 this.initData();
+            },
+
+            deleteTap(id){
+                this.$confirm('此操作将删除操作员，是否确认？', '删除操作员', {
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    type:'warning'
+                }).then(
+                    ()=>{
+                        this.delete(id);
+                    }
+                ).catch();
+            },
+
+            delete(id) {
+                let params={};
+                params.specUserId=id;
+                delOperById(this, params).then(
+                    (res)=>{
+                        this.$message.success('删除成功！');
+                        //重置从第一页开始查询
+                        this.page=1;
+                        this.initData();
+                    },
+                    (res)=>{
+                        if (res.msg !== null) {
+                            this.$message.error(res.msg);
+                        }else{
+                            this.$message.error('删除失败！');
+                        }
+                    }
+                ).catch();
             },
         }
     }

@@ -199,6 +199,18 @@ module.exports = {
             txnId: "30038"
         },
 
+        uptShop: {
+            url: "MallPcMng",
+            action: "uptShop",
+            txnId: "30039"
+        },
+
+        delShopById: {
+            url: "MallPcMng",
+            action: "delShopById",
+            txnId: "30040"
+        },
+
         saveOper: {
             url: "MallPcMng",
             action: "saveOper",
@@ -209,6 +221,12 @@ module.exports = {
             url: "MallPcMng",
             action: "getOper",
             txnId: "30042"
+        },
+
+        delOperById: {
+            url: "MallPcMng",
+            action: "delOperById",
+            txnId: "30043"
         },
 
     },

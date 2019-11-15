@@ -15,12 +15,12 @@
             <el-table-column prop="area" label="区"></el-table-column>
             <el-table-column prop="street" label="街道"></el-table-column>
             <el-table-column prop="shopAddress" label="详细地址"></el-table-column>
+            <!--<el-table-column prop="zipCode" label="邮编"></el-table-column>-->
             <el-table-column label="创建时间" width="160">
                 <template slot-scope="props">
                     <span>{{num2Date(props.row.createDate)}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="zipCode" label="邮编"></el-table-column>
             <el-table-column label="状态">
                 <template slot-scope="props">
                     <span v-if="props.row.status!==1" style="color: red;">{{getStatus(props.row.status)}}</span>
@@ -29,7 +29,12 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="props">
-                    <el-button type="danger" @click="deleteTap(props.row.shopId)" >删除</el-button>
+                    <div style="margin-bottom: 2px">
+                        <el-button type="primary" @click="modiTap(props.row)" >修改</el-button>
+                    </div>
+                    <div>
+                        <el-button type="danger" @click="deleteTap(props.row.shopId)" >删除</el-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -77,12 +82,20 @@
                             <el-input v-model="dialogForm.shopAddress" placeholder="请输入详细地址"></el-input>
                         </el-form-item>
                     </el-col>
+                    <!--<el-col :span="6">-->
+                        <!--<el-form-item label="邮编" prop="shopAddress"-->
+                                      <!--:rules="[{required: true, message:'详细地址不能为空', trigger:'blur'}]">-->
+                            <!--<el-input v-model="dialogForm.shopAddress" placeholder="请输入详细地址"></el-input>-->
+                        <!--</el-form-item>-->
+                    <!--</el-col>-->
                 </el-row>
             </el-form>
-            <div id="container" style="width:600px;height:500px; border: 1px solid red;"></div>
+            <!--地图模块，使用v-show隐藏，未启用-->
+            <div v-show="false" id="container" style="width:600px;height:500px; border: 1px solid red;"></div>
             <span slot="footer" type="dialog-footer">
                 <el-button @click="dialogVisible=false">取消</el-button>
-                <el-button type="primary" @click="dialogFormConfirm">确定</el-button>
+                <el-button v-if='flag===1' type="primary" @click="dialogFormConfirm">确定</el-button>
+                <el-button v-else type="primary" :disabled="modiDisable" @click="dialogFormConfirm">修改</el-button>
             </span>
         </el-dialog>
 
@@ -90,7 +103,7 @@
 </template>
 
 <script>
-    import {getMallShop, saveShop} from "@/util/module.js";
+    import {getMallShop, saveShop, delShopById, uptShop} from "@/util/module.js";
     import {num2Date} from "@/Gw/GwString.js";
 
     export default {
@@ -101,6 +114,14 @@
                 addDisabled: false,
                 flag: 1, //1:新增 2:修改
                 dialogForm: {
+                    shopName: null,
+                    province: null,
+                    city: null,
+                    area: null,
+                    street: null,
+                    shopAddress: null
+                },
+                dialogFormOld: {
                     shopName: null,
                     province: null,
                     city: null,
@@ -120,7 +141,29 @@
                 } else {
                     return '修改';
                 }
-            }
+            },
+
+            modiDisable(){
+                if (this.dialogFormOld.province !== this.dialogForm.province) {
+                    return false;
+                }
+                if (this.dialogFormOld.city !== this.dialogForm.city) {
+                    return false;
+                }
+                if (this.dialogFormOld.shopAddress !== this.dialogForm.shopAddress) {
+                    return false;
+                }
+                if (this.dialogFormOld.shopName !== this.dialogForm.shopName) {
+                    return false;
+                }
+                if (this.dialogFormOld.street !== this.dialogForm.street) {
+                    return false;
+                }
+                if (this.dialogFormOld.area !== this.dialogForm.area) {
+                    return false;
+                }
+                return true;
+            },
         },
 
         created() {
@@ -168,6 +211,7 @@
             },
 
             onAddNewTap() {
+                this.flag=1;
                 this.dialogVisible = true;
             },
 
@@ -202,45 +246,148 @@
             },
 
             dialogFormCommit(){
-                let params={};
-                params.userId=localStorage.getItem("userId");
-                if (this.dialogForm.province!=null){
-                    params.province=this.dialogForm.province;
-                }
-                if (this.dialogForm.city!=null){
-                    params.city=this.dialogForm.city;
-                }
-                if (this.dialogForm.area!=null){
-                    params.area=this.dialogForm.area;
-                }
-                if (this.dialogForm.street!=null){
-                    params.street=this.dialogForm.street;
-                }
-                if (this.dialogForm.shopName!=null){
-                    params.shopName=this.dialogForm.shopName;
-                }
-                if (this.dialogForm.shopAddress!=null){
-                    params.shopAddress=this.dialogForm.shopAddress;
-                }
-                saveShop(this, params).then(
-                    (res)=>{
-                        console.log("新增店铺返回", res);//debug
-                        this.$message.success("新增店铺成功!");
-                        this.initData();
-                        this.dialogVisible=false;
-                    },
-                    (res)=>{
-                        console.log("新增店铺返回", res);//debug
-                        if (res.msg!=null){
-                            this.$message.error(res.msg);
+                //新增
+                if (this.flag === 1) {
+                    let params={};
+                    params.userId=localStorage.getItem("userId");
+                    if (this.dialogForm.province!=null){
+                        params.province=this.dialogForm.province;
+                    }
+                    if (this.dialogForm.city!=null){
+                        params.city=this.dialogForm.city;
+                    }
+                    if (this.dialogForm.area!=null){
+                        params.area=this.dialogForm.area;
+                    }
+                    if (this.dialogForm.street!=null){
+                        params.street=this.dialogForm.street;
+                    }
+                    if (this.dialogForm.shopName!=null){
+                        params.shopName=this.dialogForm.shopName;
+                    }
+                    if (this.dialogForm.shopAddress!=null){
+                        params.shopAddress=this.dialogForm.shopAddress;
+                    }
+                    saveShop(this, params).then(
+                        (res)=>{
+                            console.log("新增店铺返回", res);//debug
+                            this.$message.success("新增店铺成功!");
+                            this.initData();
+                            this.dialogVisible=false;
+                        },
+                        (res)=>{
+                            console.log("新增店铺返回", res);//debug
+                            if (res.msg!=null){
+                                this.$message.error(res.msg);
+                            }
                         }
+                    ).catch();
+                }else {
+                    //修改
+                    let params={};
+                    params.userId=localStorage.getItem("userId");
+                    params.shopId=this.dialogForm.shopId;
+                    if (this.dialogForm.province!==this.dialogFormOld.province){
+                        params.province=this.dialogForm.province;
+                    }
+                    if (this.dialogForm.city!==this.dialogFormOld.city){
+                        params.city=this.dialogForm.city;
+                    }
+                    if (this.dialogForm.area!==this.dialogFormOld.area){
+                        params.area=this.dialogForm.area;
+                    }
+                    if (this.dialogForm.street!==this.dialogFormOld.street){
+                        params.street=this.dialogForm.street;
+                    }
+                    if (this.dialogForm.shopName!==this.dialogFormOld.shopName){
+                        params.shopName=this.dialogForm.shopName;
+                    }
+                    if (this.dialogForm.shopAddress!==this.dialogFormOld.shopAddress){
+                        params.shopAddress=this.dialogForm.shopAddress;
+                    }
+                    uptShop(this, params).then(
+                        (res)=>{
+                            console.log("修改店铺返回", res);//debug
+                            this.$message.success("修改店铺成功!");
+                            this.initData();
+                            this.dialogVisible=false;
+                        },
+                        (res)=>{
+                            console.log("修改店铺返回", res);//debug
+                            if (res.msg!=null){
+                                this.$message.error(res.msg);
+                            }
+                        }
+                    ).catch();
+                }
+
+            },
+
+            modiTap(row){
+                console.log("row", row);//debug
+                this.flag=2;
+                this.dialogForm.area=row.area;
+                this.dialogForm.city=row.city;
+                this.dialogForm.createDate=row.createDate;
+                this.dialogForm.latitude=row.latitude;
+                this.dialogForm.longitude=row.longitude;
+                this.dialogForm.mallId=row.mallId;
+                this.dialogForm.modiDate=row.modiDate;
+                this.dialogForm.province=row.province;
+                this.dialogForm.shopAddress=row.shopAddress;
+                this.dialogForm.shopId=row.shopId;
+                this.dialogForm.shopName=row.shopName;
+                this.dialogForm.status=row.status;
+                this.dialogForm.street=row.street;
+                this.dialogForm.zipCode=row.zipCode;
+                //存旧数据
+                this.dialogFormOld.area=row.area;
+                this.dialogFormOld.city=row.city;
+                this.dialogFormOld.createDate=row.createDate;
+                this.dialogFormOld.latitude=row.latitude;
+                this.dialogFormOld.longitude=row.longitude;
+                this.dialogFormOld.mallId=row.mallId;
+                this.dialogFormOld.modiDate=row.modiDate;
+                this.dialogFormOld.province=row.province;
+                this.dialogFormOld.shopAddress=row.shopAddress;
+                this.dialogFormOld.shopId=row.shopId;
+                this.dialogFormOld.shopName=row.shopName;
+                this.dialogFormOld.status=row.status;
+                this.dialogFormOld.street=row.street;
+                this.dialogFormOld.zipCode=row.zipCode;
+
+                this.dialogVisible=true;
+            },
+
+            deleteTap(shopId){
+                this.$confirm('此操作将删除店铺，是否确认？', '删除店铺', {
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    type:'warning'
+                }).then(
+                    ()=>{
+                        this.delete(shopId);
                     }
                 ).catch();
             },
 
-            deleteTap(id){
-
-            },
+            delete(shopId){
+                let params={};
+                params.shopId=shopId;
+                delShopById(this, params).then(
+                    (res)=>{
+                        this.$message.success('删除成功！');
+                        this.initData();
+                    },
+                    (res)=>{
+                        if (res.msg!=null){
+                            this.$message.error(res.msg);
+                        } else{
+                            this.$message.error('删除失败！');
+                        }
+                    }
+                ).catch();
+            }
         }
     }
 </script>
