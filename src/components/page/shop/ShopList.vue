@@ -76,10 +76,18 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="18">
                         <el-form-item label="详细地址" prop="shopAddress"
                                       :rules="[{required: true, message:'详细地址不能为空', trigger:'blur'}]">
                             <el-input v-model="dialogForm.shopAddress" placeholder="请输入详细地址"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="状态" prop="status"
+                                      :rules="[{required: true, message:'必须选择状态', trigger:'blur'}]">
+                            <el-select v-model="dialogForm.status" placeholder="请选择状态" style="width: 100%;">
+                                <el-option v-for="item in selections" :key="item.id" :label="item.value" :value="item.id"></el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <!--<el-col :span="6">-->
@@ -119,7 +127,8 @@
                     city: null,
                     area: null,
                     street: null,
-                    shopAddress: null
+                    shopAddress: null,
+                    status:null,
                 },
                 dialogFormOld: {
                     shopName: null,
@@ -127,10 +136,16 @@
                     city: null,
                     area: null,
                     street: null,
-                    shopAddress: null
+                    shopAddress: null,
+                    status:null,
                 },
                 dialogVisible: false,
                 map:null,
+                selections:[
+                    {id:1, value:'正常'},
+                    {id:2, value:'注销'},
+                    {id:3, value:'停用'},
+                ],
             }
         },
 
@@ -160,6 +175,9 @@
                     return false;
                 }
                 if (this.dialogFormOld.area !== this.dialogForm.area) {
+                    return false;
+                }
+                if (this.dialogForm.status!==this.dialogFormOld.status){
                     return false;
                 }
                 return true;
@@ -304,6 +322,9 @@
                     }
                     if (this.dialogForm.shopAddress!==this.dialogFormOld.shopAddress){
                         params.shopAddress=this.dialogForm.shopAddress;
+                    }
+                    if (this.dialogForm.status!==this.dialogFormOld.status){
+                        params.status=this.dialogForm.status;
                     }
                     uptShop(this, params).then(
                         (res)=>{

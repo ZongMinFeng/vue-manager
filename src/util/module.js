@@ -731,19 +731,9 @@ const uptShop = (me, params) => {
         if(params.shopAddress!=null){
             send.shopAddress=params.shopAddress;
         }
-
-        //debug写死测试 b1egin
-        params.latitude=30.108904;
-        params.longitude=117.03571;
-        if(params.latitude!=null){
-            send.latitude=params.latitude;
-            signArray.latitude=params.latitude;
+        if(params.status!=null){
+            send.status=params.status;
         }
-        if(params.longitude!=null){
-            send.longitude=params.longitude;
-            signArray.longitude=params.longitude;
-        }
-        //debug写死测试 end
 
         urlParams.send = send;
         urlParams.signArray = signArray;
