@@ -307,7 +307,8 @@
                 let params={
                     id:this.itemForm.id,
                     userId:localStorage.getItem("usrId")||'',
-                    argValue:this.itemForm.argValue
+                    argValue:this.itemForm.argValue,
+                    signFlag:this.itemForm.signFlag,
                 };
                 uptMallContent(this, params).then((res)=>{
                     this.modiItemVisible=false;
