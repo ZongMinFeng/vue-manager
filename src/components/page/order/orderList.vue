@@ -2,15 +2,23 @@
     <div style="background-color: white;padding: 10px;">
         <el-form :model="selectForm">
             <el-row>
-                <el-col :md="12" :sm="8" :xl="8">
+                <el-col :md="6" :sm="8" :xl="8">
                     <el-form-item label="状态" prop="type">
-                        <el-select v-model="selectForm.status" clearable placeholder="请选择" @change="initdata">
+                        <el-select v-model="selectForm.status" clearable placeholder="请选择" @change="statusChange">
                             <el-option v-for="item in orderStatusArray" :key="item.id" :label="item.id+':'+item.detail" :value="item.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col v-if="this.shops.length>0" :md="6" :sm="8" :xl="8">
+                    <el-form-item label="店铺" prop="type">
+                        <el-select v-model="selectForm.shopId" clearable placeholder="请选择店铺" @change="shopChange">
+                            <el-option v-for="item in shops" :key="item.shopId" :label="item.area+':'+item.shopName" :value="item.shopId"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
         </el-form>
+
         <el-table :data="orders" stripe border size="medium" class="table" @row-dblclick="rowDblclick">
             <el-table-column prop="orderId" label="编号" width="120"></el-table-column>
             <el-table-column label="商品信息" width="170">
@@ -26,7 +34,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="payAmt" label="支付金额" width="100"></el-table-column>
-            <el-table-column prop="uptAmt" label="修改金额" width="100"></el-table-column>
+            <el-table-column prop="uptAmt" label="优惠金额" width="100"></el-table-column>
             <el-table-column label="订单金额" width="150">
                 <template slot-scope="props">
                     <p>订单总价:{{props.row.orderAmt}}元</p>
@@ -36,7 +44,7 @@
             <el-table-column label="商品金额数量" width="150">
                 <template slot-scope="props">
                     <p>商品总价:{{props.row.goodsAllAmt}}元</p>
-                    <p>商品总数:{{props.row.goodsAllNum}}件</p>
+                    <p>商品总条数:{{props.row.orderDetailList.length}}</p>
                 </template>
             </el-table-column>
             <el-table-column label="时间" width="225">
@@ -45,16 +53,26 @@
                     <p>支付时间：{{toDate(props.row.paymentTime)}}</p>
                 </template>
             </el-table-column>
-            <el-table-column label="信息" width="70">
-                <template slot-scope="props">
-                    <p v-if="props.row.payStatus==='Y'" style="color: green;">已支付</p>
-                    <p v-else style="color: red;">未支付</p>
-                    <p v-if="props.row.closedComment==='Y'" style="color: green;">已评论</p>
-                </template>
-            </el-table-column>
+            <!--<el-table-column label="信息" width="70">-->
+                <!--<template slot-scope="props">-->
+                    <!--<p v-if="props.row.payStatus==='Y'" style="color: green;">已支付</p>-->
+                    <!--<p v-else style="color: red;">未支付</p>-->
+                    <!--<p v-if="props.row.closedComment==='Y'" style="color: green;">已评论</p>-->
+                <!--</template>-->
+            <!--</el-table-column>-->
             <el-table-column label="订单状态">
                 <template slot-scope="props">
                     <p>{{orderStatus(props.row.status)}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="props">
+                    <div style="margin-bottom: 2px">
+                        <el-button v-if="props.row.status===8" type="primary" @click="takeOrderTap(props.row)" >接单</el-button>
+                    </div>
+                    <div>
+                        <el-button v-if="props.row.status===9" type="warning" @click="uptOrderPayAmtTap(props.row)" >修改金额</el-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -220,7 +238,11 @@
                                 <h4 style="float: left; font-size: 12px; width: 70px;">订单总价：</h4>
                                 <h4 style="float: left; font-size: 12px">￥{{order.orderAmt}}</h4>
                             </li>
-                            <li style="margin-top: 30px; margin-left: 10px; margin-right: 8px; display: flex;">
+                            <li style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                <div style="float: left; font-size: 10px; width: 70px; color: green;">优惠金额：</div>
+                                <div style="float: left; font-size: 10px; color: green">￥{{order.uptAmt}}</div>
+                            </li>
+                            <li style="margin-top: 20px; margin-left: 10px; margin-right: 8px; display: flex;">
                                 <h3 style="float: left; font-size: 14px; width: 70px;">实付款：</h3>
                                 <h3 style="float: left; font-size: 14px; color: red;">￥{{order.payAmt}}</h3>
                             </li>
@@ -229,13 +251,33 @@
                 </el-col>
             </el-row>
         </el-dialog>
+
+        <el-dialog :title="uptOrderPayAmtDialogTitle" :visible.sync="uptOrderPayAmtDialogVisible" width="30%">
+            <el-form :model="uptOrderPayAmtDialogForm" label-width="80px" ref="uptOrderPayAmtDialogForm">
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="金额" prop="uptAmt"
+                                      :rules="[{required: true, message:'修改金额不能为空', trigger:'blur'}]">
+                            <el-input v-model="uptOrderPayAmtDialogForm.uptAmt" placeholder="请输入优惠金额"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <span slot="footer" type="dialog-footer">
+                <el-button @click="uptOrderPayAmtDialogVisible=false">取消</el-button>
+                <el-button type="primary" @click="uptOrderPayAmtDialogFormConfirm">确定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import {
         qryOrders,
-        qryOrderById
+        qryOrderById,
+        confirmOrder,
+        getMallShop,
+        uptOrderPayAmt
     } from "../../../util/module";
     import cfg from '../../../config/cfg';
 
@@ -250,6 +292,7 @@
                 uploadUrl:'',
                 selectForm:{
                     status:null,
+                    shopId:null,
                 },
                 orderStatusArray:[
                     {id:1, detail:'交易成功'},
@@ -268,18 +311,25 @@
                 order:{},
                 orderPays:{},
                 ordership:{},
+                shops:[],
+                uptOrderPayAmtDialogTitle:'修改金额',
+                uptOrderPayAmtDialogVisible:false,
+                uptOrderPayAmtDialogForm:{
+                    orderId:null,
+                    uptAmt:null
+                },
             }
         },
 
         created(){
             let mallId = localStorage.getItem('mallId') || '';
             this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/';
+            this.getMallShop();
             this.initdata();
         },
 
         methods:{
             initdata(){
-                console.log('selectForm', this.selectForm);//debug
                 let params={};
                 params.page=this.CurPage;
                 params.pageSize=this.limitNum;
@@ -292,6 +342,26 @@
                     console.log("失败res", res);//debug
                     this.$message.error(res.msg);
                 });
+            },
+
+            //获取店铺信息
+            getMallShop(){
+                let params={};
+                getMallShop(this, params).then(
+                    (res)=>{
+                        console.log("res", res);//debug
+                        this.shops=res.data;
+                    }
+                ).catch();
+            },
+
+            statusChange(){
+                this.CurPage=1;
+                this.initdata();
+            },
+
+            shopChange(){
+
             },
 
             toDate(dateNum){
@@ -406,6 +476,89 @@
                     this.$message.error(res.msg);
                 });
             },
+
+            //接单按钮被按下
+            takeOrderTap(row){
+                //接单时如果有分店铺，必须先选择哪个店铺
+                if (this.shops.length > 0) {
+                    if(this.selectForm.shopId===null){
+                        this.$message.error('请选择店铺！');
+                        return;
+                    }
+                }
+                this.$confirm('此操作将接单，是否确认？', '接单确认',{
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    type:'warning'
+                }).then(
+                    ()=>{
+                        this.takeOrder(row);
+                    }
+                ).catch();
+            },
+
+            //接单
+            takeOrder(row){
+                let param={};
+                param.orderId=row.orderId;
+                param.shopId=this.selectForm.shopId;
+                confirmOrder(this, param).then(
+                    (res)=>{
+                        this.$message.success('接单成功！');
+                        this.initdata();
+                    },
+                    (res)=>{
+                        if (res.msg != null) {
+                            this.$message.error(res.msg);
+                        }else{
+                            this.$message.error('接单失败！');
+                        }
+                        this.initdata();
+                    }
+                ).catch(
+                    ()=>{
+                        this.$message.error('系统错误!');
+                    }
+                );
+            },
+
+            //修改金额被按下
+            uptOrderPayAmtTap(row){
+                this.uptOrderPayAmtDialogForm.orderId=row.orderId;
+                this.uptOrderPayAmtDialogVisible=true;
+            },
+
+            uptOrderPayAmtDialogFormConfirm(){
+                this.$refs['uptOrderPayAmtDialogForm'].validate(
+                    (valid)=>{
+                        if (valid){
+                            this.uptOrderPayAmtDialogFormCommit();
+                        } else {
+                            return false;
+                        }
+                    }
+                );
+            },
+
+            uptOrderPayAmtDialogFormCommit(){
+                let params={};
+                params.orderId=this.uptOrderPayAmtDialogForm.orderId;
+                params.uptAmt=this.uptOrderPayAmtDialogForm.uptAmt;
+                uptOrderPayAmt(this, params).then(
+                    (res)=>{
+                        this.$message.success('修改金额成功！');
+                        this.initdata();
+                        this.uptOrderPayAmtDialogVisible=false;
+                    },
+                    (res)=>{
+                        if (res.msg != null) {
+                            this.$message.error(res.msg);
+                        }else{
+                            this.$message.error('修改金额失败！');
+                        }
+                    }
+                ).catch();
+            }
         }
     }
 </script>

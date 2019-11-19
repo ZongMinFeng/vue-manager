@@ -905,6 +905,90 @@ const delOperById = (me, params) => {
     });
 };
 
+/**
+ * 1.4.7	 商城订单确认接单--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const confirmOrder = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("confirmOrder params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.confirmOrder.url + '/' + cfg.service.confirmOrder.action;
+        urlParams.txnId = cfg.service.confirmOrder.txnId;
+
+        if(params.orderId !=null){
+            send.orderId =params.orderId;
+            signArray.orderId =send.orderId ;
+        }
+        if(params.shopId !=null){
+            send.shopId =params.shopId;
+            signArray.shopId =send.shopId ;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
+/**
+ * 1.4.6	 商城订单金额修改--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const uptOrderPayAmt = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("confirmOrder params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.uptOrderPayAmt.url + '/' + cfg.service.uptOrderPayAmt.action;
+        urlParams.txnId = cfg.service.uptOrderPayAmt.txnId;
+
+        if(params.orderId !=null){
+            send.orderId =params.orderId;
+            signArray.orderId =send.orderId ;
+        }
+        if(params.uptAmt !=null){
+            send.uptAmt =params.uptAmt;
+            signArray.uptAmt =send.uptAmt ;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
 export {
     getCateParamByCateId,
     getMallCategory,
@@ -931,4 +1015,7 @@ export {
     delShopById,
     uptShop,
     delOperById,
+    confirmOrder,
+    uptOrderPayAmt,
+
 };

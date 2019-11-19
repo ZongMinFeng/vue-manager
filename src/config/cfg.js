@@ -1,7 +1,8 @@
 /*!
 * gaozh v1
 */
-module.exports = {
+module.exports={
+// export default  {
     //	交易码，返回码定义
     service: {
         //图片地址
@@ -229,6 +230,18 @@ module.exports = {
             txnId: "30043"
         },
 
+        confirmOrder:{
+            url: "MallWeChat",
+            action: "confirmOrder",
+            txnId: "20007"
+        },
+
+        uptOrderPayAmt:{
+            url: "MallWeChat",
+            action: "uptOrderPayAmt",
+            txnId: "20006"
+        },
+
     },
 
     //公共处理模块
@@ -248,11 +261,11 @@ module.exports = {
         }
     },
 
+
     resp: {
         success: {
             code: "0000",
             desc: "交易成功"
         },
-
     }
 };

@@ -28,6 +28,10 @@ import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
 Vue.use(preview);
 
+//省市区三级联动插件(v-distpicker)
+import VDistpicker from 'v-distpicker'
+Vue.component('v-distpicker', VDistpicker);
+
 
 
 //使用钩子函数对路由进行权限跳转

@@ -50,32 +50,33 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="2">
-                        <el-form-item label="地址:">
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="省" label-width="40px" prop="province">
-                            <el-input v-model="dialogForm.province" placeholder="请输入省"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="市" label-width="40px" prop="city">
-                            <el-input v-model="dialogForm.city" placeholder="请输入市"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="区" label-width="40px" prop="area">
-                            <el-input v-model="dialogForm.area" placeholder="请输入市"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="街道" label-width="50px" prop="street">
-                            <el-input v-model="dialogForm.street" placeholder="请输入街道"></el-input>
-                        </el-form-item>
-                    </el-col>
+                    <el-form-item label="地址">
+                        <el-col :span="17">
+                            <v-distpicker :province="dialogForm.province" :city="dialogForm.city" :area="dialogForm.area"
+                                          @province="onChangeProvince" @city="onChangeCity" @area="onChangeArea"></v-distpicker>
+                        </el-col>
+                        <el-col :span="7">
+                            <el-form-item label="街道" label-width="50px" prop="street">
+                                <el-input v-model="dialogForm.street" placeholder="请输入街道"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
                 </el-row>
-                <el-row>
+                <el-row v-if="flag===1">
+                    <el-col :span="24">
+                        <el-form-item label="详细地址" prop="shopAddress"
+                                      :rules="[{required: true, message:'详细地址不能为空', trigger:'blur'}]">
+                            <el-input v-model="dialogForm.shopAddress" placeholder="请输入详细地址"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <!--<el-col :span="6">-->
+                    <!--<el-form-item label="邮编" prop="shopAddress"-->
+                    <!--:rules="[{required: true, message:'详细地址不能为空', trigger:'blur'}]">-->
+                    <!--<el-input v-model="dialogForm.shopAddress" placeholder="请输入详细地址"></el-input>-->
+                    <!--</el-form-item>-->
+                    <!--</el-col>-->
+                </el-row>
+                <el-row v-if="flag===2">
                     <el-col :span="18">
                         <el-form-item label="详细地址" prop="shopAddress"
                                       :rules="[{required: true, message:'详细地址不能为空', trigger:'blur'}]">
@@ -84,7 +85,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="状态" prop="status"
-                                      :rules="[{required: true, message:'必须选择状态', trigger:'blur'}]">
+                                      :rules="[{required: true, message:'状态不能为空', trigger:'blur'}]">
                             <el-select v-model="dialogForm.status" placeholder="请选择状态" style="width: 100%;">
                                 <el-option v-for="item in selections" :key="item.id" :label="item.value" :value="item.id"></el-option>
                             </el-select>
@@ -113,9 +114,15 @@
 <script>
     import {getMallShop, saveShop, delShopById, uptShop} from "@/util/module.js";
     import {num2Date} from "@/Gw/GwString.js";
+    import VDistpicker from 'v-distpicker';
 
     export default {
         name: "ShopList",
+
+        components: {
+            VDistpicker
+        },
+
         data() {
             return {
                 tableData: [],
@@ -146,6 +153,7 @@
                     {id:2, value:'注销'},
                     {id:3, value:'停用'},
                 ],
+                province:null,
             }
         },
 
@@ -230,6 +238,9 @@
 
             onAddNewTap() {
                 this.flag=1;
+                this.dialogForm.province='江苏省';
+                this.dialogForm.city='南京市';
+                this.dialogForm.area='雨花台区';
                 this.dialogVisible = true;
             },
 
@@ -377,6 +388,8 @@
                 this.dialogFormOld.street=row.street;
                 this.dialogFormOld.zipCode=row.zipCode;
 
+                this.province=row.province;
+
                 this.dialogVisible=true;
             },
 
@@ -408,7 +421,18 @@
                         }
                     }
                 ).catch();
-            }
+            },
+
+            onChangeProvince: function (a) {
+                this.dialogForm.province=a.value;
+            },
+
+            onChangeCity: function (a) {
+                this.dialogForm.city=a.value;
+            },
+            onChangeArea: function (a) {
+                this.dialogForm.area=a.value;
+            },
         }
     }
 </script>
