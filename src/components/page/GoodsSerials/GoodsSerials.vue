@@ -107,9 +107,9 @@
                 <template slot-scope="props">
                     <div class="stock-div">
                         <div>
-                            <p>总库存: {{props.row.stockNum}}</p>
-                            <p style="color: red;">锁定库存: {{props.row.lockNum}}</p>
-                            <p style="color: green;">可用库存: {{props.row.stockNum-props.row.lockNum}}</p>
+                            <p>总库存: {{parseFloat(props.row.stockNum+"")}}</p>
+                            <p style="color: red;">锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
+                            <p style="color: green;">可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
                         </div>
                         <el-button type="warning" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStock(props.row)"></el-button>
                     </div>

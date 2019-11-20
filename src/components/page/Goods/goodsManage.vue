@@ -100,9 +100,9 @@
                     <template slot-scope="props">
                     <div class="stock-div">
                         <div>
-                            <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{props.row.stockNum-props.row.lockNum}}</p>
-                            <p v-if="props.row.isSerial==='N'"  class="stock" >总库存: {{props.row.stockNum}}</p>
-                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{props.row.lockNum}}</p>
+                            <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
+                            <p v-if="props.row.isSerial==='N'"  class="stock" >总库存: {{parseFloat(props.row.stockNum+"")}}</p>
+                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
                         </div>
                         <el-button v-if="props.row.isSerial==='N'" type="primary" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStock(props.row)"></el-button>
                         <el-button v-else @click="doInfos2(props.$index, 'fourth')">系列信息</el-button>
@@ -217,9 +217,9 @@
                     <template slot-scope="props">
                         <div class="stock-div">
                             <div>
-                                <p>可用库存: {{props.row.stockNum-props.row.lockNum}}</p>
-                                <p>总库存: {{props.row.stockNum}}</p>
-                                <p style="color: red;">锁定库存: {{props.row.lockNum}}</p>
+                                <p>可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
+                                <p>总库存: {{parseFloat(props.row.stockNum+"")}}</p>
+                                <p style="color: red;">锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
                             </div>
                         </div>
                     </template>
