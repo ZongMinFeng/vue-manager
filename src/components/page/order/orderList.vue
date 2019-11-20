@@ -20,7 +20,7 @@
         </el-form>
 
         <el-table :data="orders" stripe border size="medium" class="table" @row-dblclick="rowDblclick">
-            <el-table-column prop="orderId" label="编号" width="120"></el-table-column>
+            <el-table-column prop="orderId" label="订单编号" width="120"></el-table-column>
             <el-table-column label="商品信息" width="170">
                 <template slot-scope="props">
                     <div style="overflow-x: auto;">
@@ -481,7 +481,7 @@
             takeOrderTap(row){
                 //接单时如果有分店铺，必须先选择哪个店铺
                 if (this.shops.length > 0) {
-                    if(this.selectForm.shopId===null){
+                    if(this.selectForm.shopId===null||this.selectForm.shopId===''){
                         this.$message.error('请选择店铺！');
                         return;
                     }

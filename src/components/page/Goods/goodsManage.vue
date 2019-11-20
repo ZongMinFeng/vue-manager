@@ -77,14 +77,13 @@
                           @selection-change="handleSelectionChange"
                           @expand-change="expChange"
                           @row-dblclick="rowDblclick">
-                    <!--<el-table-column type="selection" width="60" align="center"></el-table-column>-->
-                    <el-table-column prop="goodsId" label="商品ID" width="170"></el-table-column>
+                    <el-table-column prop="name" label="名称"></el-table-column>
+                    <!--<el-table-column prop="goodsId" label="商品ID" width="170"></el-table-column>-->
                     <el-table-column label="商品主图" width="120" align="center">
                         <template slot-scope="scope">
                             <img style="height: 80px; width: 80px;background-color: white;"  :preview="scope.$index" :src="uploadUrl + scope.row.goodsId + '/'+scope.row.picture" >
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="名称" width="200"></el-table-column>
                     <el-table-column label="商品价格" width="120">
                         <template slot-scope="props">
                             <p>{{formatPrice(props.row.price)}}元</p>
@@ -96,12 +95,12 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="sellCount" label="销量" width="60"></el-table-column>
-                    <el-table-column  label="库存" width="165">
+                    <el-table-column  label="库存" width="200">
                     <template slot-scope="props">
                     <div class="stock-div">
                         <div>
                             <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
-                            <p v-if="props.row.isSerial==='N'"  class="stock" >总库存: {{parseFloat(props.row.stockNum+"")}}</p>
+                            <p v-if="props.row.isSerial==='N'"  class="stock" >总 库 存: {{parseFloat(props.row.stockNum+"")}}</p>
                             <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
                         </div>
                         <el-button v-if="props.row.isSerial==='N'" type="primary" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStock(props.row)"></el-button>
@@ -115,7 +114,7 @@
                         <el-switch style="margin-left: 5px;" v-model="props.row.status" :active-value="1" :inactive-value="3" @change="switchStatus(props.row)"></el-switch>
                     </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="140">
+                    <el-table-column label="操作">
                     <template slot-scope="props">
                         <p>
                             <el-button style="width: 90px;" type="primary" @click="doInfos(props.$index, null)">查看●修改</el-button>
@@ -225,10 +224,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <!--<span slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="editSkuInfo.dialogVisible = false">取 消</el-button>-->
-                <!--<el-button type="primary" @click="handleEditSkuConfirm">确 定</el-button>-->
-            <!--</span>-->
         </el-dialog>
     </div>
 </template>

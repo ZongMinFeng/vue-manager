@@ -340,11 +340,11 @@ module.exports = {
                     index: 'mallHomePage',
                     title: '首页轮播图',
                 },
-                {
-                    // icon: 'el-icon-tickets',
-                    index: 'mallPhone',
-                    title: '客服电话',
-                },
+                // {
+                //     // icon: 'el-icon-tickets',
+                //     index: 'mallPhone',
+                //     title: '客服电话',
+                // },
                 {
                     // icon: 'el-icon-tickets',
                     index: 'mallSysArg',
@@ -389,11 +389,11 @@ module.exports = {
                     index: 'orderList',
                     title: '订单列表',
                 },
-                {
-                    // icon: 'el-icon-tickets',
-                    index: 'orderTimeout',
-                    title: '超时设置',
-                },
+                // {
+                //     // icon: 'el-icon-tickets',
+                //     index: 'orderTimeout',
+                //     title: '超时设置',
+                // },
 
             ]
         },

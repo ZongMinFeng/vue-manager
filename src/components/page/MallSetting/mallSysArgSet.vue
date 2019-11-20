@@ -1,16 +1,17 @@
 <template>
-    <div style=" width: 100%; height: 100%; background-color: white;">
-        <div >
-            <el-button type="success" icon="el-icon-plus" style="margin: 10px" @click="showAddItem">新增</el-button>
+    <div class="container">
+        <div style="height: 50px;">
+            <el-button v-show="!addItemVisible" type="success" icon="el-icon-plus" style="float: left;" @click="showAddItem">新增系统参数</el-button>
             <div class="btn-div" v-for="(item) in items">
                 <el-button type="primary"  v-if="item.argName!=null&&item.argName.startsWith('config_service_phone')"  @click="showPhontItem">客服电话</el-button>
                 <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_closetime')"  @click="showTimeItem">超时设置</el-button>
                 <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_memos')"  @click="showMemosItem">备注标签设置</el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_minamt')"  @click="showAmtItem">每单最小金额</el-button>
             </div>
         </div>
 
         <!--新增样式-->
-        <div v-if="addItemVisible" style=" width: 100%; height: 100%; background-color: white;">
+        <div v-if="addItemVisible" style="width: 100%;">
             <el-card class="form-container" shadow="never"  >
                 <el-form label-width="80px" :model="itemForm" :rules="rules" ref="itemAddForm">
                     <el-form-item label="名称" prop="argName">
@@ -18,19 +19,26 @@
                             <el-option v-for="item in options" :key="item.argName" :label="item.chnExplain" :value="item.argName"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="值" prop="argValue">
+                    <el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_memos')" label="值">
                         <el-row>
                             <el-col :span="20">
                                 <el-input v-model="argValueMemos" maxlength="20"></el-input>
                             </el-col>
-
                             <el-col :span="2">
-                                <span  v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_closetime')">分钟</span>
-                                <el-button  v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_memos')" type="primary" style="margin-left: 20px" @click="addRemock">添加</el-button>
+                                <el-button   type="primary" style="margin-left: 20px" @click="addRemock">添加</el-button>
                             </el-col>
                         </el-row>
                     </el-form-item>
-
+                    <el-form-item v-else label="值" prop="argValue">
+                        <el-row>
+                            <el-col :span="20">
+                                <el-input v-model="itemForm.argValue" maxlength="20"></el-input>
+                            </el-col>
+                            <el-col :span="2">
+                                <span  v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_closetime')">分钟</span>
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
                     <el-form-item  v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_memos')" style="padding-right:10px">
                             <div>
                                 <el-tag v-if="tags" style="margin: 10px;" v-for="tag in tags"
@@ -40,7 +48,6 @@
                                 </el-tag>
                             </div>
                     </el-form-item>
-
                     <el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_closetime')" label="快速选择" style="padding-right:10px">
                         <template sslot-scope="props">
                             <div>
@@ -58,18 +65,18 @@
 
 
         <!--列表样式-->
-        <div v-if="showItemVisible" style=" width: 100%; background-color: white;">
+        <div v-if="showItemVisible">
                 <el-table :data="setItemArray" border stripe current-row-key="argName">
                     <el-table-column label="名称" prop="chnExplain"></el-table-column>
 
                     <el-table-column label="值" >
-                        <template slot-scope="scope">
-                            <el-tag v-if="scope.row.argName.startsWith('mall_order_memos')" style="margin: 10px;" v-for="tag in tags"
+                        <template  slot-scope="scope">
+                            <el-tag v-if="scope.row.argName.startsWith('mall_order_memos')"  style="margin: 10px;" v-for="tag in tags"
                                     :key="tag"
                             >
                                 {{tag}}
                             </el-tag>
-                            <span v-if="!scope.row.argName.startsWith('mall_order_memos')">{{scope.row.argValue}}</span>
+                            <span v-else>{{scope.row.argValue}}</span>
                         </template>
                     </el-table-column>
 
@@ -259,6 +266,9 @@
                             }
                         });
 
+                        console.log("items", this.items);//debug
+                        console.log("options", this.options);//debug
+
 
                         this.setItemArray = [];
                         this.items.forEach(value => {
@@ -317,7 +327,8 @@
                     if(value.argName.startsWith('config_service_phone')){
                         this.setItemArray.push(value);
                     }
-                })
+                });
+                console.log("setItemArray", this.setItemArray);//debug
             },
 
             //超时显示
@@ -330,7 +341,20 @@
                     if(value.argName.startsWith('mall_order_closetime')){
                         this.setItemArray.push(value);
                     }
-                })
+                });
+            },
+
+            showAmtItem(){
+                this.addItemVisible = false;
+                this.showItemVisible = true;
+                this.showFlag = 'mall_order_minamt';
+                this.setItemArray = [];
+                this.items.forEach(value => {
+                    if(value.argName.startsWith('mall_order_minamt')){
+                        this.setItemArray.push(value);
+                    }
+                });
+                console.log("setItemArray amt", this.setItemArray);//debug
             },
 
             //备注标签显示
@@ -338,7 +362,7 @@
                 this.addItemVisible = false;
                 this.showItemVisible = true;
                 this.showFlag = 'mall_order_memos';
-                let momes = []
+                let momes = [];
                 this.setItemArray = [];
                 this.items.forEach(value => {
                     if(value.argName.startsWith('mall_order_memos')){
@@ -348,10 +372,10 @@
                             momes.push(memo[memoItem]); //key所对应的value 
                         }
                     }
-                })
-                console.log(' this.setItemArray.push(value);',  this.setItemArray )
+                });
+                console.log(' this.setItemArray.push(value);',  this.setItemArray );//debug
 
-                this.tags = momes
+                this.tags = momes;
                 console.log(' this.tags ', this.tags )
             },
 
@@ -419,7 +443,7 @@
             submitForm(formName){
                 this.$refs[formName].validate((valid)=>{
                     if(this.itemForm.argName.startsWith('mall_order_memos')){
-                        if (this.argValueMemos.trim()&&this.tags.indexOf(this.argValueMemos) == -1) {
+                        if (this.argValueMemos.trim()&&this.tags.indexOf(this.argValueMemos) === -1) {
                             this.itemForm.argValue =  this.argValueMemos
                             if(this.tags.length>=15){
                                 this.$message.error('备注标签超出个数限制');
@@ -643,13 +667,13 @@
     }
 
     .btn-div{
-        display: inline-block;
+        /*display: inline-block;*/
         float: right;
-        padding:10px 10px 0 10px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
     .form-container{
         position: relative;
-        top: 40px;
         left: 0;
         right: 0;
         width: 720px;
