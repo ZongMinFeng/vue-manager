@@ -967,8 +967,8 @@ const uptOrderPayAmt = (me, params) => {
             signArray.orderId =send.orderId ;
         }
         if(params.uptAmt !=null){
-            send.uptAmt =params.uptAmt;
-            signArray.uptAmt =send.uptAmt ;
+            send.uptAmt =parseFloat(params.uptAmt+'').toFixed(2);
+            signArray.uptAmt =parseFloat(params.uptAmt+'').toFixed(2) ;
         }
 
         urlParams.send = send;

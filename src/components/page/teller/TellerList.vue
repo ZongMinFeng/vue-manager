@@ -54,6 +54,12 @@
                 <el-button type="primary" @click="dialogFormConfirm">确定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog :title="passwordTitle" :visible.sync="passwordVisible" >
+            <el-card>
+                {{passwordInfo.nickName}}<span>初始密码：</span>{{passwordInfo.randomKey}}
+            </el-card>
+        </el-dialog>
     </div>
 </template>
 
@@ -75,6 +81,12 @@
                 page: 1,   // 设置加载的第几次，默认是第一次
                 pageSize: 10,        // 返回数据的个数
                 AllCount: 0,    // 总条数
+                passwordTitle:'初始密码查看',
+                passwordVisible:false,
+                passwordInfo:{
+                    nickName:null,
+                    randomKey:null
+                },
             };
         },
 
@@ -140,6 +152,8 @@
                         this.$message.success('新增成功！');
                         this.dialogVisible=false;
                         this.initData();
+                        this.passwordInfo=res.data;
+                        this.passwordVisible=true;
                     },
                     (res)=>{
                         if (res.msg !== null) {
