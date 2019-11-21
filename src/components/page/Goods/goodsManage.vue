@@ -95,15 +95,15 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="sellCount" label="销量" width="60"></el-table-column>
-                    <el-table-column  label="库存" width="200">
+                    <el-table-column  label="库存" width="220">
                     <template slot-scope="props">
                     <div class="stock-div">
                         <div>
-                            <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
-                            <p v-if="props.row.isSerial==='N'"  class="stock" >总 库 存: {{parseFloat(props.row.stockNum+"")}}</p>
-                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
+                            <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{showUseStock(props.row)}} {{props.row.unit}}</p>
+                            <p v-if="props.row.isSerial==='N'"  class="stock" >总 库 存: {{showTotalStock(props.row)}} {{props.row.unit}}</p>
+                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{showLockStock(props.row)}} {{props.row.unit}}</p>
                         </div>
-                        <el-button v-if="props.row.isSerial==='N'" type="primary" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStock(props.row)"></el-button>
+                        <el-button v-if="props.row.isSerial==='N'" type="primary" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStockTap(props.row)"></el-button>
                         <el-button v-else @click="doInfos2(props.$index, 'fourth')">系列信息</el-button>
                     </div>
                     </template>
@@ -169,20 +169,20 @@
         </el-dialog>
 
         <el-dialog title="库存调整" :visible.sync="stockVisible" width="30%" >
-            <el-form :model="stockForm" label-width="80px" :rules="stockRules" ref="stockForm">
+            <el-form :model="stockForm" label-width="100px" ref="stockForm">
                 <el-form-item label="商品名称" prop="name">
                     <el-input :disabled="true" v-model="stockForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="当前库存" prop="stockNum">
-                    <el-input v-model="stockForm.stockNum"></el-input>
+                <el-form-item label="当前库存:" prop="stockNumOld">
+                    {{showNum(stockForm.stockNumOld, stockForm.unit)}}
                 </el-form-item>
-                <el-form-item label="锁定库存" prop="lockNum">
-                    <el-input v-model="stockForm.lockNum"></el-input>
+                <el-form-item label="当前库存修改" prop="stockNum" :rules="[{validator:checkModiStockNum, trigger:'blur'}]">
+                    <el-input v-model="stockForm.stockNum" placeholder="请输入要修改的库存，减库存请输负数"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="stockVisible = false">取 消</el-button>
-                <el-button type="primary" style="margin-left: 20px;" :disabled="stockFormUpdate" @click="OnUpStock()">修 改</el-button>
+                <el-button type="primary" style="margin-left: 20px;" @click="OnUpStock()">修 改</el-button>
             </span>
         </el-dialog>
 
@@ -243,33 +243,10 @@
     } from '../../../util/module';
     import cfg from '../../../config/cfg';
     import _String from '../../../util/string';
+    import GwRegular from '@/Gw/GwRegular.js';
 
     export default {
         data() {
-            let checkStockNum=(rule, stockNum, callback)=>{
-                if(stockNum-this.goodInfo.stockNum<0){
-                    callback(new Error('库存不能比原来小!'));
-                    return false;
-                }
-                let reg=/^\d+(\.\d{0,2})?$/;
-                if (!reg.test(stockNum)) {
-                    callback(new Error('请输入大于等于0的数字'));
-                }
-                callback();
-            };
-
-            let checkLockNum=(rule, lockNum, callback)=>{
-                if(lockNum-this.goodInfo.stockNum>0.01){
-                    callback(new Error('锁定库存不能比当前库存大!'));
-                    return false;
-                }
-                // let reg = /^[0-9]*[0-9][0-9]*$/;
-                let reg=/^\d+(\.\d{0,2})?$/;
-                if (!reg.test(lockNum)) {
-                    callback(new Error('请输入大于等于0的数字'));
-                }
-                callback();
-            };
             return {
                 goodsTypeSelect: '',
                 GoodsParamsFlag: false,
@@ -291,22 +268,14 @@
                         {required: true, message: '请输入供货商名称', trigger: 'blur'},
                     ]
                 },
-                stockRules:{
-                    stockNum:[
-                        {required:true, message:'请输入当前库存', trigger:'blur'},
-                        {validator: checkStockNum, trigger: 'blur'},
-                    ],
-                    lockNum:[
-                        {required:true, message:'请输入锁定库存', trigger:'blur'},
-                        {validator: checkLockNum, trigger: 'blur'},
-                    ]
-                },
                 selectForm:{},
                 stockVisible:false,
                 stockForm:{
                     name:'兰博基尼',
-                    stockNum:233,
-                    lockNum:0
+                    stockNum:null,
+                    stockNumOld:null,
+                    lockNum:0,
+                    unit:null,
                 },
                 goodInfo:null,
                 uploadUrl:'',
@@ -337,25 +306,6 @@
             listenGoodsTypeRefresh() {
                 return this.$store.state.goodsTypeArray;
             },
-            stockFormUpdate(){
-                if(this.stockForm.stockNum==null || this.goodInfo==null){
-                    return true;
-                }
-                //stockNumUp，lockNumUp值被改变为true
-                let stockNumUp=false;
-                let lockNumUp=false;
-                if(Math.abs(this.stockForm.stockNum-this.goodInfo.stockNum)>0.01){
-                    stockNumUp = true;
-                }
-                if(Math.abs(this.stockForm.lockNum-this.goodInfo.lockNum)>0.01){
-                    lockNumUp = true;
-                }
-                if(stockNumUp||lockNumUp){
-                    return false;
-                }else{
-                    return true;
-                }
-            }
         },
 
         watch: {
@@ -378,6 +328,22 @@
         },
 
         methods: {
+            //库存修改，对库存的检查
+            checkModiStockNum(rule, stockNum, callback){
+                if (this.stockForm.unit == null) {
+                    callback(new Error('系统错误！'));
+                }
+                switch (this.stockForm.unit) {
+                    case '斤':
+                    case '公斤':
+                        if (!GwRegular.numeric3_.test(stockNum)) {
+                            callback(new Error('请输入数字，小数最多3位'))
+                        }
+                        break;
+                }
+                callback();
+            },
+
             // 分页导航
             handleCurrentChange(options) {
                 this.CurPage = options;
@@ -1032,29 +998,39 @@
                     });
             },
 
-            upStock(row){
+            upStockTap(row){
                 console.log("row", row);//debug
                 this.goodInfo=row;
-                // this.stockForm=row;
                 this.stockForm.name=row.name;
-                this.stockForm.stockNum=row.stockNum;
+                this.stockForm.stockNumOld=row.stockNum;
                 this.stockForm.lockNum=row.lockNum;
                 this.stockForm.goodsId=row.goodsId;
+                this.stockForm.unit=row.unit;
                 this.stockVisible=true;
             },
 
             OnUpStock(){
+                console.log('啦啦啦');//debug
+                this.$refs['stockForm'].validate((valid)=>{
+                    if (valid) {
+                        this.upStock();
+                    }else{
+                        return false;
+                    }
+                });
+
+            },
+
+            upStock(){
                 console.log("stockForm", this.stockForm);//debug
                 let stockNum=this.stockForm.stockNum;
                 let lockNum=this.stockForm.lockNum;
-                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.00001){
-                    stockNum=null;
-                }
-                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.00001){
-                    lockNum=null;
+                if (parseFloat(stockNum) + this.stockForm.stockNumOld < 0.000005) {
+                    this.$message.error('调整负数库存不能超过当前库存！');
+                    return;
                 }
                 //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
-                if (this.goodInfo.unit === '斤') {
+                if (this.stockForm.unit === '斤') {
                     if (stockNum !== null) {
                         stockNum=stockNum*500;
                     }
@@ -1062,14 +1038,26 @@
                         lockNum=lockNum*500;
                     }
                 }
-                uptGoodsStock(this, this.stockForm.goodsId, stockNum, lockNum).then(
+                if (this.stockForm.unit === '公斤') {
+                    if (stockNum !== null) {
+                        stockNum=stockNum*1000;
+                    }
+                    if (lockNum !== null) {
+                        lockNum=lockNum*1000;
+                    }
+                }
+                uptGoodsStock(this, this.stockForm.goodsId, stockNum).then(
                     (res)=>{
                         this.$message.success("库存修改成功");
                         this.stockVisible=false;
                         this.onRefresh();
                     },
                     (res)=>{
-                        this.$message.error("库存修改失败");
+                        if (res.msg != null) {
+                            this.$message.error(res.msg);
+                        }else{
+                            this.$message.error("库存修改失败");
+                        }
                     }
                 );
             },
@@ -1218,6 +1206,69 @@
             //格式化金额
             formatPrice(price){
                 return _String.number_format(price, 2);
+            },
+
+            //显示可用库存
+            showUseStock(row){
+                if(row==null){
+                    return;
+                }
+                let stock=(row.stockNum-row.lockNum).toFixed(5);
+                let newStock=0;
+                switch (row.unit) {
+                    //截取3位小数、不四舍五入
+                    case '公斤':
+                    case '斤':
+                        newStock=Math.floor(stock*1000)/1000;
+                        break;
+                    default:
+                        newStock=parseInt(stock);
+                }
+                return newStock;
+            },
+
+            showTotalStock(row){
+                if(row==null){
+                    return;
+                }
+                let stock=row.stockNum.toFixed(5);
+                let newStock=0;
+                switch (row.unit) {
+                    default:
+                        newStock=parseInt(stock);
+                }
+                return newStock;
+            },
+
+            showLockStock(row){
+                if(row==null){
+                    return;
+                }
+                let stock=row.lockNum.toFixed(5);
+                let newStock=0;
+                switch (row.unit) {
+                    default:
+                        newStock=parseInt(stock);
+                }
+                return newStock;
+            },
+
+            showNum(num, unit){
+                if(num==null){
+                    return;
+                }
+                let stock=num.toFixed(5);
+                let newStock=0;
+                switch (unit) {
+                    //截取3位小数、不四舍五入
+                    case '公斤':
+                    case '斤':
+                        newStock=Math.floor(stock*1000)/1000;
+                        break;
+                    default:
+                        newStock=parseInt(stock);
+                }
+                return newStock;
             },
 
         }
