@@ -99,9 +99,9 @@
                     <template slot-scope="props">
                     <div class="stock-div">
                         <div>
-                            <p v-if="props.row.isSerial==='N'" class="stock" >可用库存: {{showUseStock(props.row)}} {{props.row.unit}}</p>
-                            <p v-if="props.row.isSerial==='N'"  class="stock" >总 库 存: {{showTotalStock(props.row)}} {{props.row.unit}}</p>
-                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" >锁定库存: {{showLockStock(props.row)}} {{props.row.unit}}</p>
+                            <p v-if="props.row.isSerial==='N'"  class="stock" >总 库 存: {{showStock(props.row.unit, props.row.stockNum)}} {{props.row.unit}}</p>
+                            <p v-if="props.row.isSerial==='N'" style="color: red;"  class="stock" ><span style="color: red;">锁定库存: {{showStock(props.row.unit, props.row.lockNum)}} {{props.row.unit}}</span></p>
+                            <p v-if="props.row.isSerial==='N'" class="stock" ><span style="color: green;">可用库存: {{showStock(props.row.unit, props.row.stockNum-props.row.lockNum)}} {{props.row.unit}}</span></p>
                         </div>
                         <el-button v-if="props.row.isSerial==='N'" type="primary" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStockTap(props.row)"></el-button>
                         <el-button v-else @click="doInfos2(props.$index, 'fourth')">系列信息</el-button>
@@ -173,23 +173,30 @@
                 <el-form-item label="商品名称" prop="name">
                     <el-input :disabled="true" v-model="stockForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="当前库存:" prop="stockNumOld">
-                    {{showNum(stockForm.stockNumOld, stockForm.unit)}}
+                <el-form-item label="总库存:">
+                    {{showStock5(stockForm.unit, stockForm.stockNumOld)}} {{stockForm.unit}}
                 </el-form-item>
-                <el-form-item label="当前库存修改" prop="stockNum" :rules="[{validator:checkModiStockNum, trigger:'blur'}]">
-                    <el-input v-model="stockForm.stockNum" placeholder="请输入要修改的库存，减库存请输负数"></el-input>
+                <el-form-item label="锁定库存:">
+                    <span style="color: red;">{{showStock5(stockForm.unit, stockForm.lockNum)}} {{stockForm.unit}}</span>
+                </el-form-item>
+                <el-form-item label="可用库存:">
+                    <span style="color: green;">{{showStock5(stockForm.unit, stockForm.stockNumOld-stockForm.lockNum)}} {{stockForm.unit}}</span>
+                </el-form-item>
+                <el-form-item label="库存变动" prop="stockNum" :rules="[{validator:checkModiStockNum, trigger:'blur'}]">
+                    <el-input v-model="stockForm.stockNum" placeholder="请输入要修改的库存"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="stockVisible = false">取 消</el-button>
-                <el-button type="primary" style="margin-left: 20px;" @click="OnUpStock()">修 改</el-button>
+                <el-button type="danger" style="margin-left: 20px;" @click="OnUpStockDown()">销 货</el-button>
+                <el-button type="primary" style="margin-left: 20px;" @click="OnUpStock()">补 货</el-button>
             </span>
         </el-dialog>
 
         <el-dialog
                 title="系列信息"
                 :visible.sync="goodDetailVisible"
-                width="60%">
+                width="70%">
             <div>
                 <span>商品名称：</span>
                 <span>{{goodDetail.name}}</span>
@@ -212,13 +219,13 @@
                         <p>{{formatPrice(props.row.specNowPrice)}}元</p>
                     </template>
                 </el-table-column>
-                <el-table-column  label="库存" width="165" >
+                <el-table-column  label="库存" width="180" >
                     <template slot-scope="props">
                         <div class="stock-div">
                             <div>
-                                <p>可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
-                                <p>总库存: {{parseFloat(props.row.stockNum+"")}}</p>
-                                <p style="color: red;">锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
+                                <p>总库存: {{showStock(goodDetail.unit, props.row.stockNum)}} {{goodDetail.unit}}</p>
+                                <p style="color: red;">锁定库存: {{showStock(goodDetail.unit, props.row.lockNum)}} {{goodDetail.unit}}</p>
+                                <p style="color: green;">可用库存: {{showStock(goodDetail.unit, (props.row.stockNum-props.row.lockNum))}} {{goodDetail.unit}}</p>
                             </div>
                         </div>
                     </template>
@@ -244,6 +251,8 @@
     import cfg from '../../../config/cfg';
     import _String from '../../../util/string';
     import GwRegular from '@/Gw/GwRegular.js';
+    import {unitNum} from "../../../Gw/GwString";
+    import String from '@/util/string.js';
 
     export default {
         data() {
@@ -317,7 +326,6 @@
                 this.$store.commit('goodsRefreshF');
             },
             listenGoodsTypeRefresh: function (newVal, oldVal) {
-                console.log('listenGoodsTypeRefresh', newVal);//debug
                 this.goodsTypeArray = newVal;
             },
             $route(newValue, oldValue) {
@@ -328,18 +336,36 @@
         },
 
         methods: {
+            showStock(unit, stock){
+                return unitNum(unit, String.unitNumDown(unit, stock));
+            },
+
+            showStock5(unit, stock){
+                return String.unitNum5(unit, String.unitNumDown(unit, stock));
+            },
+
             //库存修改，对库存的检查
             checkModiStockNum(rule, stockNum, callback){
-                if (this.stockForm.unit == null) {
-                    callback(new Error('系统错误！'));
+                if (stockNum == null || this.stockForm.unit == null) {
+                    callback(new Error('请输入值'));
                 }
                 switch (this.stockForm.unit) {
-                    case '斤':
                     case '公斤':
-                        if (!GwRegular.numeric3_.test(stockNum)) {
-                            callback(new Error('请输入数字，小数最多3位'))
+                    case '斤':
+                    case '克':
+                        if (!GwRegular.numeric2.test(stockNum)) {
+                            callback('请输入数字，可以为2位小数');
                         }
                         break;
+                    default:
+                        //只能是个位数
+                        if (!GwRegular.num.test(stockNum)) {
+                            callback('请输入整数');
+                        }
+                }
+                if (stockNum > 999999) {
+                    callback(new Error('库存应小于100万'));
+                    return true;
                 }
                 callback();
             },
@@ -593,13 +619,12 @@
                         console.log("res:", res);
                         that.tableDateArray = res.data.rows;
                         //后台很坑的设置了重量单位为克，下发单位“斤”，数量却是“克”
-                        this.tableDateArray.forEach(item=>{
-                            if (item.unit === '斤') {
-                                item.stockNum=item.stockNum/500;
-                                item.lockNum=item.lockNum/500;
-                            }
-                        });
-                        console.log("tableDateArray", this.tableDateArray);//debug
+                        // this.tableDateArray.forEach(item=>{
+                        //     if (item.unit === '斤') {
+                        //         item.stockNum=item.stockNum/500;
+                        //         item.lockNum=item.lockNum/500;
+                        //     }
+                        // });
                         that.AllCount = parseInt(res.data.records);
                     }, (res) => {
                         // 失败
@@ -740,14 +765,8 @@
                     console.log("系列缓存", this.goodsSerialsArrays[row.goodsId]);
                     return;
                 }
-                console.log("row:",row);//debug
-                console.log("expandedRows:",expandedRows);//debug
                 //获取此行goodsId的系列信息
                 this.getGoodsSerials(row.goodsId);
-                // this.goodsSerialsArrays[row.goodsId]=this.getGoodsSerials(row.goodsId);
-                // this.goodsSerialsArrays[row.goodsId]=[//debug
-                //     {specColor:"黄色", specSize:"十寸"}//debug
-                // ];//debug
                 console.log("row.goodsId", row.goodsId);
                 console.log("系列", this.goodsSerialsArrays[row.goodsId]);
             },
@@ -761,7 +780,6 @@
                 urlParams.txnId = cfg.service.getGoodsInfoById.txnId;
                 send.goodsId=goodsId;
                 urlParams.send = send;
-                console.log("urlParams",urlParams);//debug
                 sendServer(urlParams, this).then(
                     (res) => {
                         // 成功
@@ -771,13 +789,9 @@
                         }
                         if(res.data["isSerial"]!=null&&res.data["isSerial"]==="Y"){
                             //有系列信息，返回系列详细信息
-                            console.log("goodsSerials", res.data["goodsSerials"]);//debug
                             console.log("goodsId", goodsId);
                             that.goodsSerialsArrays[goodsId]=res.data["goodsSerials"];
                             //更新系列data信息
-                            // that.$refs.goodsId.data=that.goodsSerialsArrays[goodsId];
-                            console.log("ref",that.$refs[goodsId]);//debug
-                            // that.$refs[goodsId].data=that.goodsSerialsArrays[goodsId];
                             return res.data["goodsSerials"];
                         }else{
                             //没有系列系列信息，返回空
@@ -820,7 +834,6 @@
                             return false;
                         }
                         that.goodsTypeArray = res.data;
-                        console.log("goodsTypeArray", this.goodsTypeArray);//debug
                     }, (res) => {
                         // 失败
                         that.$message.error('请求失败');
@@ -850,7 +863,6 @@
 
             //上架和下架
             onShoppingTap(row){
-                console.log("row", row);//debug
                 let urlParams={
                     header:{
                         operFlag:"1"
@@ -890,7 +902,6 @@
                 let goodInfo={};
                 goodInfo=this.tableDateArray[index];
                 let goodId=goodInfo.goodsId;
-                console.log("flag", flag);//debug
                 if(flag==null){
                     this.$router.push({path:'/goodsInfos', query:{goodId:goodId}});
                 }else{
@@ -911,7 +922,6 @@
                     this.goodDetailVisible=true;
                     let mallId = localStorage.getItem('mallId') || '';
                     this.serialsUrl = cfg.service.uploadUrl+'/' + mallId + '/' + goodInfo.goodsId ;
-                    console.log("goodDetail", this.goodDetail);//debug
                 }, res=>{
                     this.$message.error(res.msg);
                 });
@@ -952,7 +962,6 @@
             },
 
             putOnOffBatchBatch(flag){
-                console.log("multipleSelection", this.multipleSelection);//debug
                 let urlParams={
                     header:{
                         operFlag:"1"
@@ -999,52 +1008,53 @@
             },
 
             upStockTap(row){
-                console.log("row", row);//debug
                 this.goodInfo=row;
                 this.stockForm.name=row.name;
                 this.stockForm.stockNumOld=row.stockNum;
                 this.stockForm.lockNum=row.lockNum;
                 this.stockForm.goodsId=row.goodsId;
                 this.stockForm.unit=row.unit;
+
+                //初始化stockNum
+                this.stockForm.stockNum=null;
                 this.stockVisible=true;
             },
 
+            //补货
             OnUpStock(){
-                console.log('啦啦啦');//debug
+                let flag=1;
                 this.$refs['stockForm'].validate((valid)=>{
                     if (valid) {
-                        this.upStock();
+                        this.upStock(flag);
                     }else{
                         return false;
                     }
                 });
-
             },
 
-            upStock(){
-                console.log("stockForm", this.stockForm);//debug
-                let stockNum=this.stockForm.stockNum;
-                let lockNum=this.stockForm.lockNum;
-                if (parseFloat(stockNum) + this.stockForm.stockNumOld < 0.000005) {
-                    this.$message.error('调整负数库存不能超过当前库存！');
-                    return;
-                }
+            //销货
+            OnUpStockDown(){
+                let flag=2;
+                this.$refs['stockForm'].validate((valid)=>{
+                    if (valid) {
+                        this.upStock(flag);
+                    }else{
+                        return false;
+                    }
+                });
+            },
+
+            upStock(flag){
                 //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
-                if (this.stockForm.unit === '斤') {
-                    if (stockNum !== null) {
-                        stockNum=stockNum*500;
-                    }
-                    if (lockNum !== null) {
-                        lockNum=lockNum*500;
-                    }
+                let stockNum = String.unitNumUp(this.stockForm.unit, this.stockForm.stockNum);
+                if (flag===2) {
+                    //销货，需要取反
+                    stockNum=-stockNum;
                 }
-                if (this.stockForm.unit === '公斤') {
-                    if (stockNum !== null) {
-                        stockNum=stockNum*1000;
-                    }
-                    if (lockNum !== null) {
-                        lockNum=lockNum*1000;
-                    }
+                //减库存时，不能将库存减为负数
+                if (parseFloat(stockNum) + parseFloat(this.stockForm.stockNumOld) < -0.000005) {
+                    this.$message.error('减库存时，不能将库存减为负数！');
+                    return;
                 }
                 uptGoodsStock(this, this.stockForm.goodsId, stockNum).then(
                     (res)=>{
@@ -1072,7 +1082,6 @@
             },
 
             switchStatus(item){
-                console.log("switchStatus row", item);//debug
                 let str='';
                 if(item.status===1){
                     str='上架';
@@ -1117,7 +1126,6 @@
 
             //删除商品by id
             delGood(item){
-                console.log("item", item);//debug
                 let params={};
                 params.goodsId=item.goodsId;
                 params.userId=localStorage.getItem('userId')||'';

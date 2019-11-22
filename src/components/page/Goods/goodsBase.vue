@@ -226,71 +226,29 @@
                 }
                 callback();
             };
-            let checkStockLimitUp = (rule, StockLimitUp, callback) => {
-                if (this.AddForm.StockAlarmFlag) {
-                    let reg = /^[0-9]*[1-9][0-9]*$/;
-                    if (!reg.test(StockLimitUp)) {
-                        callback(new Error('请输入大于等于0的数字'));
-                    }
-                    if (this.AddForm.StockLimitLow) {
-                        if (!reg.test(this.AddForm.StockLimitLow)) {
-                            callback();
-                        } else {
-                            let StockLimitLowI = parseInt(this.AddForm.StockLimitLow);
-                            let StockLimitUpI = parseInt(StockLimitUp);
-                            if (StockLimitUpI < StockLimitLowI) {
-                                callback(new Error('库存上限需大于库存下限'));
-                            }
-                            callback();
-                        }
-                    } else {
-                        callback();
-                    }
-                } else {
-                    callback();
-                }
-
-            };
-            let checkStockLimitLow = (rule, StockLimitLow, callback) => {
-                if (this.AddForm.StockAlarmFlag) {
-                    let reg = /^[0-9]*[1-9][0-9]*$/;
-                    if (!reg.test(StockLimitLow)) {
-                        callback(new Error('请输入大于等于0的数字'));
-                    }
-                    if (this.AddForm.StockLimitUp) {
-                        if (!reg.test(this.AddForm.StockLimitUp)) {
-                            callback();
-                        } else {
-                            let StockLimitUpI = parseInt(this.AddForm.StockLimitUp);
-                            let StockLimitLowI = parseInt(StockLimitLow);
-                            if (StockLimitUpI < StockLimitLowI) {
-                                callback(new Error('库存下限需小于库存上限'));
-                            }
-                            callback();
-                        }
-                    } else {
-                        callback();
-                    }
-                } else {
-                    callback();
-                }
-            };
             let checkStock = (rule, stockNum, callback) => {
-                if (this.AddForm.stockNum) {
-                    // let reg = /^[0-9]*[1-9][0-9]*$/;
-                    //允许两位小数
-                    let reg=/^\d+(\.\d{0,2})?$/;
-                    if (!reg.test(stockNum)) {
-                        callback(new Error('请输入大于等于0的数字'));
-                    }
-                    if(stockNum>999999){
-                        callback(new Error('库存应小于100万'));
-                        return true;
-                    }
-                    callback();
-                } else {
-                    callback();
+                if (this.AddForm.stockNum==null||this.AddForm.unit==null){
+                    callback(new Error('请输入值'));
                 }
+                switch(this.AddForm.unit){
+                    case '公斤':
+                    case '斤':
+                    case '克':
+                        if (!GwRegular.numeric2.test(stockNum)) {
+                            callback('请输入正数，可以为2位小数');
+                        }
+                        break;
+                    default:
+                        //只能是个位数
+                        if (!GwRegular.num.test(stockNum)) {
+                            callback('请输入整数');
+                        }
+                }
+                if(stockNum>999999){
+                    callback(new Error('库存应小于100万'));
+                    return true;
+                }
+                callback();
             };
             let checkMinPrice=(rule, minPrice, callback)=>{
                 if (this.AddForm.minPrice) {
@@ -350,12 +308,6 @@
                     unit: [
                         {validator: checkUnit, trigger: 'blur'},
                     ],
-                    StockLimitUp: [
-                        {validator: checkStockLimitUp, trigger: 'blur'},
-                    ],
-                    StockLimitLow: [
-                        {validator: checkStockLimitLow, trigger: 'blur'},
-                    ],
                     SafePeriod: [
                         {validator: checkSafePeriod, trigger: 'blur'},
                     ],
@@ -380,7 +332,7 @@
                     ],
                 },
                 goodsTypeArray: [],
-                unitArray: ['斤', '公斤', '个', '件', '只', '双', '套', '打', '箱', '卷', '袋', '包', '米', '厘米', '平方'],
+                unitArray: ['斤', '公斤', '克', '个', '件', '只', '双', '套', '打', '箱', '卷', '袋', '包', '米', '厘米', '平方'],
                 AddForm:{
                     goodsId: '',
                     categoryId: '',
@@ -389,7 +341,7 @@
                     picture: '',
                     imgs: [],
                     videos:'',
-                    unit: '件',
+                    unit: '公斤',
                     stockNum: '',
                     price: '',
                     nowPrice: '',
@@ -479,7 +431,7 @@
                         picture: '',
                         imgs: [],
                         videos:'',
-                        unit: '件',
+                        unit: '公斤',
                         stockNum: '',
                         price: '',
                         nowPrice: '',

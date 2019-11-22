@@ -193,13 +193,13 @@ const uptGoodsStock = (me, productId, stockNum, lockNum) => {
             (res) => {
                 // 成功
                 if (res.status !== 200 && res.status !== 400) {
-                    reject(false); // 失败回调
+                    reject(res); // 失败回调
                     return false;
                 }
                 resolve(res)
             }, (res) => {
                 // 失败
-                reject(false)
+                reject(res)
             }
         );
     });

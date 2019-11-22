@@ -185,4 +185,74 @@
 
 
 // module.exports= _String
+
+//根据单位换算数量
+_String.unitNumUp=(unit, num)=>{
+    let nowNum=parseFloat(num+'');
+    if (nowNum == null) {
+        return 0;
+    }
+    let newNum=0;
+    switch (unit) {
+        case '斤':
+            newNum=nowNum*500;
+            break;
+        case '公斤':
+        case '千克':
+            newNum=nowNum*1000;
+            break;
+        default:
+            newNum=nowNum;
+    }
+    return newNum;
+};
+
+//根据单位换算数量
+_String.unitNumDown=(unit, num)=>{
+    let nowNum=parseFloat(num+'');
+    if (nowNum == null) {
+        return 0;
+    }
+    let newNum=0;
+    switch (unit) {
+        case '斤':
+            newNum=nowNum/500;
+            break;
+        case '公斤':
+        case '千克':
+            newNum=nowNum/1000;
+            break;
+        default:
+            newNum=nowNum;
+    }
+    return newNum;
+};
+
+/**
+ * 根据单位显示数字，默认显示个位数
+ * @param unit
+ * @param num
+ */
+_String.unitNum5=(unit, num)=>{
+    let nowNum=parseFloat(num+'').toFixed(5);
+    let newNum=0;
+    switch (unit) {
+        //截取5位小数、不四舍五入
+        case '公斤':
+        case '千克':
+        case '斤':
+            newNum=Math.floor(nowNum*100000)/100000;
+            break;
+        case '克':
+            //截取2位小数、不四舍五入
+            newNum=Math.floor(nowNum*100)/100;
+            break;
+        default:
+            //显示个位数
+            newNum=parseInt(num);
+            break;
+    }
+    return newNum;
+};
+
 export default _String

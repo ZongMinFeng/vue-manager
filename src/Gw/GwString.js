@@ -26,7 +26,35 @@ const num2Date=(dateNum)=>{
   return Y+M+D+h+m+s;
 };
 
+/**
+ * 根据单位显示数字，默认显示个位数
+ * @param unit
+ * @param num
+ */
+const unitNum=(unit, num)=>{
+  let nowNum=parseFloat(num+'').toFixed(5);
+  let newNum=0;
+  switch (unit) {
+    //截取3位小数、不四舍五入
+    case '公斤':
+    case '千克':
+    case '斤':
+      newNum=Math.floor(nowNum*1000)/1000;
+      break;
+    case '克':
+      //截取2位小数、不四舍五入
+      newNum=Math.floor(nowNum*100)/100;
+      break;
+    default:
+      //显示个位数
+      newNum=parseInt(num);
+      break;
+  }
+  return newNum;
+};
+
 export {
   get32randString,
-  num2Date
+  num2Date,
+  unitNum,
 }

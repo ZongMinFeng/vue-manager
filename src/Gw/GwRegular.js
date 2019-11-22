@@ -2,20 +2,26 @@
 
 var GwRegular={};
 
-//数字
-GwRegular.num=/^-?\d+$/;
+//正整数
+GwRegular.num=/^\+?[1-9][0-9]*$/;
+
+//所有整数
+GwRegular.num_=/^-?\d+$/;
+
+//两位正实数
+GwRegular.numeric2=/^[0-9]+(\.[0-9]{1,2})?$/;
 
 //两位实数
-GwRegular.numeric=/^[0-9]+(.[0-9]{2})?$/;
-
-//两位实数
-GwRegular.numeric_=/^-?[0-9]+(.[0-9]{2})?$/;
+GwRegular.numeric2_=/^-?[0-9]+(\.[0-9]{1,2})?$/;
 
 //三位实数
-GwRegular.numeric3=/^[0-9]+(.[0-9]{3})?$/;
+GwRegular.numeric3=/^[0-9]+(\.[0-9]{1,3})?$/;
 
 //三位实数
-GwRegular.numeric3_=/^-?[0-9]+(.[0-9]{1,3})?$/;
+GwRegular.numeric3_=/^-?[0-9]+(\.[0-9]{1,3})?$/;
+
+//五位正实数
+GwRegular.numeric5=/^[0-9]+(\.[0-9]{1,5})?$/;
 
 //必须两位小数
 GwRegular.num2=/^\d+\.\d{2}$/;

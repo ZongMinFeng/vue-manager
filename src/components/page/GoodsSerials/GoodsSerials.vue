@@ -1,6 +1,8 @@
 <template>
     <div>
-        <el-button v-if="addVisible" type="success" icon="el-icon-plus"  @click="onAddItemNewTap(goodId)" class="button">新增</el-button>
+        <el-button v-if="addVisible" type="success" icon="el-icon-plus" @click="onAddItemNewTap(goodId)" class="button">
+            新增
+        </el-button>
 
         <div class="container" :class="{displayNon:isDisplayNon}">
             <div v-if="oper===2" class="showId">
@@ -62,7 +64,9 @@
                             :show-file-list="false"
                             :http-request="handelPicturePostSerials"
                             :before-upload="beforeAvatarUploadSerials">
-                        <el-button v-if="AddFormSerial.specPic!=null&&AddFormSerial.specPic!==''" size="small" type="primary">修改系列图</el-button>
+                        <el-button v-if="AddFormSerial.specPic!=null&&AddFormSerial.specPic!==''" size="small"
+                                   type="primary">修改系列图
+                        </el-button>
                         <el-button v-else size="small" type="primary">新增系列图</el-button>
                     </el-upload>
                     <div v-if="AddFormSerial.specPic!=null&&AddFormSerial.specPic!==''" style="margin-top:5px;">
@@ -81,10 +85,13 @@
 
         </div>
 
-        <el-table  :data="tableDataArray" size="medium" class="table" stripe border>
+        <el-table :data="tableDataArray" size="medium" class="table" stripe border>
             <el-table-column label="系列 ID" prop="specGoodsId"></el-table-column>
             <el-table-column label="系列主图" width="120" align="center">
-                <template slot-scope="scope"><img v-if="scope.row.specPic!=null&&scope.row.specPic!==''"  :preview="scope.$index" style="height: 80px; width: 80px;background-color: white;" :src="uploadUrl + '/'+scope.row.specPic"></template>
+                <template slot-scope="scope"><img v-if="scope.row.specPic!=null&&scope.row.specPic!==''"
+                                                  :preview="scope.$index"
+                                                  style="height: 80px; width: 80px;background-color: white;"
+                                                  :src="uploadUrl + '/'+scope.row.specPic"></template>
             </el-table-column>
             <el-table-column label="颜色" prop="specColor"></el-table-column>
             <el-table-column label="尺寸" prop="specSize" width="80px"></el-table-column>
@@ -98,20 +105,23 @@
                     <p>{{formatPrice(props.row.specNowPrice)}}元</p>
                 </template>
             </el-table-column>
-            <el-table-column label="起售金额">
+            <el-table-column label="起售金额" width="80">
                 <template slot-scope="props">
                     <p>{{formatPrice(props.row.specMinPrice)}}元</p>
                 </template>
             </el-table-column>
-            <el-table-column  label="库存" width="165" >
+            <el-table-column label="库存" width="210">
                 <template slot-scope="props">
                     <div class="stock-div">
                         <div>
-                            <p>总库存: {{parseFloat(props.row.stockNum+"")}}</p>
-                            <p style="color: red;">锁定库存: {{parseFloat(props.row.lockNum+"")}}</p>
-                            <p style="color: green;">可用库存: {{parseFloat((props.row.stockNum-props.row.lockNum).toFixed(5)+"")}}</p>
+                            <p>总库存: {{showStock(mastGoodInfo.unit, props.row.stockNum+"")}} {{mastGoodInfo.unit}}</p>
+                            <p style="color: red;">锁定库存: {{showStock(mastGoodInfo.unit, props.row.lockNum)}}
+                                {{mastGoodInfo.unit}}</p>
+                            <p style="color: green;">可用库存: {{showStock(mastGoodInfo.unit,
+                                (props.row.stockNum-props.row.lockNum))}} {{mastGoodInfo.unit}}</p>
                         </div>
-                        <el-button type="warning" style="margin-left: 5px;" icon="el-icon-edit" circle @click="upStock(props.row)"></el-button>
+                        <el-button type="warning" style="margin-left: 5px;" icon="el-icon-edit" circle
+                                   @click="upStock(props.row)"></el-button>
                     </div>
                 </template>
             </el-table-column>
@@ -125,47 +135,53 @@
 
         <h3 style="margin-top:20px; color: #909399;">主商品信息</h3>
         <div class="line"></div>
-
         <el-form :model="mastGoodInfo" label-width="100px" class="goodInfo">
             <el-row :gutter="10">
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="商品名称">
-                        <el-input maxlength="20" :disabled="true"  v-model="mastGoodInfo.name"></el-input>
+                        <el-input maxlength="20" :disabled="true" v-model="mastGoodInfo.name"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="商品价格">
-                        <el-input maxlength="20" :disabled="true"  v-model="mastGoodInfo.price"></el-input>
+                        <el-input maxlength="20" :disabled="true" v-model="mastGoodInfo.price"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="商品现价">
-                        <el-input maxlength="20" :disabled="true"  v-model="mastGoodInfo.nowPrice"></el-input>
+                        <el-input maxlength="20" :disabled="true" v-model="mastGoodInfo.nowPrice"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="商品卖点">
-                        <el-input maxlength="20" :disabled="true"  v-model="mastGoodInfo.sellPoint"></el-input>
+                        <el-input maxlength="20" :disabled="true" v-model="mastGoodInfo.sellPoint"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
         </el-form>
 
-        <el-dialog title="库存调整" :visible.sync="stockVisible" width="30%" >
-            <el-form :model="stockForm" label-width="80px" :rules="stockRules" ref="stockForm">
+        <el-dialog title="库存调整" :visible.sync="stockVisible" width="30%">
+            <el-form :model="stockForm" label-width="100px" :rules="stockRules" ref="stockForm">
                 <el-form-item label="系列ID" prop="name">
                     <el-input :disabled="true" v-model="stockForm.specGoodsId"></el-input>
                 </el-form-item>
-                <el-form-item label="当前库存" prop="stockNum">
-                    <el-input v-model="stockForm.stockNum"></el-input>
+                <el-form-item label="总库存:">
+                    <span style="color: red;"> {{showStock5(stockForm.unit, stockForm.stockNumOld )}} {{stockForm.unit}}</span>
                 </el-form-item>
-                <el-form-item label="锁定库存" prop="lockNum">
-                    <el-input v-model="stockForm.lockNum"></el-input>
+                <el-form-item label="锁定库存:">
+                    {{showStock5(stockForm.unit, stockForm.lockNum )}} {{stockForm.unit}}
+                </el-form-item>
+                <el-form-item label="可用库存:">
+                    <span style="color: green;">{{showStock5(stockForm.unit, stockForm.stockNumOld - stockForm.lockNum )}} {{stockForm.unit}}</span>
+                </el-form-item>
+                <el-form-item label="当前库存修改" prop="stockNum" :rules="[{validator:checkStockUpdate, trigger:'blur'}]">
+                    <el-input v-model="stockForm.stockNum" placeholder="请输入要修改的库存"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="stockVisible = false">取 消</el-button>
-                <el-button type="primary" style="margin-left: 20px;" :disabled="stockFormUpdate" @click="OnUpStock()">修 改</el-button>
+                <el-button type="danger" style="margin-left: 20px;" :disabled="stockFormUpdate" @click="OnUpStockTapDown()">销 货</el-button>
+                <el-button type="primary" style="margin-left: 20px;" :disabled="stockFormUpdate" @click="OnUpStockTap()">补 货</el-button>
             </span>
 
         </el-dialog>
@@ -181,56 +197,44 @@
     } from '../../../util/module';
     import _String from '../../../util/string';
     import GwRegular from '@/Gw/GwRegular.js';
+    import {unitNum} from '@/Gw/GwString.js';
+    import String from '@/util/string.js';
+
     export default {
-        props:{
-            data:{}
+        props: {
+            data: {}
         },
 
-        data(){
-            let checkStockNum=(rule, stockNum, callback)=>{
-                if(stockNum-this.goodInfo.stockNum<0){
+        data() {
+            let checkStockNum = (rule, stockNum, callback) => {
+                if (stockNum - this.goodInfo.stockNum < 0) {
                     callback(new Error('库存不能比原来小!'));
                     return true;
                 }
-                let reg=/^\d+(\.\d{0,5})?$/;
+                let reg = /^\d+(\.\d{0,5})?$/;
                 if (!reg.test(stockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                     return true;
                 }
-                if(stockNum>999999){
+                if (stockNum > 999999) {
                     callback(new Error('库存应小于100万'));
                     return true;
                 }
             };
 
-            let checkLockNum=(rule, lockNum, callback)=>{
-                if(lockNum-this.goodInfo.stockNum>0.00001){
+            let checkLockNum = (rule, lockNum, callback) => {
+                if (lockNum - this.goodInfo.stockNum > 0.00001) {
                     callback(new Error('锁定库存不能比当前库存大!'));
                     return true;
                 }
-                let reg=/^\d+(\.\d{0,5})?$/;
+                let reg = /^\d+(\.\d{0,5})?$/;
                 if (!reg.test(lockNum)) {
                     callback(new Error('请输入大于等于0的数字'));
                     return true;
                 }
-                if(lockNum>999999){
+                if (lockNum > 999999) {
                     callback(new Error('锁定库存应小于100万'));
                     return true;
-                }
-            };
-
-            let checkSafePeriod = (rule, SafePeriod, callback) => {
-                // let reg = /^[0-9]*[1-9][0-9]*$/;
-                //允许两位小数
-                let reg=/^\d+(\.\d{0,2})?$/;
-                if (!reg.test(SafePeriod)) {
-                    callback(new Error('请输入大于0的数字'));
-                }
-                let SafePeriodI = parseInt(SafePeriod);
-                if (SafePeriodI === 0) {
-                    callback(new Error('请输入大于0的数字'));
-                } else {
-                    callback();
                 }
             };
 
@@ -248,7 +252,7 @@
                 callback();
             };
 
-            let checkMinPrice=(rule, specMinPrice, callback)=>{
+            let checkMinPrice = (rule, specMinPrice, callback) => {
                 if (this.AddFormSerial.specMinPrice) {
                     //允许两位小数
                     if (!GwRegular.num2.test(specMinPrice)) {
@@ -259,128 +263,188 @@
                     callback();
                 }
             };
-            return{
-                goodId:null,
-                mastGoodInfo:{
-                    name:''
+            return {
+                goodId: null,
+                mastGoodInfo: {
+                    name: ''
                 },
-                tableDataArray:[],
-                stockVisible:false,
-                stockForm:{
-                    name:'兰博基尼',
-                    stockNum:233,
-                    lockNum:0
+                tableDataArray: [],
+                stockVisible: false,
+                stockForm: {
+                    name: '兰博基尼',
+                    stockNum: null,
+                    stockNumOld: null,
+                    lockNum: 0,
+                    unit: null,
                 },
                 AddFormSerial: {
-                    goodsId:'',
-                    specPic:'',
-                    specColor:'',
-                    specSize:'',
-                    stockNum:'',
-                    specPrice:'',
-                    specNowPrice:'',
-                    specMinPrice:'0.00',
+                    goodsId: '',
+                    specPic: '',
+                    specColor: '',
+                    specSize: '',
+                    stockNum: '',
+                    specPrice: '',
+                    specNowPrice: '',
+                    specMinPrice: '0.00',
                 },
-                stockRules:{
-                    stockNum:[
-                        {required:true, message:'请输入当前库存', trigger:'blur'},
+                stockRules: {
+                    stockNum: [
+                        {required: true, message: '请输入当前库存', trigger: 'blur'},
                         {validator: checkStockNum, trigger: 'blur'},
                     ],
-                    lockNum:[
-                        {required:true, message:'请输入锁定库存', trigger:'blur'},
+                    lockNum: [
+                        {required: true, message: '请输入锁定库存', trigger: 'blur'},
                         {validator: checkLockNum, trigger: 'blur'},
                     ]
                 },
-                goodInfo:{
-                    name:''
+                goodInfo: {
+                    name: ''
                 },
                 rules: {
-                    stockNum:[
-                        {validator:checkSafePeriod, trigger: 'blur'}
+                    stockNum: [
+                        {validator: this.checkStock, trigger: 'blur'}
                     ],
-                    specPrice:[
-                        {validator:checkAmt, trigger: 'blur'}
+                    specPrice: [
+                        {validator: checkAmt, trigger: 'blur'}
                     ],
-                    specNowPrice:[
-                        {validator:checkAmt, trigger: 'blur'}
+                    specNowPrice: [
+                        {validator: checkAmt, trigger: 'blur'}
                     ],
-                    specMinPrice:[
+                    specMinPrice: [
                         {required: true, message: '请输入起售金额', trigger: 'blur'},
                         {validator: checkMinPrice, trigger: 'blur'}
                     ],
                 },
                 oper: 1, // 1:新增，2:修改
-                goodsId:'',
-                isDisplayNon:true,
-                addVisible:true,
-                uploadUrl:'',
-                time:'',
-                imgSrc2:''
+                goodsId: '',
+                isDisplayNon: true,
+                addVisible: true,
+                uploadUrl: '',
+                time: '',
+                imgSrc2: ''
             }
         },
 
-        computed:{
-            stockFormUpdate(){
-                if(this.stockForm.stockNum==null || this.goodInfo==null){
+        computed: {
+            stockFormUpdate() {
+                if (this.stockForm.stockNum == null) {
                     return true;
                 }
-                //stockNumUp，lockNumUp值被改变为true
-                let stockNumUp=false;
-                let lockNumUp=false;
-                if(Math.abs(this.stockForm.stockNum-this.goodInfo.stockNum)>0.00001){
-                    stockNumUp = true;
-                }
-                if(Math.abs(this.stockForm.lockNum-this.goodInfo.lockNum)>0.00001){
-                    lockNumUp = true;
-                }
-                if(stockNumUp||lockNumUp){
-                    return false;
-                }else{
+                let stockNum=parseFloat(this.stockForm.stockNum+'');
+                if (Math.abs(stockNum) < 0.000005) {
                     return true;
                 }
+                return false;
             },
 
 
-            imgSrc(){
-                return this.uploadUrl+ '/'+ this.AddFormSerial.specPic+'?'+this.time;
+            imgSrc() {
+                return this.uploadUrl + '/' + this.AddFormSerial.specPic + '?' + this.time;
             }
         },
 
-        created(){
-            pageBus.$on("goodId", (goodId)=>{
-                this.goodId=goodId;
+        created() {
+            pageBus.$on("goodId", (goodId) => {
+                this.goodId = goodId;
                 this.initDate();
             });
         },
 
-        beforeDestroy(){
+        beforeDestroy() {
             pageBus.$off("goodId");
         },
 
-        methods:{
-            initDate(){
-                this.isDisplayNon=true;
-                this.addVisible=true;
-                if(this.goodId==null){
-                    this.tableDataArray=[];
+        methods: {
+            initDate() {
+                this.isDisplayNon = true;
+                this.addVisible = true;
+                if (this.goodId == null) {
+                    this.tableDataArray = [];
                     return;
                 }
-                this.tableDataArray=[];
+                this.tableDataArray = [];
                 this.getGoodsSerials(this.goodId);
                 let mallId = localStorage.getItem('mallId') || '';
-                this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/' + this.goodId ;
+                this.uploadUrl = cfg.service.uploadUrl + '/' + mallId + '/' + this.goodId;
                 console.log("this.uploadUrl", this.uploadUrl);//debug
             },
 
+            showStock(unit, stock){
+                return unitNum(unit, String.unitNumDown(unit, stock));
+            },
+
+            showStock5(unit, stock){
+                console.log('unit', unit);//debug
+                console.log('stock', stock);//debug
+                return String.unitNum5(unit, String.unitNumDown(unit, stock));
+            },
+
+            unitNum(unit, num) {
+                return unitNum(unit, num);
+            },
+
+
+
+            checkStock(rule, stockNum, callback) {
+                if (stockNum == null || this.mastGoodInfo.unit == null) {
+                    callback(new Error('请输入值'));
+                }
+                switch (this.mastGoodInfo.unit) {
+                    case '公斤':
+                    case '斤':
+                    case '克':
+                        if (!GwRegular.numeric2.test(stockNum)) {
+                            callback('请输入正数，可以为2位小数');
+                        }
+                        break;
+                    default:
+                        //只能是个位数
+                        if (!GwRegular.num.test(stockNum)) {
+                            callback('请输入整数');
+                        }
+                }
+                if (stockNum > 999999) {
+                    callback(new Error('库存应小于100万'));
+                    return true;
+                }
+                callback();
+            },
+
+            checkStockUpdate(rule, stockNum, callback) {
+                console.log('输入stockNum', stockNum);//debug
+                if (stockNum == null || this.mastGoodInfo.unit == null) {
+                    callback(new Error('请输入值'));
+                }
+                switch (this.mastGoodInfo.unit) {
+                    case '公斤':
+                    case '斤':
+                    case '克':
+                        if (!GwRegular.numeric2.test(stockNum)) {
+                            callback('请输入数字，可以为2位小数');
+                        }
+                        break;
+                    default:
+                        //只能是个位数
+                        if (!GwRegular.num.test(stockNum)) {
+                            callback('请输入整数');
+                        }
+                }
+                if (stockNum > 999999) {
+                    callback(new Error('库存应小于100万'));
+                    return true;
+                }
+                callback();
+            },
+
             //获取商品系列信息
-            getGoodsSerials(goodsId){
+            getGoodsSerials(goodsId) {
                 console.log("获取系列信息", goodsId);//debug
                 let that = this;
                 let urlParams = {};
                 let send = {};
                 urlParams.url = cfg.service.project + cfg.service.getGoodsInfoById.url + '/' + cfg.service.getGoodsInfoById.action;
                 urlParams.txnId = cfg.service.getGoodsInfoById.txnId;
-                send.goodsId=goodsId;
+                send.goodsId = goodsId;
                 urlParams.send = send;
                 sendServer(urlParams, this).then(
                     (res) => {
@@ -389,19 +453,12 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        this.mastGoodInfo=res.data;
-                        if(res.data["isSerial"]!=null&&res.data["isSerial"]==="Y"){
+                        this.mastGoodInfo = res.data;
+                        if (res.data["isSerial"] != null && res.data["isSerial"] === "Y") {
                             //有系列信息，返回系列详细信息
-                            that.tableDataArray=res.data["goodsSerials"];
-                            //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
-                            this.tableDataArray.forEach(item=>{
-                                if (this.mastGoodInfo.unit === '斤') {
-                                    item.stockNum=item.stockNum/500;
-                                    item.lockNum=item.lockNum/500;
-                                }
-                            });
+                            that.tableDataArray = res.data["goodsSerials"];
                             return res.data["goodsSerials"];
-                        }else{
+                        } else {
                             //没有系列系列信息，返回空
                             return [];
                         }
@@ -414,49 +471,49 @@
 
             // 系列信息新增
             onAddItemNewTap(goodsId) {
-                this.oper=1;
-                this.isDisplayNon=false;
-                this.addVisible=false;
-                this.goodsId=goodsId;
-                let AddFormSerial={
-                    goodsId:this.goodsId,
-                    specColor:'',
-                    specSize:'',
-                    stockNum:'',
-                    specPrice:'',
-                    specNowPrice:'',
-                    specPic:'',
-                    specMinPrice:'0.00',
+                this.oper = 1;
+                this.isDisplayNon = false;
+                this.addVisible = false;
+                this.goodsId = goodsId;
+                let AddFormSerial = {
+                    goodsId: this.goodsId,
+                    specColor: '',
+                    specSize: '',
+                    stockNum: '',
+                    specPrice: '',
+                    specNowPrice: '',
+                    specPic: '',
+                    specMinPrice: '0.00',
                 };
-                this.AddFormSerial=AddFormSerial;
+                this.AddFormSerial = AddFormSerial;
             },
 
             //编辑系列信息
-            editSerial(serial){
+            editSerial(serial) {
                 console.log("serial", serial);//debug
                 //serial有set和get信息，复制一个简单的对象发送到编辑界面
-                this.AddFormSerial.goodsId=serial.goodsId;
-                this.AddFormSerial.lockNum=serial.lockNum;
-                this.AddFormSerial.specColor=serial.specColor;
-                this.AddFormSerial.specGoodsId=serial.specGoodsId;
-                this.AddFormSerial.specNowPrice=serial.specNowPrice;
-                this.AddFormSerial.specPrice=serial.specPrice;
-                this.AddFormSerial.specSellCount=serial.specSellCount;
-                this.AddFormSerial.specSize=serial.specSize;
-                this.AddFormSerial.stockNum=serial.stockNum;
-                this.AddFormSerial.specMinPrice=serial.specMinPrice;
-                if(serial.specPic==null){
-                    this.AddFormSerial.specPic='';
-                }else{
-                    this.AddFormSerial.specPic=serial.specPic;
+                this.AddFormSerial.goodsId = serial.goodsId;
+                this.AddFormSerial.lockNum = serial.lockNum;
+                this.AddFormSerial.specColor = serial.specColor;
+                this.AddFormSerial.specGoodsId = serial.specGoodsId;
+                this.AddFormSerial.specNowPrice = serial.specNowPrice;
+                this.AddFormSerial.specPrice = serial.specPrice;
+                this.AddFormSerial.specSellCount = serial.specSellCount;
+                this.AddFormSerial.specSize = serial.specSize;
+                this.AddFormSerial.stockNum = serial.stockNum;
+                this.AddFormSerial.specMinPrice = serial.specMinPrice;
+                if (serial.specPic == null) {
+                    this.AddFormSerial.specPic = '';
+                } else {
+                    this.AddFormSerial.specPic = serial.specPic;
                 }
-                this.oper=2;
-                this.isDisplayNon=false;
-                this.addVisible=false;
+                this.oper = 2;
+                this.isDisplayNon = false;
+                this.addVisible = false;
             },
 
             //删除
-            onDeleteTap(specGoodsId){
+            onDeleteTap(specGoodsId) {
                 this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -472,7 +529,7 @@
             },
 
             //编辑系列信息
-            deleteSerial(specGoodsId){
+            deleteSerial(specGoodsId) {
                 //serial有set和get信息，复制一个简单的对象发送到编辑界面
                 let urlParams = {};
                 let send = {};
@@ -480,12 +537,12 @@
                 urlParams.txnId = cfg.service.delGoodsSerialById.txnId;
 
                 let userId = localStorage.getItem('userId') || '';
-                send.specGoodsId=specGoodsId;
-                send.userId=userId;
+                send.specGoodsId = specGoodsId;
+                send.userId = userId;
 
-                urlParams.signArray={
-                    specGoodsId:send.specGoodsId,
-                    userId:send.userId
+                urlParams.signArray = {
+                    specGoodsId: send.specGoodsId,
+                    userId: send.userId
                 };
 
                 urlParams.send = send;
@@ -509,42 +566,69 @@
                 );
             },
 
-            upStock(row){
-                this.goodInfo=row;
-                this.stockForm.specGoodsId=row.specGoodsId;
-                this.stockForm.stockNum=row.stockNum;
-                this.stockForm.lockNum=row.lockNum;
-                this.stockForm.goodsId=row.goodsId;
-                this.stockVisible=true;
+            upStock(row) {
+                this.goodInfo = row;
+                this.stockForm.specGoodsId = row.specGoodsId;
+                this.stockForm.unit = this.mastGoodInfo.unit;
+                this.stockForm.stockNumOld = row.stockNum;
+                this.stockForm.lockNum = row.lockNum;
+                this.stockForm.goodsId = row.goodsId;
+                //初始化库存输入框
+                this.stockForm.stockNum=null;
+                this.stockVisible = true;
             },
 
-            OnUpStock(){
-                console.log("stockForm", this.stockForm);//debug
-                let stockNum=this.stockForm.stockNum;
-                let lockNum=this.stockForm.lockNum;
-                if(Math.abs(stockNum-this.goodInfo.stockNum)<0.00001){
-                    stockNum=null;
-                }
-                if(Math.abs(lockNum-this.goodInfo.lockNum)<0.00001){
-                    lockNum=null;
-                }
+            //补货
+            OnUpStockTap(){
+                let flag=1;
+                this.$refs['stockForm'].validate((valid)=>{
+                    if (valid) {
+                        this.OnUpStock(flag);
+                    }else{
+                        return false;
+                    }
+                });
+            },
+
+            //销货
+            OnUpStockTapDown(){
+                let flag=2;
+                this.$refs['stockForm'].validate((valid)=>{
+                    if (valid) {
+                        this.OnUpStock(flag);
+                    }else{
+                        return false;
+                    }
+                });
+            },
+
+            OnUpStock(flag) {
                 //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
-                if (this.mastGoodInfo.unit === '斤') {
-                    if (stockNum !== null) {
-                        stockNum=stockNum*500;
-                    }
-                    if (lockNum !== null) {
-                        lockNum=lockNum*500;
-                    }
+                let stockNum = String.unitNumUp(this.stockForm.unit, this.stockForm.stockNum);
+                if (flag===2){
+                    //销货，stockNum反转
+                    stockNum=-stockNum;
                 }
+                //减库存时，不能将库存减为负数
+                if (parseFloat(stockNum) + parseFloat(this.stockForm.stockNumOld) < -0.000005) {
+                    this.$message.error('减库存时，不能将库存减为负数！');
+                    return;
+                }
+                let lockNum=null;
+
                 uptGoodsStock(this, this.stockForm.specGoodsId, stockNum, lockNum).then(
-                    (res)=>{
+                    (res) => {
                         this.$message.success("库存修改成功");
-                        this.stockVisible=false;
+                        this.stockVisible = false;
                         this.initDate();
                     },
-                    (res)=>{
-                        this.$message.error("库存修改失败");
+                    (res) => {
+                        console.log('res', res);//debug
+                        if (res.msg != null) {
+                            this.$message.error(res.msg);
+                        }else{
+                            this.$message.error("库存修改失败");
+                        }
                     }
                 );
             },
@@ -561,33 +645,38 @@
             },
 
             goodsAddItem() {
+                //颜色和尺寸必须上传一个
+                if ((this.AddFormSerial.specColor == null || this.AddFormSerial.specColor === '') && (this.AddFormSerial.specSize == null || this.AddFormSerial.specSize === '')) {
+                    this.$message.error('颜色或者尺寸必须填写一个！');
+                    return;
+                }
                 let urlParams = {};
                 let send = [];
                 urlParams.url = cfg.service.project + cfg.service.saveGoodsSerials.url + '/' + cfg.service.saveGoodsSerials.action;
                 urlParams.txnId = cfg.service.saveGoodsSerials.txnId;
 
                 let userId = localStorage.getItem('userId') || '';
-                let goodsSerialsItem={};
-                goodsSerialsItem.goodsId=this.goodsId;
-                goodsSerialsItem.specColor=this.AddFormSerial.specColor;
-                goodsSerialsItem.specSize=this.AddFormSerial.specSize;
+                let goodsSerialsItem = {};
+                goodsSerialsItem.goodsId = this.goodsId;
+                goodsSerialsItem.specColor = this.AddFormSerial.specColor;
+                goodsSerialsItem.specSize = this.AddFormSerial.specSize;
                 //后台很坑地设置了重量单位“克”，而下发的单位有可能是“斤”
-                if (this.mastGoodInfo.unit === '斤') {
-                    goodsSerialsItem.stockNum=this.AddFormSerial.stockNum*500;
-                }else{
-                    goodsSerialsItem.stockNum=this.AddFormSerial.stockNum;
-                }
+                // if (this.mastGoodInfo.unit === '斤') {
+                //     goodsSerialsItem.stockNum = this.AddFormSerial.stockNum * 500;
+                // } else {
+                //     goodsSerialsItem.stockNum = this.AddFormSerial.stockNum;
+                // }
+                goodsSerialsItem.stockNum=String.unitNumUp(this.mastGoodInfo.unit, this.AddFormSerial.stockNum);
                 goodsSerialsItem.specPrice = parseFloat(this.AddFormSerial.specPrice).toFixed(2);
                 goodsSerialsItem.specNowPrice = parseFloat(this.AddFormSerial.specNowPrice).toFixed(2);
-                goodsSerialsItem.userId=userId;
-                goodsSerialsItem.specMinPrice=this.AddFormSerial.specMinPrice;
-                if (goodsSerialsItem.specPic!==null&&goodsSerialsItem.specPic!=='')
-                {
-                    goodsSerialsItem.specPic=this.AddFormSerial.specPic;
+                goodsSerialsItem.userId = userId;
+                goodsSerialsItem.specMinPrice = this.AddFormSerial.specMinPrice;
+                if (goodsSerialsItem.specPic !== null && goodsSerialsItem.specPic !== '') {
+                    goodsSerialsItem.specPic = this.AddFormSerial.specPic;
                 }
-                let goodsSerials=[];
+                let goodsSerials = [];
                 goodsSerials.push(goodsSerialsItem);
-                send=goodsSerials;
+                send = goodsSerials;
 
                 urlParams.send = send;
                 let that = this;
@@ -617,37 +706,37 @@
                 urlParams.txnId = cfg.service.uptGoodsSerialById.txnId;
 
                 let userId = localStorage.getItem('userId') || '';
-                send.specGoodsId=this.AddFormSerial.specGoodsId;
-                send.specColor=this.AddFormSerial.specColor;
-                send.specSize=this.AddFormSerial.specSize;
+                send.specGoodsId = this.AddFormSerial.specGoodsId;
+                send.specColor = this.AddFormSerial.specColor;
+                send.specSize = this.AddFormSerial.specSize;
                 send.specPrice = parseFloat(this.AddFormSerial.specPrice).toFixed(2);
                 send.specNowPrice = parseFloat(this.AddFormSerial.specNowPrice).toFixed(2);
-                send.userId=userId;
-                send.goodsId=this.AddFormSerial.goodsId;
-                send.specMinPrice=this.AddFormSerial.specMinPrice;
-                if(this.AddFormSerial.specPic!=null&&this.AddFormSerial.specPic!==''){
-                    send.specPic=this.AddFormSerial.specPic;
-                    urlParams.signArray={
-                        specGoodsId:send.specGoodsId,
-                        goodsId:send.goodsId,
-                        specPic:send.specPic,
-                        specPrice:send.specPrice,
-                        specNowPrice:send.specNowPrice,
-                        userId:send.userId,
-                        specMinPrice:send.specMinPrice,
+                send.userId = userId;
+                send.goodsId = this.AddFormSerial.goodsId;
+                send.specMinPrice = this.AddFormSerial.specMinPrice;
+                if (this.AddFormSerial.specPic != null && this.AddFormSerial.specPic !== '') {
+                    send.specPic = this.AddFormSerial.specPic;
+                    urlParams.signArray = {
+                        specGoodsId: send.specGoodsId,
+                        goodsId: send.goodsId,
+                        specPic: send.specPic,
+                        specPrice: send.specPrice,
+                        specNowPrice: send.specNowPrice,
+                        userId: send.userId,
+                        specMinPrice: send.specMinPrice,
                     };
-                }else{
-                    urlParams.signArray={
-                        specGoodsId:send.specGoodsId,
-                        goodsId:send.goodsId,
-                        specPrice:send.specPrice,
-                        specNowPrice:send.specNowPrice,
-                        userId:send.userId,
-                        specMinPrice:send.specMinPrice,
+                } else {
+                    urlParams.signArray = {
+                        specGoodsId: send.specGoodsId,
+                        goodsId: send.goodsId,
+                        specPrice: send.specPrice,
+                        specNowPrice: send.specNowPrice,
+                        userId: send.userId,
+                        specMinPrice: send.specMinPrice,
                     };
                 }
 
-                urlParams.send=send;
+                urlParams.send = send;
 
                 let that = this;
                 sendServer(urlParams, this).then(
@@ -672,10 +761,10 @@
                 let that = this;
                 this.$refs[AddFormSerialName].validate((valid) => {
                     if (valid) {
-                        if(this.oper===1){
+                        if (this.oper === 1) {
                             //新增
                             that.goodsAddItem();
-                        }else{
+                        } else {
                             //修改
                             that.goodsEditItem();
                         }
@@ -685,9 +774,9 @@
                 });
             },
 
-            addCancle(){
-                this.isDisplayNon=true;
-                this.addVisible=true;
+            addCancle() {
+                this.isDisplayNon = true;
+                this.addVisible = true;
             },
 
             handelPicturePostSerials(param) {
@@ -710,12 +799,12 @@
                 send.append("goodsFileNames", param.file);
                 // 其他参数
 
-                let operFlag='1';
-                if(this.AddFormSerial.specPic!=null&&this.AddFormSerial.specPic!==''){
-                    operFlag='2';
+                let operFlag = '1';
+                if (this.AddFormSerial.specPic != null && this.AddFormSerial.specPic !== '') {
+                    operFlag = '2';
                 }
                 urlParams.header = {
-                    operFlag:operFlag,
+                    operFlag: operFlag,
                     'Content-Type': 'multipart/form-data'
                 };
                 urlParams.UnUserId = true;
@@ -736,16 +825,16 @@
                             return false;
                         }
                         console.log("res:", res);
-                        if(operFlag==='1'){
+                        if (operFlag === '1') {
                             that.$message.success("上传成功");
-                        }else{
+                        } else {
                             that.$message.success("修改成功");
                         }
                         let filenames = res.data.filenames;
-                        console.log("filenames:",filenames);
-                        this.AddFormSerial.specPic=filenames;
-                        this.time=this.getTime();
-                        console.log("src", this.uploadUrl + '/'+this.AddFormSerial.specPic+'?'+this.time);//debug
+                        console.log("filenames:", filenames);
+                        this.AddFormSerial.specPic = filenames;
+                        this.time = this.getTime();
+                        console.log("src", this.uploadUrl + '/' + this.AddFormSerial.specPic + '?' + this.time);//debug
 
                     }, (res) => {
                         // 失败
@@ -768,12 +857,12 @@
                 return isJPG && isLt2M;
             },
 
-            getTime(){
+            getTime() {
                 return new Date().getTime();
             },
 
             //格式化金额
-            formatPrice(price){
+            formatPrice(price) {
                 return _String.number_format(price, 2);
             },
         }
@@ -785,13 +874,13 @@
         width: 100%;
     }
 
-    .line{
+    .line {
         border: 1px solid;
         height: 0px;
         color: #909399;
     }
 
-    .goodInfo{
+    .goodInfo {
         margin-top: 10px;
     }
 
@@ -826,14 +915,14 @@
         color: #429EFD;
     }
 
-    .showId{
+    .showId {
         margin-bottom: 15px;
         margin-left: 28px;
         color: #606266;
     }
 
-    .displayNon{
-        display:none;
+    .displayNon {
+        display: none;
     }
 
     .drag-list {
