@@ -24,7 +24,16 @@
         <el-table :data="tableData" border stripe>
             <!--<el-table-column label="Id" prop="argName"></el-table-column>-->
             <el-table-column label="名称" prop="chnExplain"></el-table-column>
-            <el-table-column label="值" prop="argValue"></el-table-column>
+            <el-table-column label="值">
+                <template slot-scope="props">
+                    <el-tag v-if="isManyItems(props.row.argName)" style="margin: 10px;" v-for="tag in getTags(props.row)" :key="tag">
+                        {{tag}}
+                    </el-tag>
+                    <span v-if="!isManyItems(props.row.argName)">
+                        {{props.row.argValue}}
+                    </span>
+                </template>
+            </el-table-column>
             <el-table-column label="图片" prop="pictureUrl">
                 <template slot-scope="scope">
                     <el-image v-if="isPicture(scope.row.argName)" style="height: 80px; width: 80px;" :src="uploadUrl + scope.row.argValue + '/'+scope.row.pictureUrl" :preview-src-list="[uploadUrl + scope.row.argValue + '/'+scope.row.pictureUrl]"></el-image>
@@ -239,6 +248,35 @@
                 }, (res)=>{
                     this.$message.error(res.message);
                 });
+            },
+
+            //参数有多个值判断
+            isManyItems(argName) {
+                if (argName == null) {
+                    return false;
+                }
+
+                switch(argName){
+                    case 'mall_spec_name':
+                    case 'mall_order_memos':
+                        return true;
+                    default:
+                        return false;
+                }
+            },
+
+            getTags(row){
+               let tags=[];
+               if (row.argName === 'mall_spec_name') {
+                   tags.push(...row.argValue.split('||'));
+               }
+               if (row.argName === 'mall_order_memos') {
+                    let memos=JSON.parse(row.argValue);
+                    for (let val in memos) {
+                        tags.push(memos[val]);
+                    }
+               }
+               return tags;
             },
 
             selectItem(argName){
