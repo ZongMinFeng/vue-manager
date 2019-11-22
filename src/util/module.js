@@ -989,6 +989,33 @@ const uptOrderPayAmt = (me, params) => {
     });
 };
 
+const qryMallDailyOrderRpt = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("confirmOrder params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.qryMallDailyOrderRpt.url + '/' + cfg.service.qryMallDailyOrderRpt.action;
+        urlParams.txnId = cfg.service.qryMallDailyOrderRpt.txnId;
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
 export {
     getCateParamByCateId,
     getMallCategory,
@@ -1017,5 +1044,5 @@ export {
     delOperById,
     confirmOrder,
     uptOrderPayAmt,
-
+    qryMallDailyOrderRpt,
 };

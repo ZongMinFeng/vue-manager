@@ -1,9 +1,27 @@
 <template>
     <div>
-        <div>
+        <div style="height: 50px;">
             <el-button type="success" icon="el-icon-plus" style="margin-bottom: 10px" @click="showAddItem">新增</el-button>
+            <el-button type="primary" style="margin-bottom: 10px; margin-left: 10px" @click="selectItemAll">所有配置</el-button>
+            <div class="btn-div" v-for="(item) in items">
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('config_service_phone')"
+                           @click="selectItem('config_service_phone')">客服电话
+                </el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_closetime')"
+                           @click="selectItem('mall_order_closetime')">订单关闭时间
+                </el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_memos')"
+                           @click="selectItem('mall_order_memos')">备注标签设置
+                </el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_minamt')"
+                           @click="selectItem('mall_order_minamt')">每单最小金额
+                </el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_spec_name')"
+                           @click="selectItem('mall_spec_name')">系统参数名称
+                </el-button>
+            </div>
         </div>
-        <el-table :data="items" border stripe>
+        <el-table :data="tableData" border stripe>
             <!--<el-table-column label="Id" prop="argName"></el-table-column>-->
             <el-table-column label="名称" prop="chnExplain"></el-table-column>
             <el-table-column label="值" prop="argValue"></el-table-column>
@@ -152,7 +170,9 @@
                     4:'半天',
                     5:'1天',
                     6:'无'
-                }
+                },
+                tableData:[],
+                searchForm:{},
             }
         },
 
@@ -168,6 +188,7 @@
                 this.allItems=[];
                 this.items=[];
                 this.options=[];
+                this.tableData=[];
                 //获取配置信息
                 getSysMallConfig(this).then((res)=>{
                     res.data.forEach((value)=>{
@@ -203,6 +224,7 @@
                         this.allItems.forEach((value)=>{
                             if(value.argValue!==''){
                                 this.items.push(value);
+                                this.tableData.push(value);
                             }else{
                                 //不是首页图允许新增
                                 if(!value.argName.startsWith('mall_a_picture')){
@@ -216,6 +238,22 @@
                     });
                 }, (res)=>{
                     this.$message.error(res.message);
+                });
+            },
+
+            selectItem(argName){
+                this.tableData=[];
+                this.items.forEach((item)=>{
+                    if (item.argName===argName) {
+                        this.tableData.push(item);
+                    }
+                });
+            },
+
+            selectItemAll(){
+                this.tableData=[];
+                this.items.forEach((item)=>{
+                    this.tableData.push(item);
                 });
             },
 
@@ -395,5 +433,12 @@
 
     .el-slider__marks-text{
         width:30px;
+    }
+
+    .btn-div {
+        /*display: inline-block;*/
+        float: right;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 </style>

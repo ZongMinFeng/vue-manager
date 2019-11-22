@@ -138,7 +138,7 @@
                 <el-form-item label="名称" prop="argName">
                     <el-input v-model="itemForm.chnExplain" :disabled="true"></el-input>
                 </el-form-item>
-                <!--多条目处理1-->
+                <!--多条目处理-->
                 <el-form-item v-if="isManyItems" label="值">
                     <el-row>
                         <el-col :span="20">
@@ -151,18 +151,6 @@
                         </el-col>
                     </el-row>
                 </el-form-item>
-                <!--多条目处理2-->
-                <!--<el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_memos')"-->
-                              <!--label="值">-->
-                    <!--<el-row>-->
-                        <!--<el-col :span="20">-->
-                            <!--<el-input v-model="argValueMemos" maxlength="20"></el-input>-->
-                        <!--</el-col>-->
-                        <!--<el-col :span="2">-->
-                            <!--<el-button type="primary" style="margin-left: 20px" @click="addRemock">添加</el-button>-->
-                        <!--</el-col>-->
-                    <!--</el-row>-->
-                <!--</el-form-item>-->
                 <el-form-item
                         v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_memos')||isManyItems"
                         style="padding-right:10px">

@@ -65,6 +65,7 @@
                     localStorage.removeItem('userId');
                     localStorage.removeItem('macKey');
                     localStorage.removeItem('mallPcUuid');
+                    localStorage.removeItem('mallName');
                     mallPcUuid='';
                 }
 
@@ -142,6 +143,7 @@
                                 localStorage.setItem('mallId', res.data.mallId);
                                 localStorage.setItem('mallPcUuid', res.data.mallPcUuid);
                                 localStorage.setItem('userId', res.data.userId);
+                                localStorage.setItem('mallName', res.data.mallName);
                                 that.$router.push('/');
                             }
                             resolve(that.LoginStatus);

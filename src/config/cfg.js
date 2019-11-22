@@ -242,6 +242,12 @@ module.exports={
             txnId: "20006"
         },
 
+        qryMallDailyOrderRpt:{
+            url: "MallWeChat",
+            action: "qryMallDailyOrderRpt",
+            txnId: "20013"
+        },
+
     },
 
     //公共处理模块
