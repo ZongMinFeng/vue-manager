@@ -34,12 +34,6 @@ module.exports = {
                 },
 
                 {
-                    path: '/mallSysArgSet',
-                    component: resolve => require(['../components/page/MallSetting/mallSysArgSet.vue'], resolve),
-                    meta: {title: '系统参数设置'}
-                },
-
-                {
                     path: '/goodsManage',
                     component: resolve => require(['../components/page/Goods/goodsManage.vue'], resolve),
                     meta: {
@@ -340,21 +334,11 @@ module.exports = {
                     index: 'mallHomePage',
                     title: '首页轮播图',
                 },
-                // {
-                //     // icon: 'el-icon-tickets',
-                //     index: 'mallPhone',
-                //     title: '客服电话',
-                // },
                 {
                     // icon: 'el-icon-tickets',
                     index: 'mallSysArg',
                     title: '系统参数',
                 },
-                {
-                    // icon: 'el-icon-tickets',
-                    index: 'mallSysArgSet',
-                    title: '系统参数设置',
-                }
             ],
         },
         {
