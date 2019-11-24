@@ -12,6 +12,9 @@ const get32randString=()=>{
   return nums;
 };
 
+/**
+ *时间戳转时间
+ */
 const num2Date=(dateNum)=>{
   if(dateNum==null||dateNum===''){
     return '未知';
@@ -53,8 +56,18 @@ const unitNum=(unit, num)=>{
   return newNum;
 };
 
+/**
+ * 金额格式化
+ * @param amt 金额
+ * @param num 保留位数
+ */
+const amtFormat=(amt, num)=>{
+  return parseFloat(amt+'').toFixed(num);
+};
+
 export {
   get32randString,
   num2Date,
   unitNum,
+  amtFormat,
 }

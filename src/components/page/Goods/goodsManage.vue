@@ -86,12 +86,14 @@
                     </el-table-column>
                     <el-table-column label="商品价格" width="120">
                         <template slot-scope="props">
-                            <p>{{formatPrice(props.row.price)}}元</p>
+                            <p v-if="Math.abs(props.row.price- props.row.nowPrice)<0.005">{{formatPrice(props.row.price)}}元</p>
+                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">原价：{{formatPrice(props.row.price)}}元</p>
+                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">现价：{{formatPrice(props.row.nowPrice)}}元</p>
                         </template>
                     </el-table-column>
-                    <el-table-column label="商品现价" width="120">
+                    <el-table-column label="分类" width="100">
                         <template slot-scope="props">
-                            <p>{{formatPrice(props.row.nowPrice)}}元</p>
+                            {{getcCategory(props.row.categoryId)}}
                         </template>
                     </el-table-column>
                     <el-table-column prop="sellCount" label="销量" width="60"></el-table-column>
@@ -119,7 +121,8 @@
                         <p>
                             <el-button style="width: 90px;" type="primary" @click="doInfos(props.$index, null)">查看●修改</el-button>
                         </p>
-                        <p style="margin-top: 5px;" v-if="props.row.status===3&&(props.row.lockNum==null||props.row.lockNum===0)">
+                        <!--有系列、锁定库存不允许删除商品-->
+                        <p style="margin-top: 5px;" v-if="canDelete(props.row)">
                             <el-button type="danger" style="width: 90px;" @click="delGoodCheck(props.row)">删除</el-button>
                         </p>
                     </template>
@@ -253,6 +256,7 @@
     import GwRegular from '@/Gw/GwRegular.js';
     import {unitNum} from "../../../Gw/GwString";
     import String from '@/util/string.js';
+    import {itemByCons} from '@/Gw/GwArray.js';
 
     export default {
         data() {
@@ -336,6 +340,29 @@
         },
 
         methods: {
+            //可删除条目
+            canDelete(row){
+                if (row.isSerial === 'Y') {
+                    return false;
+                }
+                if (row.lockNum > 0) {
+                    return false;
+                }
+                if (row.status !== 3) {
+                    return false;
+                }
+                return true;
+            },
+
+            //获取分类名称
+            getcCategory(id){
+                let category=itemByCons(this.goodsTypeArray, id, 'categoryId');
+                if (category == null) {
+                    return null;
+                }
+                return category.name;
+            },
+
             showStock(unit, stock){
                 return unitNum(unit, String.unitNumDown(unit, stock));
             },
@@ -834,6 +861,7 @@
                             return false;
                         }
                         that.goodsTypeArray = res.data;
+                        console.log('goodsTypeArray', this.goodsTypeArray);//debug
                     }, (res) => {
                         // 失败
                         that.$message.error('请求失败');

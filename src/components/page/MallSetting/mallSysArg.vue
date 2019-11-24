@@ -21,6 +21,9 @@
                 <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_spec_name')"
                            @click="selectItem('mall_spec_name')">系统参数名称
                 </el-button>
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_goods_defminamt')"
+                           @click="selectItem('mall_goods_defminamt')">默认起售金额
+                </el-button>
             </div>
         </div>
         <el-table :data="tableData" border stripe>
@@ -33,7 +36,10 @@
                         {{tag}}
                     </el-tag>
                     <span v-if="!isManyItems(props.row.argName)">
-                        {{props.row.argValue}}
+                        <span>{{getUnitFront(props.row)}}</span>
+                        {{argValueDisplay(props.row)}}
+                        <!--显示单位-->
+                        <span>{{getUnitAfter(props.row)}}</span>
                     </span>
                 </template>
             </el-table-column>
@@ -127,6 +133,7 @@
     } from "../../../util/module";
     import cfg from '../../../config/cfg';
     import GwRegular from '@/Gw/GwRegular.js';
+    import {amtFormat} from '@/Gw/GwString.js';
 
     export default {
         name: "mallSysArg",
@@ -298,6 +305,52 @@
                 }, (res) => {
                     this.$message.error(res.message);
                 });
+            },
+
+            //根据argName获取单位显示，前置显示
+            getUnitFront(row){
+                let unit='';
+                switch (row.argName) {
+                    case 'mall_order_minamt':
+                    case 'mall_goods_defminamt':
+                        unit='￥';
+                        break;
+                }
+                return unit;
+            },
+
+            //值特殊化显示
+            argValueDisplay(row){
+                let valueDisplay='';
+                switch (row.argName) {
+                    case 'config_service_phone':
+                        if (row.argValue.length === 11) {
+                            valueDisplay=row.argValue.substring(0, 3)+'-'+row.argValue.substring(3, 7)+'-'+row.argValue.substring(7, 11);
+                        }
+                        break;
+                    case 'mall_goods_defminamt':
+                    case 'mall_order_minamt':
+                        valueDisplay=amtFormat(row.argValue, 2);
+                        break;
+                    default:
+                       valueDisplay=row.argValue;
+                }
+                return valueDisplay;
+            },
+
+            //根据argName获取单位显示，后置显示
+            getUnitAfter(row){
+                let unit='';
+                switch (row.argName) {
+                    case 'mall_order_closetime':
+                        unit='分钟';
+                        break;
+                    case 'mall_order_minamt':
+                    case 'mall_goods_defminamt':
+                        unit='元';
+                        break;
+                }
+                return unit;
             },
 
             //参数有多个值判断

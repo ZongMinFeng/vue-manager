@@ -1,3 +1,4 @@
+import {objKeySort} from "../util/jsonSha256";
 
 const inArrayByCons=(objects, object, option)=>{
   if (!objects instanceof Array){
@@ -48,6 +49,13 @@ const inArrayOptionByCons=(objects, value, option)=>{
   }
 };
 
+/**
+ * 返回数组下标
+ * @param objects
+ * @param object
+ * @param option
+ * @returns {number}
+ */
 const indexByCons=(objects, object, option)=>{
   let indexReturn=-1;
   if(!objects instanceof Array){
@@ -62,6 +70,29 @@ const indexByCons=(objects, object, option)=>{
   });
 
   return indexReturn;
+};
+
+/**
+ * 返回数组项
+ * @param objects
+ * @param object
+ * @param option
+ * @returns {number}
+ */
+const itemByCons=(objects, value, option)=>{
+  let indexReturn=-1;
+  if(!objects instanceof Array){
+    return null;
+  }
+
+  objects.forEach((item, index)=>{
+    if (item[option]===value) {
+      indexReturn=index;
+    }
+    return null;
+  });
+
+  return objects[indexReturn];
 };
 
 
@@ -83,5 +114,6 @@ export {
   inArrayByCons,
   inArrayOptionByCons,
   indexByCons,
-  sortByNum
+  sortByNum,
+  itemByCons,
 };

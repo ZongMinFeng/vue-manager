@@ -12,33 +12,31 @@
         </el-card>
 
         <div class="body-cont">
-            <el-card shadow="hover" class="mgb20  mgb21">
-                <schart canvasId="unholderOrders"
-                        :type="type"
-                        :width="width"
-                        :height="height"
-                        :data="unholderOrders"
-                        :options="unholderOrderOptions">
-                </schart>
-            </el-card>
+            <el-row :gutter="24">
+                <el-col :span="12">
+                    <el-card shadow="hover">
+                        <schart ref="bar" class="schart" canvasId="unholderOrders" :data="unholderOrders" :options="unholderOrderOptions"></schart>
+                    </el-card>
+                </el-col>
+                <el-col :span="12" style="margin-bottom: 10px;">
+                    <el-card shadow="hover">
+                        <schart ref="line" class="schart" canvasId="acceptOrders" :data="acceptOrders" :options="acceptOrderOptions"></schart>
+                    </el-card>
+                </el-col>
+            </el-row>
 
-            <el-card shadow="hover" class="mgb20 mgb21">
-                <schart canvasId="acceptOrders"
-                        :type="type"
-                        :width="width"
-                        :data="acceptOrders"
-                        :options="acceptOrderOptions">
-                </schart>
-            </el-card>
-
-            <el-card shadow="hover" class="mgb20 mgb21">
-                <schart canvasId="orderAmts"
-                        :type="type"
-                        :width="width"
-                        :data="orderAmts"
-                        :options="orderAmtsOptions">
-                </schart>
-            </el-card>
+            <el-row :gutter="24">
+                <el-col :span="12">
+                    <el-card shadow="hover">
+                        <schart ref="bar" class="schart" canvasId="orderAmts" :data="orderAmts" :options="orderAmtsOptions"></schart>
+                    </el-card>
+                </el-col>
+                <el-col v-show="false" :span="12">
+                    <el-card shadow="hover">
+                        <schart ref="bar" class="schart" canvasId="tests" :data="tests" :options="testsOptions"></schart>
+                    </el-card>
+                </el-col>
+            </el-row>
         </div>
     </div>
 </template>
@@ -79,6 +77,20 @@
                 },
                 orderAmts:[],
                 orderAmtsOptions:{
+                    title:'当日订单总额',
+                    // bgColor: '#009688',
+                    // titleColor: '#ffffff',
+                    // fillColor: '#e0f2f1',
+                    // axisColor: '#ffffff',
+                    // contentColor: '#999'
+                },
+                tests:[
+                    {
+                        name:'啦啦',
+                        value:10,
+                    },
+                ],
+                testsOptions:{
                     title:'当日订单总额',
                     // bgColor: '#009688',
                     // titleColor: '#ffffff',
@@ -148,7 +160,7 @@
                 });
                 let shopNameNew=shopName;
                 if (shopName.length>6){
-                    shopNameNew=shopName.substring(0,6)+'\n\t'+shopName.substring(6, shopName.length-6);
+                    shopNameNew=shopName.substring(0,20);
                 }
                 return shopNameNew;
             },
@@ -161,9 +173,9 @@
 <style scoped>
     .body-cont {
         /*width: 100%;*/
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+        /*display: flex;*/
+        /*flex-direction: row;*/
+        /*flex-wrap: wrap;*/
         /*justify-content: space-around;*/
         /*justify-content: space-between;*/
     }
@@ -231,6 +243,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .schart {
+        width: 100%;
+        height: 300px;
     }
 
 </style>
