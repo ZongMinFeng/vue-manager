@@ -5,14 +5,16 @@
                 <el-col :md="6" :sm="8" :xl="8">
                     <el-form-item label="状态" prop="type">
                         <el-select v-model="selectForm.status" clearable placeholder="请选择" @change="statusChange">
-                            <el-option v-for="item in orderStatusArray" :key="item.id" :label="item.id+':'+item.detail" :value="item.id"></el-option>
+                            <el-option v-for="item in orderStatusArray" :key="item.id" :label="item.id+':'+item.detail"
+                                       :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col v-if="this.shops.length>0" :md="6" :sm="8" :xl="8">
                     <el-form-item label="店铺" prop="type">
                         <el-select v-model="selectForm.shopId" clearable placeholder="请选择店铺" @change="shopChange">
-                            <el-option v-for="item in shops" :key="item.shopId" :label="item.area+':'+item.shopName" :value="item.shopId"></el-option>
+                            <el-option v-for="item in shops" :key="item.shopId" :label="item.area+':'+item.shopName"
+                                       :value="item.shopId"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -24,9 +26,11 @@
             <el-table-column label="商品信息" width="170">
                 <template slot-scope="props">
                     <div style="overflow-x: auto;">
-                        <div v-for="(item, index) in props.row.orderDetailList" style="width: 44px; margin-right: 5px; float: left; padding: 1px;">
+                        <div v-for="(item, index) in props.row.orderDetailList"
+                             style="width: 44px; margin-right: 5px; float: left; padding: 1px;">
                             <div style="width: 100%; float: left;">
-                                <img style="height: 40px; width: 40px;background-color: white;" :preview="index"  :src="uploadUrl + item.goodsId + '/'+item.tranImg">
+                                <img style="height: 40px; width: 40px;background-color: white;" :preview="index"
+                                     :src="uploadUrl + item.goodsId + '/'+item.tranImg">
                             </div>
                             <p style="font-size: 8px;" :title="item.goodsName">{{item.goodsName.substring(0, 4)}}</p>
                         </div>
@@ -54,11 +58,11 @@
                 </template>
             </el-table-column>
             <!--<el-table-column label="信息" width="70">-->
-                <!--<template slot-scope="props">-->
-                    <!--<p v-if="props.row.payStatus==='Y'" style="color: green;">已支付</p>-->
-                    <!--<p v-else style="color: red;">未支付</p>-->
-                    <!--<p v-if="props.row.closedComment==='Y'" style="color: green;">已评论</p>-->
-                <!--</template>-->
+            <!--<template slot-scope="props">-->
+            <!--<p v-if="props.row.payStatus==='Y'" style="color: green;">已支付</p>-->
+            <!--<p v-else style="color: red;">未支付</p>-->
+            <!--<p v-if="props.row.closedComment==='Y'" style="color: green;">已评论</p>-->
+            <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column label="订单状态">
                 <template slot-scope="props">
@@ -68,10 +72,17 @@
             <el-table-column label="操作">
                 <template slot-scope="props">
                     <div style="margin-bottom: 2px">
-                        <el-button v-if="props.row.status===8" type="primary" @click="takeOrderTap(props.row)" >接单</el-button>
+                        <el-button v-if="props.row.status===8" type="primary" @click="takeOrderTap(props.row)">接单
+                        </el-button>
+                    </div>
+                    <div style="margin-bottom: 2px">
+                        <el-button v-if="props.row.status===7" type="primary" @click="deliverGoodsTap(props.row)">发货
+                        </el-button>
                     </div>
                     <div>
-                        <el-button v-if="props.row.status===9" type="warning" @click="uptOrderPayAmtTap(props.row)" >修改金额</el-button>
+                        <el-button v-if="props.row.status===9" type="warning" @click="uptOrderPayAmtTap(props.row)">
+                            修改金额
+                        </el-button>
                     </div>
                 </template>
             </el-table-column>
@@ -89,7 +100,7 @@
 
         <el-dialog :visible.sync="dialogStatus" width="40%">
             <el-row>
-                <el-col :md="13" :sm="8" :xl="8"  style="background-color: #FBFBFB">
+                <el-col :md="13" :sm="8" :xl="8" style="background-color: #FBFBFB">
                     <div style="border: 1px solid #DDDDDD; height: 130px;">
                         <div style="border-bottom: 1px solid #DDDDDD; padding-top: 2px; padding-bottom: 2px; padding-left: 10px; background-color: #F3F3F3">
                             <h5>订单信息</h5>
@@ -108,7 +119,8 @@
                                     <div style="float: left; font-size: 10px; width: 70px;">创建时间：</div>
                                     <div style="float: left; font-size: 10px">{{toDate(order.createDate)}}</div>
                                 </li>
-                                <li v-if="order.paymentTime!=null" style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                <li v-if="order.paymentTime!=null"
+                                    style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">支付时间：</div>
                                     <div style="float: left; font-size: 10px">{{toDate(order.paymentTime)}}</div>
                                 </li>
@@ -116,11 +128,13 @@
                                     <div style="float: left; font-size: 10px; width: 70px;">关闭时间：</div>
                                     <div style="float: left; font-size: 10px">{{toDate(order.closeTime)}}</div>
                                 </li>
-                                <li v-if="order.nickName!=null" style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                <li v-if="order.nickName!=null"
+                                    style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">买家信息：</div>
                                     <div style="float: left; font-size: 10px">{{order.nickName}}</div>
                                 </li>
-                                <li v-if="order.buyerMessage!=null" style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                <li v-if="order.buyerMessage!=null"
+                                    style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">买家留言：</div>
                                     <div style="float: left; font-size: 10px">{{order.buyerMessage}}</div>
                                 </li>
@@ -132,20 +146,24 @@
                     <div style="border: 1px solid #DDDDDD; height: 130px;">
                         <div style="display: flex; margin-top: 20px; margin-left: 20px;">
                             <i v-if="order.status===2" class="el-icon-error" style="font-size: 30px; color: red;"></i>
-                            <i v-else-if="order.status===9" class="el-icon-warning" style="font-size: 30px; color: orange;"></i>
-                            <i v-else-if="order.status===7" class="el-icon-info" style="font-size: 30px; color: orange;"></i>
+                            <i v-else-if="order.status===9" class="el-icon-warning"
+                               style="font-size: 30px; color: orange;"></i>
+                            <i v-else-if="order.status===7" class="el-icon-info"
+                               style="font-size: 30px; color: orange;"></i>
                             <i v-else class="el-icon-success" style="font-size: 30px; color: green;"></i>
-                            <h5 style="margin-top: 8px; margin-left: 5px;">订单状态:  {{orderStatus(order.status)}}</h5>
+                            <h5 style="margin-top: 8px; margin-left: 5px;">订单状态: {{orderStatus(order.status)}}</h5>
                         </div>
                         <div>
                             <div style="float: left; display: flex; margin-top: 30px; margin-left: 20px;">
-                                <i v-if="order.payStatus==='Y'" class="el-icon-success" style="font-size: 30px; color: green;"></i>
+                                <i v-if="order.payStatus==='Y'" class="el-icon-success"
+                                   style="font-size: 30px; color: green;"></i>
                                 <i v-else class="el-icon-error" style="font-size: 30px;"></i>
                                 <h5 v-if="order.payStatus==='Y'" style="margin-top: 8px; margin-left: 5px;">已支付</h5>
                                 <h5 v-else style="margin-top: 8px; margin-left: 5px;">未支付</h5>
                             </div>
                             <div style="float: left; display: flex; margin-top: 30px; margin-left: 30px;">
-                                <i v-if="order.closedComment==='Y'" class="el-icon-success" style="font-size: 30px; color: green;"></i>
+                                <i v-if="order.closedComment==='Y'" class="el-icon-success"
+                                   style="font-size: 30px; color: green;"></i>
                                 <i v-else class="el-icon-warning" style="font-size: 30px;"></i>
                                 <h5 v-if="order.closedComment==='Y'" style="margin-top: 8px; margin-left: 5px;">已评论</h5>
                                 <h5 v-else style="margin-top: 8px; margin-left: 5px;">未评论</h5>
@@ -154,16 +172,18 @@
                     </div>
                 </el-col>
             </el-row>
-
             <el-table :data="orderDetail" border style="margin-top: 20px;">
                 <el-table-column label="商品">
                     <template slot-scope="props">
                         <div style="float: left; margin-left: 10px; margin-right: 10px;">
-                            <img style="height: 40px; width: 40px;background-color: white;" :src="uploadUrl + props.row.goodsId + '/'+props.row.tranImg">
+                            <img style="height: 40px; width: 40px;background-color: white;"
+                                 :src="uploadUrl + props.row.goodsId + '/'+props.row.tranImg">
                         </div>
                         <div style="float: left;">
                             <p>{{props.row.goodsName}}:{{props.row.goodsId}}</p>
-                            <p><span v-if="props.row.specColor!=null&&props.row.specColor!==''">颜色:{{props.row.specColor}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span v-if="props.row.specSize!=null&&props.row.specSize!==''" >尺寸:{{props.row.specSize}}</span></p>
+                            <p><span v-if="props.row.specColor!=null&&props.row.specColor!==''">颜色:{{props.row.specColor}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+                                    v-if="props.row.specSize!=null&&props.row.specSize!==''">尺寸:{{props.row.specSize}}</span>
+                            </p>
                         </div>
                     </template>
                 </el-table-column>
@@ -189,7 +209,9 @@
                             <ul style="list-style-type:none;">
                                 <li style="margin-top: 14px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">地址：</div>
-                                    <div style="float: left; font-size: 10px">{{ordership.province}},{{ordership.city}},{{ordership.area}},{{ordership.shipAddress}}</div>
+                                    <div style="float: left; font-size: 10px">
+                                        {{ordership.province}},{{ordership.city}},{{ordership.area}},{{ordership.shipAddress}}
+                                    </div>
                                 </li>
                                 <li style="margin-top: 14px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 50px;">姓名：</div>
@@ -268,6 +290,32 @@
                 <el-button type="primary" @click="uptOrderPayAmtDialogFormConfirm">确定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog title="发货" :visible.sync="deliverVisible" width="30%">
+            <el-form :model="deliverForm" label-width="80px" ref="deliverForm">
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="快递单号" prop="expressNo"
+                                      :rules="[{required: true, message:'快递单号不能为空', trigger:'blur'}]">
+                            <el-input v-model="deliverForm.expressNo" placeholder="请输入快递单号"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="快递公司" prop="expressName"
+                                      :rules="[{required: true, message:'快递单号不能为空', trigger:'blur'}]">
+                            <el-select style="width: 100%;" v-model="deliverForm.expressName" clearable placeholder="请选择" @change="selectExpress">
+                                <el-option v-for="item in expressInfos" :key="item.id" :label="item.value"
+                                           :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <span slot="footer" type="dialog-footer">
+                <el-button @click="deliverVisible=false">取消</el-button>
+                <el-button type="primary" @click="deliverFormConfirm">确定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -277,168 +325,183 @@
         qryOrderById,
         confirmOrder,
         getMallShop,
-        uptOrderPayAmt
+        uptOrderPayAmt,
+        sendOrder,
     } from "../../../util/module";
     import cfg from '../../../config/cfg';
 
     export default {
         name: "orderList",
-        data(){
-            return{
+        data() {
+            return {
                 CurPage: 1,   // 设置加载的第几次，默认是第一次
                 limitNum: 10,        // 返回数据的个数
                 AllCount: 0,    // 总条数
-                orders:[],//订单
-                uploadUrl:'',
-                selectForm:{
-                    status:null,
+                orders: [],//订单
+                uploadUrl: '',
+                selectForm: {
+                    status: null,
+                    shopId: null,
+                },
+                orderStatusArray: [
+                    {id: 1, detail: '交易成功'},
+                    {id: 2, detail: '交易关闭'},
+                    {id: 3, detail: '已签收'},
+                    {id: 4, detail: '已发货'},
+                    {id: 7, detail: '未发货'},
+                    {id: 8, detail: '已付款'},
+                    {id: 9, detail: '未付款'},
+                ],
+                dialogStatus: false,
+                dialogOrder: {},
+                orderDetail: [],
+                order: {},
+                orderPays: {},
+                ordership: {},
+                shops: [],
+                uptOrderPayAmtDialogTitle: '修改金额',
+                uptOrderPayAmtDialogVisible: false,
+                uptOrderPayAmtDialogForm: {
+                    orderId: null,
+                    uptAmt: null
+                },
+                deliverVisible:false,
+                deliverForm:{
+                    orderId:null,
+                    expressNo:null,
+                    expressName:null,
                     shopId:null,
                 },
-                orderStatusArray:[
-                    {id:1, detail:'交易成功'},
-                    {id:2, detail:'交易关闭'},
-                    {id:3, detail:'已签收'},
-                    {id:4, detail:'已发货'},
-                    {id:5, detail:'未知'},
-                    {id:6, detail:'未知'},
-                    {id:7, detail:'未发货'},
-                    {id:8, detail:'已付款'},
-                    {id:9, detail:'未付款'},
+                //快递公司信息
+                expressInfos:[
+                    {id:1, value:'顺丰'},
+                    {id:2, value:'申通'},
                 ],
-                dialogStatus:false,
-                dialogOrder:{},
-                orderDetail:[],
-                order:{},
-                orderPays:{},
-                ordership:{},
-                shops:[],
-                uptOrderPayAmtDialogTitle:'修改金额',
-                uptOrderPayAmtDialogVisible:false,
-                uptOrderPayAmtDialogForm:{
-                    orderId:null,
-                    uptAmt:null
-                },
             }
         },
 
-        created(){
+        created() {
             let mallId = localStorage.getItem('mallId') || '';
-            this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/';
+            this.uploadUrl = cfg.service.uploadUrl + '/' + mallId + '/';
             this.getMallShop();
             this.initdata();
         },
 
-        methods:{
-            initdata(){
-                let params={};
-                params.page=this.CurPage;
-                params.pageSize=this.limitNum;
-                params.status=this.selectForm.status;
-                qryOrders(this, params).then(res=>{
+        methods: {
+            initdata() {
+                let params = {};
+                params.page = this.CurPage;
+                params.pageSize = this.limitNum;
+                params.status = this.selectForm.status;
+                qryOrders(this, params).then(res => {
                     console.log("res", res);//debug
-                    this.orders=res.data.rows;
+                    this.orders = res.data.rows;
                     this.AllCount = parseInt(res.data.records);
-                }, res=>{
+                }, res => {
                     console.log("失败res", res);//debug
                     this.$message.error(res.msg);
                 });
             },
 
             //获取店铺信息
-            getMallShop(){
-                let params={};
+            getMallShop() {
+                let params = {};
                 getMallShop(this, params).then(
-                    (res)=>{
+                    (res) => {
                         console.log("res", res);//debug
-                        this.shops=res.data;
+                        this.shops = res.data;
                     }
                 ).catch();
             },
 
-            statusChange(){
-                this.CurPage=1;
+            statusChange() {
+                this.CurPage = 1;
                 this.initdata();
             },
 
-            shopChange(){
+            shopChange() {
 
             },
 
-            toDate(dateNum){
-                if(dateNum==null||dateNum===''){
+            selectExpress(){
+
+            },
+
+            toDate(dateNum) {
+                if (dateNum == null || dateNum === '') {
                     return '未知';
                 }
                 let date = new Date(dateNum);
                 let Y = date.getFullYear() + '-';
-                let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-                let D = (date.getDate()<10?'0'+date.getDate():date.getDate()) + ' ';
-                let h = (date.getHours()<10?'0'+date.getHours():date.getHours()) + ':';
-                let m = (date.getMinutes()<10?'0'+date.getMinutes():date.getMinutes()) + ':';
-                let s = date.getSeconds()<10?'0'+date.getSeconds():date.getSeconds();
-                return Y+M+D+h+m+s;
+                let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+                let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+                let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+                let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+                return Y + M + D + h + m + s;
             },
 
-            orderStatus(status){
-                let statusName='未知状态';
-                switch(status){
+            orderStatus(status) {
+                let statusName = '未知状态';
+                switch (status) {
                     case 1:
-                        statusName='交易成功';
+                        statusName = '交易成功';
                         break;
                     case 2:
-                        statusName='交易关闭';
+                        statusName = '交易关闭';
                         break;
                     case 3:
-                        statusName='已签收';
+                        statusName = '已签收';
                         break;
                     case 4:
-                        statusName='已发货';
+                        statusName = '已发货';
                         break;
                     case 5:
                         break;
                     case 6:
                         break;
                     case 7:
-                        statusName='未发货';
+                        statusName = '未发货';
                         break;
                     case 8:
-                        statusName='已付款';
+                        statusName = '已付款';
                         break;
                     case 9:
-                        statusName='未付款';
+                        statusName = '未付款';
                         break;
                 }
                 return statusName;
             },
 
-            getPayStatus(status){
-                let statusName='未知状态';
-                switch(status){
+            getPayStatus(status) {
+                let statusName = '未知状态';
+                switch (status) {
                     case 1:
-                        statusName='成功';
+                        statusName = '成功';
                         break;
                     case 2:
-                        statusName='失败';
+                        statusName = '失败';
                         break;
                     case 3:
-                        statusName='撤销';
+                        statusName = '撤销';
                         break;
                     case 4:
-                        statusName='未知';
+                        statusName = '未知';
                         break;
                     case 5:
-                        statusName='未知';
+                        statusName = '未知';
                         break;
                     case 6:
-                        statusName='未知';
+                        statusName = '未知';
                         break;
                     case 7:
-                        statusName='未知';
+                        statusName = '未知';
                         break;
                     case 8:
-                        statusName='未知';
+                        statusName = '未知';
                         break;
                     case 9:
-                        statusName='初始状态';
+                        statusName = '初始状态';
                         break;
                 }
                 return statusName;
@@ -457,81 +520,133 @@
             },
 
             //行被双击
-            rowDblclick(row){
+            rowDblclick(row) {
                 console.log("row", row);
                 // this.order=row;
                 // this.orderItems=row.orderDetailList;
                 // this.dialogStatus=true;
                 //获取订单详细信息
-                let params={};
-                params.orderId=row.orderId;
-                qryOrderById(this, params).then(res=>{
+                let params = {};
+                params.orderId = row.orderId;
+                qryOrderById(this, params).then(res => {
                     console.log("订单查询", res.data);
-                    this.order=res.data.order;
-                    this.orderDetail=res.data.orderDetail;
-                    this.orderPays=res.data.orderPay;
-                    this.ordership=res.data.ordership;
-                    this.dialogStatus=true;
-                }, res=>{
+                    this.order = res.data.order;
+                    this.orderDetail = res.data.orderDetail;
+                    this.orderPays = res.data.orderPay;
+                    this.ordership = res.data.ordership;
+                    this.dialogStatus = true;
+                }, res => {
                     this.$message.error(res.msg);
                 });
             },
 
             //接单按钮被按下
-            takeOrderTap(row){
+            takeOrderTap(row) {
                 //接单时如果有分店铺，必须先选择哪个店铺
                 if (this.shops.length > 0) {
-                    if(this.selectForm.shopId===null||this.selectForm.shopId===''){
+                    if (this.selectForm.shopId === null || this.selectForm.shopId === '') {
                         this.$message.error('请选择店铺！');
                         return;
                     }
                 }
-                this.$confirm('此操作将接单，是否确认？', '接单确认',{
-                    confirmButtonText:'确定',
-                    cancelButtonText:'取消',
-                    type:'warning'
+                this.$confirm('此操作将接单，是否确认？', '接单确认', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
                 }).then(
-                    ()=>{
+                    () => {
                         this.takeOrder(row);
                     }
                 ).catch();
             },
 
             //接单
-            takeOrder(row){
-                let param={};
-                param.orderId=row.orderId;
-                param.shopId=this.selectForm.shopId;
+            takeOrder(row) {
+                let param = {};
+                param.orderId = row.orderId;
+                param.shopId = this.selectForm.shopId;
                 confirmOrder(this, param).then(
-                    (res)=>{
+                    (res) => {
                         this.$message.success('接单成功！');
+                        this.initdata();
+                    },
+                    (res) => {
+                        if (res.msg != null) {
+                            this.$message.error(res.msg);
+                        } else {
+                            this.$message.error('接单失败！');
+                        }
+                        this.initdata();
+                    }
+                ).catch(
+                    () => {
+                        this.$message.error('系统错误!');
+                    }
+                );
+            },
+
+            // 发货按钮被按下
+            deliverGoodsTap(row) {
+                //接单时如果有分店铺，必须先选择哪个店铺
+                if (this.shops.length > 0) {
+                    if (this.selectForm.shopId === null || this.selectForm.shopId === '') {
+                        this.$message.error('请选择店铺！');
+                        return;
+                    }
+                }
+                this.deliverForm={};
+                this.deliverForm.orderId=row.orderId;
+                if (row.shopId !== null) {
+                    this.deliverForm.shopId=row.shopId;
+                }
+                this.deliverVisible=true;
+            },
+
+            deliverFormConfirm(){
+                this.$refs['deliverForm'].validate((valid)=>{
+                    if (valid) {
+                        this.deliverGoods();
+                    }else {
+                        return false;
+                    }
+                });
+            },
+
+            //发货
+            deliverGoods(){
+                let params={};
+                params.orderId=this.deliverForm.orderId;
+                params.expressNo=this.deliverForm.expressNo;
+                params.expressName=this.deliverForm.expressName;
+                if (this.deliverForm.shopId != null) {
+                    params.shopId=this.deliverForm.shopId;
+                }
+                sendOrder(this, params).then(
+                    (res)=>{
+                        this.$message.success('发货成功');
+                        this.deliverVisible=false;
                         this.initdata();
                     },
                     (res)=>{
                         if (res.msg != null) {
                             this.$message.error(res.msg);
                         }else{
-                            this.$message.error('接单失败！');
+                            this.$message.error('发货失败！');
                         }
-                        this.initdata();
                     }
-                ).catch(
-                    ()=>{
-                        this.$message.error('系统错误!');
-                    }
-                );
+                ).catch();
             },
 
             //修改金额被按下
-            uptOrderPayAmtTap(row){
-                this.uptOrderPayAmtDialogForm.orderId=row.orderId;
-                this.uptOrderPayAmtDialogVisible=true;
+            uptOrderPayAmtTap(row) {
+                this.uptOrderPayAmtDialogForm.orderId = row.orderId;
+                this.uptOrderPayAmtDialogVisible = true;
             },
 
-            uptOrderPayAmtDialogFormConfirm(){
+            uptOrderPayAmtDialogFormConfirm() {
                 this.$refs['uptOrderPayAmtDialogForm'].validate(
-                    (valid)=>{
-                        if (valid){
+                    (valid) => {
+                        if (valid) {
                             this.uptOrderPayAmtDialogFormCommit();
                         } else {
                             return false;
@@ -540,20 +655,20 @@
                 );
             },
 
-            uptOrderPayAmtDialogFormCommit(){
-                let params={};
-                params.orderId=this.uptOrderPayAmtDialogForm.orderId;
-                params.uptAmt=this.uptOrderPayAmtDialogForm.uptAmt;
+            uptOrderPayAmtDialogFormCommit() {
+                let params = {};
+                params.orderId = this.uptOrderPayAmtDialogForm.orderId;
+                params.uptAmt = this.uptOrderPayAmtDialogForm.uptAmt;
                 uptOrderPayAmt(this, params).then(
-                    (res)=>{
+                    (res) => {
                         this.$message.success('修改金额成功！');
                         this.initdata();
-                        this.uptOrderPayAmtDialogVisible=false;
+                        this.uptOrderPayAmtDialogVisible = false;
                     },
-                    (res)=>{
+                    (res) => {
                         if (res.msg != null) {
                             this.$message.error(res.msg);
-                        }else{
+                        } else {
                             this.$message.error('修改金额失败！');
                         }
                     }
@@ -564,6 +679,6 @@
 </script>
 
 <style scoped>
-    .table{
+    .table {
     }
 </style>

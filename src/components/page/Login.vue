@@ -66,6 +66,7 @@
                     localStorage.removeItem('macKey');
                     localStorage.removeItem('mallPcUuid');
                     localStorage.removeItem('mallName');
+                    localStorage.removeItem('specNames');
                     mallPcUuid='';
                 }
 
@@ -138,12 +139,20 @@
                             }
                             // that.LoginStatus = res.LoginStatus || '0';
                             if (that.LoginStatus === '3') {
+                                console.log('data', res.data);//debug
                                 that.$store.commit('loginIn');
                                 localStorage.setItem('macKey', res.data.macKey);
                                 localStorage.setItem('mallId', res.data.mallId);
                                 localStorage.setItem('mallPcUuid', res.data.mallPcUuid);
                                 localStorage.setItem('userId', res.data.userId);
                                 localStorage.setItem('mallName', res.data.mallName);
+                                if (res.data.indexConent.length > 0) {
+                                    res.data.indexConent.forEach((item)=>{
+                                        if (item.argName.startsWith('mall_spec_name')) {
+                                            localStorage.setItem('specNames', item.argValue);
+                                        }
+                                    });
+                                }
                                 that.$router.push('/');
                             }
                             resolve(that.LoginStatus);

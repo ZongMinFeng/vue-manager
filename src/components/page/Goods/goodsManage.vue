@@ -33,18 +33,19 @@
                                       @change="onRefresh"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :sm="24" :md="12" :xl="8">
-                        <el-form-item label="现价起始值" prop="begPrice">
-                            <el-input maxlength="10" placeholder="请输入最小金额" v-model="selectForm.begNowPrice"
-                                      @change="onRefresh"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :sm="24" :md="12" :xl="8">
-                        <el-form-item label="现价结束值" prop="endPrice">
-                            <el-input maxlength="10" placeholder="请输入最大金额" v-model="selectForm.endNowPrice"
-                                      @change="onRefresh"></el-input>
-                        </el-form-item>
-                    </el-col>
+                    <!--暂时没有销量，注释掉-->
+                    <!--<el-col :sm="24" :md="12" :xl="8">-->
+                        <!--<el-form-item label="现价起始值" prop="begPrice">-->
+                            <!--<el-input maxlength="10" placeholder="请输入最小金额" v-model="selectForm.begNowPrice"-->
+                                      <!--@change="onRefresh"></el-input>-->
+                        <!--</el-form-item>-->
+                    <!--</el-col>-->
+                    <!--<el-col :sm="24" :md="12" :xl="8">-->
+                        <!--<el-form-item label="现价结束值" prop="endPrice">-->
+                            <!--<el-input maxlength="10" placeholder="请输入最大金额" v-model="selectForm.endNowPrice"-->
+                                      <!--@change="onRefresh"></el-input>-->
+                        <!--</el-form-item>-->
+                    <!--</el-col>-->
                     <el-col :sm="24" :md="12" :xl="8">
                         <el-form-item label="销量起始值" prop="begSellCount">
                             <el-input maxlength="10" placeholder="请输入最小数量" v-model="selectForm.begSellCount"
@@ -84,11 +85,11 @@
                             <img style="height: 80px; width: 80px;background-color: white;"  :preview="scope.$index" :src="uploadUrl + scope.row.goodsId + '/'+scope.row.picture" >
                         </template>
                     </el-table-column>
-                    <el-table-column label="商品价格" width="120">
+                    <el-table-column label="商品价格" width="140">
                         <template slot-scope="props">
-                            <p v-if="Math.abs(props.row.price- props.row.nowPrice)<0.005">{{formatPrice(props.row.price)}}元</p>
-                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">原价：{{formatPrice(props.row.price)}}元</p>
-                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">现价：{{formatPrice(props.row.nowPrice)}}元</p>
+                            <p v-if="Math.abs(props.row.price- props.row.nowPrice)<0.005">￥{{formatPrice(props.row.price)}}元</p>
+                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">原价：￥{{formatPrice(props.row.price)}}元</p>
+                            <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">现价：￥{{formatPrice(props.row.nowPrice)}}元</p>
                         </template>
                     </el-table-column>
                     <el-table-column label="分类" width="100">
@@ -96,7 +97,8 @@
                             {{getcCategory(props.row.categoryId)}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="sellCount" label="销量" width="60"></el-table-column>
+                    <!--暂时没有销量，注释掉-->
+                    <!--<el-table-column prop="sellCount" label="销量" width="60"></el-table-column>-->
                     <el-table-column  label="库存" width="220">
                     <template slot-scope="props">
                     <div class="stock-div">
@@ -210,16 +212,16 @@
                 <el-table-column label="系列主图" width="120" align="center">
                     <template slot-scope="scope"><img v-if="scope.row.specPic!=null&&scope.row.specPic!==''"  :preview="scope.$index" style="height: 80px; width: 80px;background-color: white;" :src="serialsUrl + '/'+scope.row.specPic"></template>
                 </el-table-column>
-                <el-table-column label="颜色" prop="specColor"></el-table-column>
-                <el-table-column label="尺寸" prop="specSize"></el-table-column>
+                <el-table-column :label="specName1" prop="specColor"></el-table-column>
+                <el-table-column :label="specName2" prop="specSize"></el-table-column>
                 <el-table-column label="原价">
                     <template slot-scope="props">
-                        <p>{{formatPrice(props.row.specPrice)}}元</p>
+                        <p>￥{{formatPrice(props.row.specPrice)}}元</p>
                     </template>
                 </el-table-column>
                 <el-table-column label="现价">
                     <template slot-scope="props">
-                        <p>{{formatPrice(props.row.specNowPrice)}}元</p>
+                        <p>￥{{formatPrice(props.row.specNowPrice)}}元</p>
                     </template>
                 </el-table-column>
                 <el-table-column  label="库存" width="180" >
@@ -304,10 +306,20 @@
                 },
                 goodDetailVisible:false,
                 serialsUrl:'',
+                specName1:'颜色',
+                specName2:'尺寸'
             }
         },
         created() {
             let mallId = localStorage.getItem('mallId') || '';
+            let specNames=localStorage.getItem('specNames').split('||');
+            if(specNames.length===1){
+                this.specName1=specNames[0];
+            }
+            if(specNames.length===2){
+                this.specName1=specNames[0];
+                this.specName2=specNames[1];
+            }
             this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/';
             this.typeQry();
             this.goodsQry();

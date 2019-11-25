@@ -13,15 +13,15 @@
                 <!--商品名称-->
                 <el-row :gutter="10">
                     <el-col :sm="24" :md="12" :xl="8">
-                        <el-form-item label="颜色" prop="specColor">
-                            <el-input maxlength="20" placeholder="请输入系列颜色" v-model="AddFormSerial.specColor"
+                        <el-form-item :label="specName1" prop="specColor">
+                            <el-input maxlength="20" :placeholder="'请输入系列'+specName1" v-model="AddFormSerial.specColor"
                                       @change="onColorChange(AddFormSerial.specColor)"></el-input>
                         </el-form-item>
                     </el-col>
 
                     <el-col :sm="24" :md="12" :xl="8">
-                        <el-form-item label="尺寸" prop="specSize">
-                            <el-input maxlength="20" placeholder="请输入系列尺寸" v-model="AddFormSerial.specSize"
+                        <el-form-item :label="specName2" prop="specSize">
+                            <el-input maxlength="20"  :placeholder="'请输入系列'+specName2" v-model="AddFormSerial.specSize"
                                       @change="onSizeChange(AddFormSerial.specSize)"></el-input>
                         </el-form-item>
                     </el-col>
@@ -93,8 +93,8 @@
                                                   style="height: 80px; width: 80px;background-color: white;"
                                                   :src="uploadUrl + '/'+scope.row.specPic"></template>
             </el-table-column>
-            <el-table-column label="颜色" prop="specColor"></el-table-column>
-            <el-table-column label="尺寸" prop="specSize" width="80px"></el-table-column>
+            <el-table-column :label=specName1 prop="specColor"></el-table-column>
+            <el-table-column :label=specName2 prop="specSize" width="80px"></el-table-column>
             <el-table-column label="原价">
                 <template slot-scope="props">
                     <p>{{formatPrice(props.row.specPrice)}}元</p>
@@ -321,7 +321,9 @@
                 addVisible: true,
                 uploadUrl: '',
                 time: '',
-                imgSrc2: ''
+                imgSrc2: '',
+                specName1:'颜色',
+                specName2:'尺寸',
             }
         },
 
@@ -344,6 +346,14 @@
         },
 
         created() {
+            let specNames=localStorage.getItem('specNames').split('||');
+            if(specNames.length===1){
+                this.specName1=specNames[0];
+            }
+            if(specNames.length===2){
+                this.specName1=specNames[0];
+                this.specName2=specNames[1];
+            }
             pageBus.$on("goodId", (goodId) => {
                 this.goodId = goodId;
                 this.initDate();

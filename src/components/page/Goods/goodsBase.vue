@@ -67,7 +67,7 @@
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="起售金额" prop="minPrice">
-                        <el-input maxlength="64" placeholder="请输入起售金额,如：1.00"
+                        <el-input ref="minPrice" maxlength="64" placeholder="请输入起售金额,如：1.00"
                                   v-model="AddForm.minPrice" @change="onChangeTap"></el-input>
                     </el-form-item>
                 </el-col>
@@ -952,6 +952,10 @@
                         }
                         if(items.nowPrice!=null){
                             this.$refs.AddFormNowPrice.focus();
+                            return false;
+                        }
+                        if(items.minPrice!=null){
+                            this.$refs.minPrice.focus();
                             return false;
                         }
                         if(items.stockNum!=null){

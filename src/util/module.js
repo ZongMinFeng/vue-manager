@@ -1016,6 +1016,55 @@ const qryMallDailyOrderRpt = (me, params) => {
     });
 };
 
+/**
+ * 1.4.8	 商城订单发货--验签
+ * @param me
+ * @param params
+ * @returns {Promise<any>}
+ */
+const sendOrder = (me, params) => {
+    return new Promise((resolve, reject) => {
+        console.log("delOperById params", params);//debug
+        let urlParams = {};
+        let send = {};
+        let signArray = {};
+        urlParams.url = cfg.service.project + cfg.service.sendOrder.url + '/' + cfg.service.sendOrder.action;
+        urlParams.txnId = cfg.service.sendOrder.txnId;
+
+        if(params.orderId !=null){
+            send.orderId =params.orderId;
+            signArray.orderId =send.orderId ;
+        }
+        if(params.expressNo !=null){
+            send.expressNo =params.expressNo;
+            signArray.expressNo =send.expressNo ;
+        }
+        if(params.expressName !=null){
+            send.expressName =params.expressName;
+        }
+        if(params.shopId !=null){
+            send.shopId =params.shopId;
+            signArray.shopId =send.shopId ;
+        }
+
+        urlParams.send = send;
+        urlParams.signArray = signArray;
+        common.sendServer(urlParams, me).then(
+            (res) => {
+                // 成功
+                if (res.status !== 200 && res.status !== 400) {
+                    reject(res); // 失败回调
+                    return res;
+                }
+                resolve(res);
+            }, (res) => {
+                // 失败
+                reject(res);
+            }
+        );
+    });
+};
+
 export {
     getCateParamByCateId,
     getMallCategory,
@@ -1045,4 +1094,5 @@ export {
     confirmOrder,
     uptOrderPayAmt,
     qryMallDailyOrderRpt,
+    sendOrder,
 };

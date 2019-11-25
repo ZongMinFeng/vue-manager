@@ -248,6 +248,12 @@ module.exports={
             txnId: "20013"
         },
 
+        sendOrder:{
+            url: "MallWeChat",
+            action: "sendOrder",
+            txnId: "20008"
+        },
+
     },
 
     //公共处理模块

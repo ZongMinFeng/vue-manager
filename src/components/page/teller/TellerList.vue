@@ -10,7 +10,11 @@
                   size='medium'
                   border>
             <el-table-column prop="userName" label="名称"></el-table-column>
-            <el-table-column prop="userPhone" label="手机号"></el-table-column>
+            <el-table-column label="手机号">
+                <template slot-scope="props">
+                    {{argValueDisplay(props.row.userPhone)}}
+                </template>
+            </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="props">
                     <div>
@@ -119,6 +123,13 @@
 
                     }
                 ).catch();
+            },
+
+            //值特殊化显示
+            argValueDisplay(userPhone){
+                let valueDisplay='';
+                valueDisplay=userPhone.substring(0, 3)+'-'+userPhone.substring(3, 7)+'-'+userPhone.substring(7, 11);
+                return valueDisplay;
             },
 
             onAddNewTap(){
