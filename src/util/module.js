@@ -550,6 +550,10 @@ const qryOrders = (me, params) => {
             send.status = params.status;
         }
 
+        if (params.shopId != null && params.shopId !== '') {
+            send.shopId = params.shopId;
+        }
+
         urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
@@ -976,7 +980,7 @@ const uptOrderPayAmt = (me, params) => {
         common.sendServer(urlParams, me).then(
             (res) => {
                 // 成功
-                if (res.status !== 200 && res.status !== 400) {
+                if (res.status !== 200) {
                     reject(res); // 失败回调
                     return res;
                 }

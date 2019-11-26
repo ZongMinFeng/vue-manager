@@ -2,6 +2,8 @@
  *表单验证
  */
 
+import GwRegular from '@/Gw/GwRegular.js';
+
 var FormCheck={};
 
 FormCheck.stock=(rule, stockNum, callback, source) => {
@@ -32,6 +34,14 @@ FormCheck.stock=(rule, stockNum, callback, source) => {
     if(stockNum>999999){
         callback(new Error('库存应小于100万'));
         return true;
+    }
+    callback();
+};
+
+FormCheck.amt=(rule, amt, callback) => {
+    //允许两位小数
+    if (!GwRegular.numeric2.test(amt)) {
+        callback('请输入数字，可以为2位小数');
     }
     callback();
 };

@@ -22,12 +22,6 @@ module.exports = {
                 },
 
                 {
-                    path: '/mallPhone',
-                    component: resolve => require(['../components/page/MallSetting/mallPhone.vue'], resolve),
-                    meta: {title: '客服电话'}
-                },
-
-                {
                     path: '/mallSysArg',
                     component: resolve => require(['../components/page/MallSetting/mallSysArg.vue'], resolve),
                     meta: {title: '系统参数'}

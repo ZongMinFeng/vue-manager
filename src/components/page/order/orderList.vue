@@ -18,10 +18,16 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
+                <el-col :md="6" :sm="8" :xl="8">
+                    &nbsp;
+                </el-col>
+                <el-col :md="6" :sm="8" :xl="8">
+                    <el-button style="float: right; margin-right: 20px;" type="primary" @click="initdata">刷新</el-button>
+                </el-col>
             </el-row>
         </el-form>
 
-        <el-table :data="orders" stripe border size="medium" class="table" @row-dblclick="rowDblclick">
+        <el-table v-loading = "tableLoading" :data="orders" stripe border size="medium" class="table" @row-dblclick="rowDblclick">
             <el-table-column prop="orderId" label="订单编号" width="120"></el-table-column>
             <el-table-column label="商品信息" width="170">
                 <template slot-scope="props">
@@ -81,7 +87,7 @@
                     </div>
                     <div>
                         <el-button v-if="props.row.status===9" type="warning" @click="uptOrderPayAmtTap(props.row)">
-                            修改金额
+                            优惠金额
                         </el-button>
                     </div>
                 </template>
@@ -101,7 +107,7 @@
         <el-dialog :visible.sync="dialogStatus" width="40%">
             <el-row>
                 <el-col :md="13" :sm="8" :xl="8" style="background-color: #FBFBFB">
-                    <div style="border: 1px solid #DDDDDD; height: 130px;">
+                    <div style="border: 1px solid #DDDDDD; height: 160px;">
                         <div style="border-bottom: 1px solid #DDDDDD; padding-top: 2px; padding-bottom: 2px; padding-left: 10px; background-color: #F3F3F3">
                             <h5>订单信息</h5>
                         </div>
@@ -110,6 +116,10 @@
                                 <li style="margin-top: 14px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">订单编号：</div>
                                     <div style="float: left; font-size: 10px">{{order.orderId}}</div>
+                                </li>
+                                <li v-if="order.shopName!=null" style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                    <div style="float: left; font-size: 10px; width: 70px;">店铺名称：</div>
+                                    <div style="float: left; font-size: 10px">{{order.shopName}}</div>
                                 </li>
                                 <li style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">用户编号：</div>
@@ -143,7 +153,7 @@
                     </div>
                 </el-col>
                 <el-col :md="11" :sm="8" :xl="8">
-                    <div style="border: 1px solid #DDDDDD; height: 130px;">
+                    <div style="border: 1px solid #DDDDDD; height: 160px;">
                         <div style="display: flex; margin-top: 20px; margin-left: 20px;">
                             <i v-if="order.status===2" class="el-icon-error" style="font-size: 30px; color: red;"></i>
                             <i v-else-if="order.status===9" class="el-icon-warning"
@@ -279,7 +289,8 @@
                 <el-row>
                     <el-col :span="24">
                         <el-form-item label="金额" prop="uptAmt"
-                                      :rules="[{required: true, message:'修改金额不能为空', trigger:'blur'}]">
+                                      :rules="[{required: true, message:'修改金额不能为空', trigger:'blur'},
+                                      {validator:checkAmt, trigger:'blur'}]">
                             <el-input v-model="uptOrderPayAmtDialogForm.uptAmt" placeholder="请输入优惠金额"></el-input>
                         </el-form-item>
                     </el-col>
@@ -291,6 +302,7 @@
             </span>
         </el-dialog>
 
+        <!--暂时没有快递信息，不使用此dialog-->
         <el-dialog title="发货" :visible.sync="deliverVisible" width="30%">
             <el-form :model="deliverForm" label-width="80px" ref="deliverForm">
                 <el-row>
@@ -303,7 +315,8 @@
                     <el-col :span="24">
                         <el-form-item label="快递公司" prop="expressName"
                                       :rules="[{required: true, message:'快递单号不能为空', trigger:'blur'}]">
-                            <el-select style="width: 100%;" v-model="deliverForm.expressName" clearable placeholder="请选择" @change="selectExpress">
+                            <el-select style="width: 100%;" v-model="deliverForm.expressName" clearable
+                                       placeholder="请选择" @change="selectExpress">
                                 <el-option v-for="item in expressInfos" :key="item.id" :label="item.value"
                                            :value="item.value"></el-option>
                             </el-select>
@@ -314,6 +327,28 @@
             <span slot="footer" type="dialog-footer">
                 <el-button @click="deliverVisible=false">取消</el-button>
                 <el-button type="primary" @click="deliverFormConfirm">确定</el-button>
+            </span>
+        </el-dialog>
+
+        <!--店铺选择-->
+        <el-dialog title="请选择店铺" :visible.sync="shopVisible" width="30%">
+            <el-form :model="shopForm" label-width="80px" ref="shopForm">
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="店铺" prop="shopId"
+                                      :rules="[{required: true, message:'请选择店铺', trigger:'blur'}]">
+                            <el-select v-model="shopForm.shopId" clearable placeholder="请选择店铺">
+                                <el-option style="width: 100%;" v-for="item in shops" :key="item.shopId"
+                                           :label="item.area+':'+item.shopName"
+                                           :value="item.shopId"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <span slot="footer" type="dialog-footer">
+                <el-button @click="shopVisible=false">取消</el-button>
+                <el-button type="primary" @click="shopFormConfirmTap">确定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -329,6 +364,7 @@
         sendOrder,
     } from "../../../util/module";
     import cfg from '../../../config/cfg';
+    import FormCheck from '@/tool/formCheck.js';
 
     export default {
         name: "orderList",
@@ -359,24 +395,31 @@
                 orderPays: {},
                 ordership: {},
                 shops: [],
-                uptOrderPayAmtDialogTitle: '修改金额',
+                uptOrderPayAmtDialogTitle: '优惠金额',
                 uptOrderPayAmtDialogVisible: false,
                 uptOrderPayAmtDialogForm: {
                     orderId: null,
                     uptAmt: null
                 },
-                deliverVisible:false,
-                deliverForm:{
-                    orderId:null,
-                    expressNo:null,
-                    expressName:null,
-                    shopId:null,
+                deliverVisible: false,
+                deliverForm: {
+                    orderId: null,
+                    expressNo: null,
+                    expressName: null,
+                    shopId: null,
                 },
                 //快递公司信息
-                expressInfos:[
-                    {id:1, value:'顺丰'},
-                    {id:2, value:'申通'},
+                expressInfos: [
+                    {id: 1, value: '顺丰'},
+                    {id: 2, value: '申通'},
                 ],
+                shopForm: {
+                    shopId: null,
+                },
+                shopVisible: false,
+                selectRow: {},
+                flag:1,//1：接单  2：发货
+                tableLoading:false,
             }
         },
 
@@ -389,18 +432,31 @@
 
         methods: {
             initdata() {
+                this.tableLoading=true;
                 let params = {};
                 params.page = this.CurPage;
                 params.pageSize = this.limitNum;
                 params.status = this.selectForm.status;
+                params.shopId = this.selectForm.shopId;
                 qryOrders(this, params).then(res => {
                     console.log("res", res);//debug
                     this.orders = res.data.rows;
                     this.AllCount = parseInt(res.data.records);
+                    this.tableLoading=false;
                 }, res => {
                     console.log("失败res", res);//debug
                     this.$message.error(res.msg);
+                    this.tableLoading=false;
                 });
+            },
+
+            checkAmt(rule, amt, callback){
+                //准备优惠金额+已优惠金额<订单总额
+                if (parseFloat(amt)+parseFloat(this.selectRow.uptAmt)-parseFloat(this.selectRow.orderAmt)>0.005){
+                    callback(new Error('已优惠'+parseFloat(this.selectRow.uptAmt)+'元，总优惠金额不许超过订单总额'+parseFloat(this.selectRow.orderAmt)+'!'));
+                    return;
+                }
+                return FormCheck.amt(rule, amt, callback);
             },
 
             //获取店铺信息
@@ -420,10 +476,11 @@
             },
 
             shopChange() {
-
+                this.CurPage = 1;
+                this.initdata();
             },
 
-            selectExpress(){
+            selectExpress() {
 
             },
 
@@ -542,32 +599,36 @@
 
             //接单按钮被按下
             takeOrderTap(row) {
-                //接单时如果有分店铺，必须先选择哪个店铺
-                if (this.shops.length > 0) {
-                    if (this.selectForm.shopId === null || this.selectForm.shopId === '') {
-                        this.$message.error('请选择店铺！');
-                        return;
-                    }
+                this.flag=1;
+                this.shopForm={};
+                this.selectRow=row;
+                console.log('shops', this.shops);//debug
+                //如果没有分店铺，直接接单
+                if (this.shops.length === 0) {
+                    this.$confirm('此操作将接单，是否确认？', '接单确认', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(
+                        () => {
+                            this.takeOrder();
+                        }
+                    ).catch();
                 }
-                this.$confirm('此操作将接单，是否确认？', '接单确认', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(
-                    () => {
-                        this.takeOrder(row);
-                    }
-                ).catch();
+
+                //需要选择店铺
+                this.shopVisible=true;
             },
 
             //接单
-            takeOrder(row) {
+            takeOrder() {
                 let param = {};
-                param.orderId = row.orderId;
-                param.shopId = this.selectForm.shopId;
+                param.orderId = this.selectRow.orderId;
+                param.shopId = this.shopForm.shopId;
                 confirmOrder(this, param).then(
                     (res) => {
                         this.$message.success('接单成功！');
+                        this.shopVisible=false;
                         this.initdata();
                     },
                     (res) => {
@@ -587,50 +648,112 @@
 
             // 发货按钮被按下
             deliverGoodsTap(row) {
-                //接单时如果有分店铺，必须先选择哪个店铺
-                if (this.shops.length > 0) {
-                    if (this.selectForm.shopId === null || this.selectForm.shopId === '') {
-                        this.$message.error('请选择店铺！');
-                        return;
-                    }
+                this.flag=2;
+                this.selectRow = row;
+                this.shopForm = {};
+                this.deliverForm = {};
+                this.deliverForm.orderId = row.orderId;
+                //如果没有分店那么直接发货
+                if (this.shops.length === 0) {
+                    this.$confirm('此操作将发货，是否确认？', '发货', {
+                        confirmButtonText: '确认',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }).then(
+                        () => {
+                            this.deliverGoods();
+                        }
+                    ).catch(
+                        (res) => {
+                            console.log('出错', res);//debug
+                        }
+                    );
+                    return;
                 }
-                this.deliverForm={};
-                this.deliverForm.orderId=row.orderId;
-                if (row.shopId !== null) {
-                    this.deliverForm.shopId=row.shopId;
+
+                //筛选条件如果选择了店铺，那么默认使用筛选条件的店铺。如果没有选择，那么选择一个店铺
+                if (this.selectForm.shopId === null || this.selectForm.shopId === '') {
+                    //选择店铺
+                    this.shopVisible = true;
+                } else {
+                    //使用筛选条件的店铺
+                    this.deliverForm.shopId = this.selectForm.shopId;
+                    this.$confirm('此操作将发货，是否确认？', '发货', {
+                        confirmButtonText: '确认',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }).then(
+                        () => {
+                            this.deliverGoods();
+                        }
+                    ).catch(
+                        (res) => {
+                            console.log('出错', res);//debug
+                        }
+                    );
                 }
-                this.deliverVisible=true;
             },
 
-            deliverFormConfirm(){
-                this.$refs['deliverForm'].validate((valid)=>{
+            deliverFormConfirm() {
+                this.$refs['deliverForm'].validate((valid) => {
                     if (valid) {
                         this.deliverGoods();
-                    }else {
+                    } else {
                         return false;
                     }
                 });
             },
 
+            shopFormConfirmTap() {
+                this.$refs['shopForm'].validate((valid) => {
+                    if (valid) {
+                        this.shopFormConfirm();
+                    } else {
+                        return false;
+                    }
+                });
+            },
+
+            //店铺对话框被选择
+            shopFormConfirm() {
+                this.deliverForm.shopId = this.shopForm.shopId;
+                //接单
+                if (this.flag === 1) {
+                    this.takeOrder();
+                }
+                //发货
+                if (this.flag === 2) {
+                    this.deliverGoods();
+                }
+            },
+
             //发货
-            deliverGoods(){
-                let params={};
-                params.orderId=this.deliverForm.orderId;
-                params.expressNo=this.deliverForm.expressNo;
-                params.expressName=this.deliverForm.expressName;
+            deliverGoods() {
+                //如果是多店铺，发货选择店铺必须是接单的店铺
+                if (this.shops.length > 0) {
+                    if (this.selectRow.shopId !== this.deliverForm.shopId) {
+                        this.$message.error('发货店铺需要跟接单店铺一致！');
+                        return;
+                    }
+                }
+                let params = {};
+                params.orderId = this.deliverForm.orderId;
+                params.expressNo = this.deliverForm.expressNo;
+                params.expressName = this.deliverForm.expressName;
                 if (this.deliverForm.shopId != null) {
-                    params.shopId=this.deliverForm.shopId;
+                    params.shopId = this.deliverForm.shopId;
                 }
                 sendOrder(this, params).then(
-                    (res)=>{
+                    (res) => {
                         this.$message.success('发货成功');
-                        this.deliverVisible=false;
+                        this.deliverVisible = false;
+                        this.shopVisible = false;
                         this.initdata();
                     },
-                    (res)=>{
+                    (res) => {
                         if (res.msg != null) {
                             this.$message.error(res.msg);
-                        }else{
+                        } else {
                             this.$message.error('发货失败！');
                         }
                     }
@@ -639,6 +762,8 @@
 
             //修改金额被按下
             uptOrderPayAmtTap(row) {
+                this.selectRow=row;
+                this.uptOrderPayAmtDialogForm={};
                 this.uptOrderPayAmtDialogForm.orderId = row.orderId;
                 this.uptOrderPayAmtDialogVisible = true;
             },
