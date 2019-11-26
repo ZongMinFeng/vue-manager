@@ -107,7 +107,7 @@
         <el-dialog :visible.sync="dialogStatus" width="40%">
             <el-row>
                 <el-col :md="13" :sm="8" :xl="8" style="background-color: #FBFBFB">
-                    <div style="border: 1px solid #DDDDDD; height: 160px;">
+                    <div style="border: 1px solid #DDDDDD; height: 180px;">
                         <div style="border-bottom: 1px solid #DDDDDD; padding-top: 2px; padding-bottom: 2px; padding-left: 10px; background-color: #F3F3F3">
                             <h5>订单信息</h5>
                         </div>
@@ -143,6 +143,16 @@
                                     <div style="float: left; font-size: 10px; width: 70px;">买家信息：</div>
                                     <div style="float: left; font-size: 10px">{{order.nickName}}</div>
                                 </li>
+                                <li v-if="order.confirmOprPhone!=null"
+                                    style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                    <div style="float: left; font-size: 10px; width: 70px;">接单人手机号：</div>
+                                    <div style="float: left; font-size: 10px">{{order.confirmOprPhone}}</div>
+                                </li>
+                                <li v-if="order.deliveryOprPhone!=null"
+                                    style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
+                                    <div style="float: left; font-size: 10px; width: 70px;">发货人手机号：</div>
+                                    <div style="float: left; font-size: 10px">{{order.deliveryOprPhone}}</div>
+                                </li>
                                 <li v-if="order.buyerMessage!=null"
                                     style="margin-top: 5px; margin-left: 10px; margin-right: 8px; display: flex;">
                                     <div style="float: left; font-size: 10px; width: 70px;">买家留言：</div>
@@ -153,7 +163,7 @@
                     </div>
                 </el-col>
                 <el-col :md="11" :sm="8" :xl="8">
-                    <div style="border: 1px solid #DDDDDD; height: 160px;">
+                    <div style="border: 1px solid #DDDDDD; height: 180px;">
                         <div style="display: flex; margin-top: 20px; margin-left: 20px;">
                             <i v-if="order.status===2" class="el-icon-error" style="font-size: 30px; color: red;"></i>
                             <i v-else-if="order.status===9" class="el-icon-warning"
@@ -452,7 +462,7 @@
 
             checkAmt(rule, amt, callback){
                 //准备优惠金额+已优惠金额<订单总额
-                if (parseFloat(amt)+parseFloat(this.selectRow.uptAmt)-parseFloat(this.selectRow.orderAmt)>0.005){
+                if (parseFloat(amt)+parseFloat(this.selectRow.uptAmt)-parseFloat(this.selectRow.orderAmt)>-0.005){
                     callback(new Error('已优惠'+parseFloat(this.selectRow.uptAmt)+'元，总优惠金额不许超过订单总额'+parseFloat(this.selectRow.orderAmt)+'!'));
                     return;
                 }
