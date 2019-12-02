@@ -85,7 +85,7 @@
                             <img style="height: 80px; width: 80px;background-color: white;"  :preview="scope.$index" :src="uploadUrl + scope.row.goodsId + '/'+scope.row.picture" >
                         </template>
                     </el-table-column>
-                    <el-table-column label="商品价格" width="140">
+                    <el-table-column label="商品价格" width="160">
                         <template slot-scope="props">
                             <p v-if="Math.abs(props.row.price- props.row.nowPrice)<0.005">￥{{formatPrice(props.row.price)}}元</p>
                             <p v-if="!(Math.abs(props.row.price- props.row.nowPrice)<0.005)">原价：￥{{formatPrice(props.row.price)}}元</p>
