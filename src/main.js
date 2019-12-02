@@ -22,6 +22,14 @@ Vue.use(ElementUI, {
     size: 'small'
 });
 Vue.prototype.$axios = axios;
+let Config = {
+    TIMEOUT: 6000,
+    baseURL: {
+        dev: window.BASEURL_01,
+        prod: ''
+    }
+};
+axios.defaults.timeout = Config.TIMEOUT;
 
 //图片预览
 import preview from 'vue-photo-preview'
