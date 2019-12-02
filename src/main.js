@@ -24,6 +24,7 @@ Vue.use(ElementUI, {
 Vue.prototype.$axios = axios;
 let Config = {
     TIMEOUT: 6000,
+    // TIMEOUT: 10,
     baseURL: {
         dev: window.BASEURL_01,
         prod: ''
