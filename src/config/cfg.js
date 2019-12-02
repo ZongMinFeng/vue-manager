@@ -6,11 +6,11 @@ module.exports={
     //	交易码，返回码定义
     service: {
         //图片地址
-        // uploadUrl:'http://111.231.202.32:10080',//测试
-        uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
-        // uploadUrl:Vue.prototype.baseConfig.PictureBaseUrl,
+        uploadUrl:'http://139.196.162.158:10081',//测试
+        // uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
 
-        project: "/mall/",
+        // project: "/mall/",//生产环境
+        project: "/mallTest/",//测试环境
 
         genLoginId: {
             url: "MallPcMng",
@@ -258,7 +258,8 @@ module.exports={
 
     //公共处理模块
     serviceApi:{
-        project: "/api/",
+        // project: "/api/",//生产环境
+        project: "/apiTest/",//测试环境
 
         qryOrderById:{
             url: "UserWeChat",
