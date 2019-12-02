@@ -4,6 +4,9 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
+        <!--生产-->
+        <!--<div class="logo">商城通管理</div>-->
+        <!--测试-->
         <div class="logo">用户测试</div>
         <div class="header-right">
             <div class="header-user-con">
