@@ -310,7 +310,6 @@ const getSysMallConfig = (me) => {
         urlParams.send = send;
         common.sendServer(urlParams, me).then(
             (res) => {
-                console.log('res', res);
                 // 成功
                 if (res.status !== 200 && res.status !== 400) {
                     reject(res); // 失败回调
@@ -350,7 +349,6 @@ const getMallContent = (me) => {
 
 const saveMallContent = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("saveMallContent", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.saveMallContent.url + '/' + cfg.service.saveMallContent.action;
@@ -364,10 +362,8 @@ const saveMallContent = (me, params) => {
             userId: send.userId,
             argName: send.argName,
         };
-        console.log('params.signFlag', params.signFlag);
         //根据signFlag决定argValue是否要签名
         if (params.signFlag != null && params.signFlag === 'Y') {
-            console.log('params.signFlag', params.signFlag);
             signArray.argValue = params.argValue;
         }
 
@@ -473,7 +469,6 @@ const uptMallContent = (me, params) => {
 
 const putOnOffBatch = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         urlParams.url = cfg.service.project + cfg.service.putOnOffGoods.url + '/' + cfg.service.putOnOffGoods.action;
         urlParams.txnId = cfg.service.putOnOffGoods.txnId;
@@ -500,7 +495,6 @@ const putOnOffBatch = (me, params) => {
 
 const delGoodsInfoById = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.delGoodsInfoById.url + '/' + cfg.service.delGoodsInfoById.action;
@@ -534,7 +528,6 @@ const delGoodsInfoById = (me, params) => {
 //公共交易处理模块
 const qryOrders = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.serviceApi.project + cfg.serviceApi.qryOrders.url + '/' + cfg.serviceApi.qryOrders.action;
@@ -574,7 +567,6 @@ const qryOrders = (me, params) => {
 //1.5.12	根据订单id查询订单– 查询 – 不验签
 const qryOrderById = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.serviceApi.project + cfg.serviceApi.qryOrderById.url + '/' + cfg.serviceApi.qryOrderById.action;
@@ -607,7 +599,6 @@ const qryOrderById = (me, params) => {
  */
 const saveShop = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -706,7 +697,6 @@ const getMallShop = (me, params) => {
  */
 const uptShop = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -802,7 +792,6 @@ const delShopById = (me, params) => {
  */
 const saveOper = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -847,7 +836,6 @@ const saveOper = (me, params) => {
  */
 const getOper = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("getOper params", params);//debug
         let urlParams = {};
         let send = {};
         urlParams.url = cfg.service.project + cfg.service.getOper.url + '/' + cfg.service.getOper.action;
@@ -879,7 +867,6 @@ const getOper = (me, params) => {
  */
 const delOperById = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("delOperById params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -917,7 +904,6 @@ const delOperById = (me, params) => {
  */
 const confirmOrder = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("confirmOrder params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -959,7 +945,6 @@ const confirmOrder = (me, params) => {
  */
 const uptOrderPayAmt = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("confirmOrder params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -995,7 +980,6 @@ const uptOrderPayAmt = (me, params) => {
 
 const qryMallDailyOrderRpt = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("confirmOrder params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};
@@ -1028,7 +1012,6 @@ const qryMallDailyOrderRpt = (me, params) => {
  */
 const sendOrder = (me, params) => {
     return new Promise((resolve, reject) => {
-        console.log("delOperById params", params);//debug
         let urlParams = {};
         let send = {};
         let signArray = {};

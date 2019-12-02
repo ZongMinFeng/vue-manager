@@ -33,11 +33,13 @@
                 <el-col :sm="24" :md="12" :xl="8">
                     <el-form-item label="单位" prop="unit">
                         <el-select
+                                v-if="oper==2"
                                 style="width:100%" v-model="AddForm.unit" placeholder="请选择"
                                 @change="onUnitChangeTap"
                                 filterable
                                 allow-create
-                                default-first-option>
+                                default-first-option
+                                :disabled="true">
                             <el-option
                                     v-for="item in unitArray"
                                     :key="item"
@@ -45,6 +47,24 @@
                                     :value="item">
                             </el-option>
                         </el-select>
+
+
+                        <el-select
+                                v-else
+                                style="width:100%" v-model="AddForm.unit" placeholder="请选择"
+                                @change="onUnitChangeTap"
+                                filterable
+                                allow-create
+                                default-first-option
+                                >
+                            <el-option
+                                    v-for="item in unitArray"
+                                    :key="item"
+                                    :label="item"
+                                    :value="item">
+                            </el-option>
+                        </el-select>
+
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
@@ -995,6 +1015,8 @@
                 //因为后台重量类型使用“克”保存库存，所有单位是“斤”的库存要进行换算
                 if (this.AddForm.unit === '斤') {
                     send.stockNum=this.AddForm.stockNum*500;
+                }else if(this.AddForm.unit === '公斤') {
+                    send.stockNum = this.AddForm.stockNum*1000;
                 }else{
                     send.stockNum = this.AddForm.stockNum;
                 }

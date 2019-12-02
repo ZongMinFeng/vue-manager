@@ -24,6 +24,14 @@
                 <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_goods_defminamt')"
                            @click="selectItem('mall_goods_defminamt')">默认起售金额
                 </el-button>
+
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_flag')"
+                           @click="selectItem('mall_open_flag')">商城营业标识
+                </el-button>
+
+                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_time')"
+                           @click="selectItem('mall_open_time')">商城营业时间
+                </el-button>
             </div>
         </div>
         <el-table :data="tableData" border stripe>
@@ -61,17 +69,23 @@
             </el-table-column>
         </el-table>
 
+
+        <!--弹出框-->
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="50%">
             <el-form label-width="80px" :model="itemForm" :rules="rules" ref="itemModiForm">
+                <!--新增-->
                 <el-form-item v-if="flag===1" label="名称" prop="argName">
                     <el-select v-model="itemForm.argName" style="width: 100%;" @change="itemType">
                         <el-option v-for="item in options" :key="item.argName" :label="item.chnExplain"
                                    :value="item.argName"></el-option>
                     </el-select>
                 </el-form-item>
+
+                <!--修改-->
                 <el-form-item v-if="flag===2" label="名称">
                     <el-input v-model="itemForm.chnExplain" :disabled="true"></el-input>
                 </el-form-item>
+
                 <!--多条目处理-->
                 <el-form-item v-if="isManyItems(itemForm.argName)" label="值">
                     <el-row>
@@ -85,6 +99,7 @@
                         </el-col>
                     </el-row>
                 </el-form-item>
+
                 <el-form-item v-if="isManyItems(itemForm.argName)" style="padding-right:10px">
                     <div>
                         <el-tag v-if="tags" style="margin: 10px;" v-for="tag in tags"
@@ -94,8 +109,12 @@
                         </el-tag>
                     </div>
                 </el-form-item>
+
+                <!--当不是营业标识或营业时间的时候显示-->
                 <!--单条目处理-->
-                <el-form-item v-if="!isManyItems(itemForm.argName)" label="值" prop="argValue">
+                <el-form-item
+                        v-if="!isManyItems(itemForm.argName)&&itemForm.argName!=null&&!itemForm.argName.startsWith('mall_open_flag')&&!itemForm.argName.startsWith('mall_open_time')"
+                        label="值" prop="argValue">
                     <el-row>
                         <el-col :span="20">
                             <el-input v-model="itemForm.argValue" maxlength="20"></el-input>
@@ -105,6 +124,34 @@
                         </el-col>
                     </el-row>
                 </el-form-item>
+
+                <!--营业标识-->
+                <el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_open_flag')"
+                              label="是否营业" style="padding-right:10px">
+                    <el-select v-model="itemForm.argValue" style="width: 100%;">
+                        <el-option v-for="item in openFlagOptions" :key="item.label" :label="item.label"
+                                   :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
+
+
+                <!--营业时间-->
+                <el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_open_time')"
+                              label="营业时间" style="padding-right:10px">
+                    <template>
+                        <el-time-picker
+                                is-range
+                                v-model="value1"
+                                range-separator="至"
+                                start-placeholder="开始时间"
+                                end-placeholder="结束时间"
+                                placeholder="选择时间范围"
+                                :editable = 'false'>
+                        </el-time-picker>
+                    </template>
+                </el-form-item>
+
+                <!--订单关闭时间-->
                 <el-form-item v-if="itemForm.argName!=null&&itemForm.argName.startsWith('mall_order_closetime')"
                               label="快速选择" style="padding-right:10px">
                     <template sslot-scope="props">
@@ -139,7 +186,6 @@
         name: "mallSysArg",
         data() {
             var checkValue = (rule, value, callback) => {
-                console.log("value", value);//debug
                 //订单关闭时间
                 if (this.itemForm.argName.startsWith('mall_order_closetime')) {
                     if (value == null || value === '') {
@@ -165,14 +211,6 @@
                     }
                 }
 
-                //每单最小金额
-                if (this.itemForm.argName.startsWith('mall_order_minamt')) {
-                    if (!GwRegular.numeric2.test(value)) {
-                        callback(new Error('请输入金额，可以两位小数'));
-                        return false;
-                    }
-                }
-
                 //商品未设起购价时，默认的起购价格
                 if (this.itemForm.argName.startsWith('mall_goods_defminamt')) {
                     if (!GwRegular.numeric2.test(value)) {
@@ -181,14 +219,22 @@
                     }
                 }
 
+                if (this.itemForm.argName.startsWith('mall_goods_defminamt')) {
+                    if (!GwRegular.numeric2.test(value)) {
+                        callback(new Error('请输入金额，可以两位小数'));
+                        return false;
+                    }
+                }
+
                 //总体校验
-                if (value == null||value==='') {
+                if (value == null || value === '') {
                     callback(new Error('请输入值'));
                     return false;
                 }
                 callback();
             };
             return {
+                value1: [new Date(), new Date()],
                 allItems: [],
                 items: [],
                 addItemVisible: false,
@@ -203,6 +249,16 @@
                     signFlag: null,
                 },
                 options: [],
+                openFlagOptions: [{
+                    value: 'Y',
+                    label: '营业'
+                },
+                    {
+                        value: 'N',
+                        label: '不营业'
+                    }],
+                openFlagValue: '',    //是否营业
+
                 rules: {
                     argValue: [
                         {validator: checkValue, trigger: 'blur'},
@@ -232,6 +288,7 @@
                 flag: 1,//1新增  2修改
             }
         },
+
 
         computed: {
             dialogTitle() {
@@ -308,46 +365,58 @@
             },
 
             //根据argName获取单位显示，前置显示
-            getUnitFront(row){
-                let unit='';
+            getUnitFront(row) {
+                let unit = '';
                 switch (row.argName) {
                     case 'mall_order_minamt':
                     case 'mall_goods_defminamt':
-                        unit='￥';
+                        unit = '￥';
                         break;
                 }
                 return unit;
             },
 
             //值特殊化显示
-            argValueDisplay(row){
-                let valueDisplay='';
+            argValueDisplay(row) {
+                let valueDisplay = '';
                 switch (row.argName) {
                     case 'config_service_phone':
                         if (row.argValue.length === 11) {
-                            valueDisplay=row.argValue.substring(0, 3)+'-'+row.argValue.substring(3, 7)+'-'+row.argValue.substring(7, 11);
+                            valueDisplay = row.argValue.substring(0, 3) + '-' + row.argValue.substring(3, 7) + '-' + row.argValue.substring(7, 11);
                         }
                         break;
                     case 'mall_goods_defminamt':
                     case 'mall_order_minamt':
-                        valueDisplay=amtFormat(row.argValue, 2);
+                        valueDisplay = amtFormat(row.argValue, 2);
+                        break;
+                    case 'mall_open_flag':
+                        if (row.argValue === 'N') {
+                            valueDisplay = "不营业"
+                        } else {
+                            valueDisplay = "营业"
+                        }
+                        break;
+                    case 'mall_open_time':
+                        //由JSON字符串转换为JSON对象
+                        let obj = JSON.parse(row.argValue);
+                        valueDisplay =obj.start +'--'+obj.end;
                         break;
                     default:
-                       valueDisplay=row.argValue;
+                        valueDisplay = row.argValue;
                 }
                 return valueDisplay;
             },
 
             //根据argName获取单位显示，后置显示
-            getUnitAfter(row){
-                let unit='';
+            getUnitAfter(row) {
+                let unit = '';
                 switch (row.argName) {
                     case 'mall_order_closetime':
-                        unit='分钟';
+                        unit = '分钟';
                         break;
                     case 'mall_order_minamt':
                     case 'mall_goods_defminamt':
-                        unit='元';
+                        unit = '元';
                         break;
                 }
                 return unit;
@@ -379,6 +448,7 @@
                         tags.push(memos[val]);
                     }
                 }
+
                 return tags;
             },
 
@@ -394,7 +464,6 @@
                         break;
                 }
                 if (this.tag.trim()) {
-                    console.log('this.tags.length', this.tags.length);
                     if (this.tags.indexOf(this.tag) === -1) {
                         if (this.tags.length >= length) {
                             this.$message.error('标签超出个数限制');
@@ -404,7 +473,7 @@
                     }
                 }
                 //重置输入框
-                this.tag='';
+                this.tag = '';
             },
 
             handleModiClose(tag) {
@@ -415,10 +484,10 @@
                 })
             },
 
+
             selectItem(argName) {
-                console.log('argName', argName);//debug
                 this.argNameSelected = argName;
-                let tableDataNew=[];
+                let tableDataNew = [];
                 if (argName != null) {
                     this.items.forEach((item) => {
                         if (item.argName === this.argNameSelected) {
@@ -430,14 +499,14 @@
                         tableDataNew.push(item);
                     });
                 }
-                this.tableData=tableDataNew;
+                this.tableData = tableDataNew;
             },
 
             showAddItem() {
                 //初始化
-                this.itemForm.argName=null;
-                this.itemForm.argValue=null;
-                this.tags=[];
+                this.itemForm.argName = null;
+                this.itemForm.argValue = null;
+                this.tags = [];
                 //清空校验信息
                 if (this.$refs['itemForm'] != null) {
                     this.$refs['itemForm'].clearValidate('argValue');
@@ -458,7 +527,7 @@
             },
 
             showModiItem(item) {
-                this.flag=2;
+                this.flag = 2;
                 if (item.argName.startsWith('mall_spec_name')) {
                     this.tags = item.argValue.split("||");
                 }
@@ -512,7 +581,27 @@
             //     });
             // },
 
-            submitForm(formName) {
+            checkTime(i){
+               if(i<10){
+                   i = '0' +i
+               }
+               return i;
+            },
+
+            dateChangeTime(value){
+                let valueArray = [];
+                value.forEach(item => {
+                let d = new Date(item);
+                let date = this.checkTime(d.getHours()) + ':' +  this.checkTime(d.getMinutes()) + ':' +  this.checkTime(d.getSeconds());
+                    valueArray.push(date)
+                })
+                return valueArray;
+            },
+
+
+
+
+    submitForm(formName) {
                 if (this.itemForm.argName == null) {
                     this.$message.error('请选择名称');
                     return;
@@ -539,7 +628,28 @@
                         return;
                     }
                     this.itemForm.argValue = this.tags.join('||');
+                }else if (this.itemForm.argName.startsWith('mall_open_flag')) {
+                    //多条目处理
+                    if (this.itemForm.argValue =='') {
+                        this.$message.error('请添加营业标识！');
+                        return;
+                    }
+                }else if (this.itemForm.argName.startsWith('mall_open_time')) {
+                    //多条目处理
+                    console.log('this.value1',this.value1)
+                    if (this.value1 ==''||this.value1==null) {
+                        this.$message.error('请添加营业时间！');
+                        return;
+                    }
+                    // {"start":"09:30:00", "end":"20:00:00"}
+
+                  let valueList =  this.dateChangeTime(this.value1);
+                    console.log('timeList',timeList)
+
+                    let timeList = "{"+ "\"start" + "\":"+ "\""+ valueList[0]+ "\"" + ','+  "\"end" + "\":"+ "\""+ valueList[1]+ "\"" + "}";
+                    this.itemForm.argValue = timeList;
                 }
+
 
                 this.$refs[formName].validate((valid) => {
                     if (valid) {

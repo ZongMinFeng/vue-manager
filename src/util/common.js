@@ -68,15 +68,15 @@ const sendServer = (urlParams, me, flag) => {
             if (jsonstr) {
                 headerStr += jsonstr
             }
-            console.log("签名原内容:", headerStr);//debug
+            // console.log("签名原内容:", headerStr);//debug
             let signBase64 = base64.base64encode(headerStr);
             let signString1 = signBase64 + '&key=' + macKey;
-            console.log("签名内容：", signString1);//debug
+            // console.log("签名内容：", signString1);//debug
             header.signValue = jsonSha256.json2sha(signString1);
 
         }
 
-        console.log("url:", urlParams.url);//debug
+        // console.log("url:", urlParams.url);//debug
         axios.post(urlParams.url, params, {headers:header}).then((res) => {
             if (res.status === 200) {
                 // if (params.TxnId !== cfg.service.getLoginId.txnId) {
