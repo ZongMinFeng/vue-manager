@@ -97,7 +97,6 @@
             pageBus.$on(
                 "Response",
                 data=>{
-                    console.log("选择数据", data);//debug
                     this.PictureSelectVisible=true;
                     this.goodInfo=data;
                     let length=data.imgs.length;
@@ -130,9 +129,6 @@
             pageBus.$on(
                 "PictureSelect",
                 data=>{
-                    console.log("选中图片", data);//debug
-                    console.log("indexPicture", this.indexPicture);//debug
-                    console.log("goodInfo", this.goodInfo);//debug
                     let that=this;
                     if(this.addFlag===1){
                         //增加首页轮播图内容
@@ -202,7 +198,6 @@
                             this.allItems.push(item);
                         }
                     });
-                    console.log("allItems", this.allItems);//debug
 
                     //获取已配置信息
                     getMallContent(this).then((res)=>{
@@ -219,7 +214,6 @@
                                 }
                             }
                         });
-                        console.log("new allItems", this.allItems);//debug
                         //获取所有首页图商品名字
                         this.getGoodNames();
                     }, (res)=>{
@@ -231,7 +225,6 @@
             },
 
             removeHandle(event){
-                console.log(event);
                 this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
             },
 
@@ -255,13 +248,10 @@
 
             //删除
             click_delete(item){
-                console.log("item", item);//debug
                 delMallIndexById(this, item.id).then(
                     (res)=>{
-                        console.log("删除", res);//debug
                     },
                     (res)=>{
-                        console.log("删除失败!", res);//debug
                     }
                 );
             },
@@ -288,9 +278,7 @@
             },
 
             getGoodNames(){
-                console.log("hello, getGoodNames");//debug
                 this.allItems.forEach((value, index)=>{
-                    console.log("value", value);//debug
                     if(value.argValue!=null&&value.argValue!==''){
                         //获取商品名称
                         let params={};
@@ -323,7 +311,6 @@
             },
 
             handelPicturePost(param) {
-                console.log("param", param);//debug
                 let index = 'I';
                 let urlParams = {};
                 urlParams.url = cfg.service.project + cfg.service.sendGoodsFile.url + '/' + cfg.service.sendGoodsFile.action;
@@ -361,7 +348,6 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("首页图上传成功:", res);
                         // that.$message.success("上传成功");//debug
                         this.allItems[this.selectIndex].pictureUrl=res.data.filenames;
                         this.indexPicture=this.allItems[this.selectIndex];
@@ -385,7 +371,6 @@
                 params.argValue=this.indexPicture.argValue;
                 params.pictureUrl=this.indexPicture.pictureUrl;
                 params.id=this.indexPicture.id;
-                console.log("更新indexPicture", this.indexPicture);//debug
                 uptMallContent(this, params).then(res=>{
                     this.$message.success("修改首页图成功");
                     //关闭对话框

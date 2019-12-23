@@ -213,7 +213,6 @@
                 let params = {};
                 getMallShop(this, params).then(
                     (res) => {
-                        console.log("shopList res", res);//debug
                         this.tableData = res.data;
                     },
                     (res) => {
@@ -299,13 +298,11 @@
                     }
                     saveShop(this, params).then(
                         (res)=>{
-                            console.log("新增店铺返回", res);//debug
                             this.$message.success("新增店铺成功!");
                             this.initData();
                             this.dialogVisible=false;
                         },
                         (res)=>{
-                            console.log("新增店铺返回", res);//debug
                             if (res.msg!=null){
                                 this.$message.error(res.msg);
                             }
@@ -339,13 +336,11 @@
                     }
                     uptShop(this, params).then(
                         (res)=>{
-                            console.log("修改店铺返回", res);//debug
                             this.$message.success("修改店铺成功!");
                             this.initData();
                             this.dialogVisible=false;
                         },
                         (res)=>{
-                            console.log("修改店铺返回", res);//debug
                             if (res.msg!=null){
                                 this.$message.error(res.msg);
                             }
@@ -356,7 +351,6 @@
             },
 
             modiTap(row){
-                console.log("row", row);//debug
                 this.flag=2;
                 this.dialogForm.area=row.area;
                 this.dialogForm.city=row.city;

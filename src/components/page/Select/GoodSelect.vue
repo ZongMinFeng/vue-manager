@@ -71,7 +71,6 @@
         },
 
         created(){
-            console.log("props", this.request);//debug
             this.goodsQry();
             pageBus.$on("GoodSelectOnRefresh",(res)=>{
                 // console.log("hello, GoodSelectOnRefresh");//debug
@@ -100,7 +99,6 @@
              * @param row
              */
             chooseDoubleClick(row){
-                console.log("row", row);//debug
                 pageBus.$emit("Response", row);
             },
 
@@ -137,7 +135,6 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res);
                         that.gridData = res.data.rows;
                         that.AllCount = parseInt(res.data.records);
                         //发送准备好通知

@@ -80,7 +80,6 @@
         },
 
         created(){
-            console.log("query", this.$route.query);//debug
             this.activeName='first';
             pageBus.$on('disable',(data)=>{
                 this.disable2=data;
@@ -96,11 +95,9 @@
                 this.changes.mem2.change=data;
             });
             pageBus.$on('changeTab1Resp', (data)=>{
-                console.log("changeTab1Resp hello", data);//debug
                 this.changeTabs.needCheck=false;
                 if(data===true){
                     //基础信息有修改
-                    console.log("基础信息有修改");//debug
                     this.$confirm('您还未保存基础信息页面内容，确定需要退出吗?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -118,11 +115,9 @@
                 }
             });
             pageBus.$on('changeTab2Resp', (data)=>{
-                console.log("changeTab1Resp hello", data);//debug
                 this.changeTabs.needCheck=false;
                 if(data===true){
                     //基础信息有修改
-                    console.log("基础信息有修改");//debug
                     this.$confirm('您还未保存详情页面内容，确定需要退出吗?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -140,11 +135,9 @@
                 }
             });
             pageBus.$on('changeTab3Resp', (data)=>{
-                console.log("changeTab3Resp hello", data);//debug
                 this.changeTabs.needCheck=false;
                 if(data===true){
                     //基础信息有修改
-                    console.log("规格有修改");//debug
                     this.$confirm('您还未保存规格页面内容，确定需要退出吗?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -164,7 +157,6 @@
         },
 
         mounted(){
-            console.log("hello, goodsInfos mounted");
             //必须放在这里进行数据初始化，goodsBase、goodsDesc、goodsSpec、GoodsSerials需要时间进行pageBus的监听
             if(this.firstInit){
                 this.init();
@@ -173,7 +165,6 @@
         },
 
         destroyed(){
-            console.log("goodsInfos destroyed!");//debug
         },
 
         beforeRouteLeave: function(to, from , next){
@@ -186,7 +177,7 @@
 
         methods:{
             init(){
-                console.log("query", this.$route.query);//debug
+
                 let goodId=this.$route.query.goodId;
                 if(goodId==null){
                     let oper=this.$route.query.oper;
@@ -221,11 +212,9 @@
                 if(c1 && c2 && c3 && c4){
                     if(this.timer!=null){
                         clearInterval(this.timer);
-                        console.log("停止计时器");//debug
                     }
                     if(this.changes.mem1.change===true){
                         //基础信息有修改
-                        console.log("基础信息有修改");//debug
                         haveChange=true;
                         this.$confirm('您还未保存基础信息页面内容，确定需要退出吗?', '提示', {
                             confirmButtonText: '确定',
@@ -238,7 +227,6 @@
                     }
                     if(this.changes.mem2.change===true){
                         //详情有修改
-                        console.log("详情有修改");//debug
                         haveChange=true;
                         this.$confirm('您还未保存详情页面内容，确定需要退出吗?', '提示', {
                             confirmButtonText: '确定',
@@ -259,7 +247,6 @@
                 if(this.checkNum>5){
                     if(this.timer!=null){
                         clearInterval(this.timer);
-                        console.log("超时，停止计时器");//debug
                     }
                     if(this.changes.nextReady!=null){
                         this.changes.nextReady();
@@ -270,10 +257,8 @@
 
             //切换tab项前检查
             beforeLeave(event){
-                console.log("hello, beforeLeave!", event);//debug
-                console.log("now", this.activeName);//debug
+
                 let canReturn=true;
-                console.log("this.changeTabs.needCheck", this.changeTabs.needCheck);//debug
                 if(this.changeTabs.needCheck===true){
                     this.changeTabs.nextReady=event;
                     switch(this.activeName){
@@ -296,7 +281,6 @@
                 }else{
                     this.changeTabs.needCheck=true;
                 }
-                console.log("canReturn", canReturn);//debug
                 return canReturn;
             }
         }

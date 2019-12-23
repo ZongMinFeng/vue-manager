@@ -54,7 +54,6 @@
         methods: {
             login() { // 登录
                 let mallPcUuid = localStorage.getItem('mallPcUuid') || '';
-                console.log("login mallPcUuid", mallPcUuid);//debug
                 let macKey = localStorage.getItem('macKey') || '';
                 let mallId = localStorage.getItem('mallId') || '';
                 let userId = localStorage.getItem('userId') || '';
@@ -105,7 +104,6 @@
                 return new Promise((resolve, reject) => {
                     //登录次数+1
                     that.loginTimes++;
-                    console.log("getLoginStatus mallPcUuid", that.mallPcUuid );//debug
                     if (that.LoginStatus > '2' || !that.mallPcUuid ) { // 无需登录查询
                         reject(true);
                         return true;
@@ -139,7 +137,6 @@
                             }
                             // that.LoginStatus = res.LoginStatus || '0';
                             if (that.LoginStatus === '3') {
-                                console.log('data', res.data);//debug
                                 that.$store.commit('loginIn');
                                 localStorage.setItem('macKey', res.data.macKey);
                                 localStorage.setItem('mallId', res.data.mallId);
@@ -159,7 +156,6 @@
                             return true;
                         }, (res) => {
                             // 失败
-                            console.log('失败', res);
                             this.$message.error('请求失败');
                             reject(false);
                         }
@@ -177,7 +173,6 @@
                 sendServer(urlParams, this).then(
                     (res) => {
                         // 成功
-                        console.log('成功', res);
                         if (res.status !== 200) {
                             this.$message.error(res.msg);
                             return false;
@@ -195,7 +190,6 @@
                         // this.$router.push('/');
                     }, (res) => {
                         // 失败
-                        console.log('失败', res);
                         this.$message.error('请求失败');
                     }
                 );
@@ -214,7 +208,7 @@
             this.interval = setInterval(function () {
                 if (that.LoginStatus === '3' || that.loginTimes > 60) {
                     //二维码超时
-                    console.log("hello, LoginStatus", this.LoginStatus);//debug
+                    // console.log("hello, LoginStatus", this.LoginStatus);//debug
                     that.LoginStatus='6';
                     clearInterval(that.interval);
                 } else if (that.LoginStatus !== '0') {

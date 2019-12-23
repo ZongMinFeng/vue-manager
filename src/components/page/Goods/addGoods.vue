@@ -670,7 +670,6 @@
                         if (!imgs[imgs.length - 1]) {
                             imgs.splice(imgs.length - 1, 1);
                         }
-                        console.log("imgs:",imgs)
                         query.goodsInfo.imgs = imgs;
                     }
 
@@ -680,27 +679,20 @@
                 let mallId = localStorage.getItem('mallId') || '';
 
                 this.uploadUrl = 'http://111.231.202.32:10080/' + mallId + '/' + this.AddForm.goodsId + '/';
-                console.log("uploadUrl:", this.uploadUrl);
             },
             removeHandle(event) {
-                console.log(event);
                 this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
             },
             handleRemove(file, fileList) {
-                console.log(file, fileList);
             },
             handlePictureCardPreview(file) {
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
             handelPictureProgress(event, file, fileList) {
-                console.log("event:", event);
-                console.log("file:", file);
-                console.log("fileList:", fileList);
+
             },
             handelPicturePost(param) {
-                console.log("param:", param);
-
                 let urlParams = {};
                 let index = 'M';
                 // let send = {};
@@ -743,18 +735,14 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res)
                         that.$message.success("上传成功");
                         let filenames = res.data.filenames;
-                        console.log("filenames:",filenames)
                         if (filenames) {
                             let fileArray = res.data.filenames.split(',');
                             if (!fileArray[fileArray.length - 1]) {
                                 fileArray.splice(fileArray.length - 1, 1);
                             }
-                            console.log("fileArray:",fileArray)
                             that.AddForm.imgs = that.AddForm.imgs.concat(fileArray);
-                            console.log("that.AddForm.imgs :",that.AddForm.imgs )
                         }
 
                         // }
@@ -767,7 +755,6 @@
                 );
             },
             beforeAvatarUpload(file) {
-                console.log("file:", file)
                 const isJPG = file.type === 'image/jpeg' || file.type === "video/mp4";
                 const isLt2M = file.size / 1024 / 1024 < 4;
 

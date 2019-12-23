@@ -49,7 +49,6 @@
                 this.oldAllItems=[];
                 //获取配置信息
                 getSysMallConfig(this).then((res)=>{
-                    console.log("getSysMallConfig", res.data);//debug
                     res.data.forEach((value)=>{
                         let item={};
                         item.id='';
@@ -79,7 +78,6 @@
                             this.oldAllItems.push(item2);
                         }
                     });
-                    console.log("allItems", this.allItems);//debug
 
                     //获取已配置信息
                     getMallContent(this).then((res)=>{
@@ -103,8 +101,6 @@
                                 }
                             }
                         });
-                        console.log("new allItems", this.allItems);//debug
-                        console.log("oldAllItems", this.oldAllItems);//debug
                     }, (res)=>{
                         this.$message.error(res.message);
                     });

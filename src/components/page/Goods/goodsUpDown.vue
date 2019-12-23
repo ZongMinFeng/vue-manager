@@ -145,7 +145,6 @@
                             return false;
                         }
                         that.goodsTypeArray = res.data;
-                        console.log("goodsTypeArray", this.goodsTypeArray);//debug
                     }, (res) => {
                         // 失败
                         that.$message.error('请求失败');
@@ -160,9 +159,7 @@
                 params.limitNum=this.limitNum;
                 qryGoodsInfo(this, params).then((res)=>{
                     this.upTable=res.data.rows;
-                    console.log("upTable", res);//debug
                 }, (res)=>{
-                    console.log("upTable error", res);//debug
                     this.$message.error(res.msg);
                 });
             },
@@ -195,9 +192,6 @@
                                 this.downTable.push(value);
                             }
                         });
-                        console.log("goodsTable", this.goodsTable);//debug
-                        console.log("upTable", this.upTable);//debug
-                        console.log("downTable", this.downTable);//debug
                     }
                 }, (res)=>{
                     this.$message.error(res.msg);
@@ -248,7 +242,6 @@
                 }else{
                     multipleSelection=this.downSelect;
                 }
-                console.log("multipleSelection", multipleSelection);//debug
                 let urlParams={
                     header:{
                         operFlag:"1"

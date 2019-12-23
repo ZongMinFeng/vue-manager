@@ -63,7 +63,6 @@
         created() {
             pageBus.$on("goodId", (goodId)=>{
                 this.goodId=goodId;
-                console.log("desc goodId", this.goodId);//debug
                 this.initData();
             });
             pageBus.$on("change", ()=>{
@@ -110,7 +109,6 @@
             },
 
             beforeAvatarUpload(file) {
-                console.log("file:", file);
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 4;
 
@@ -128,7 +126,6 @@
                     this.$message.error("请在基础设置先新增商品！");
                     return;
                 }
-                console.log("param:", param);
 
                 let urlParams = {};
                 let index = 'D';
@@ -172,16 +169,13 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res)
                         that.$message.success("上传成功");
                         let filenames = res.data.filenames;
-                        console.log("filenames:", filenames);
                         if (filenames) {
                             let fileArray = res.data.filenames.split(',');
                             if (!fileArray[fileArray.length - 1]) {
                                 fileArray.splice(fileArray.length - 1, 1);
                             }
-                            console.log("fileArray:", fileArray);
                             let goodsDesc = that.goodsDesc || [];
                             fileArray.forEach(item => {
                                 let fileInfo = {
@@ -211,7 +205,6 @@
                     inputPattern: /\S/,
                     inputErrorMessage: '不能为空'
                 }).then(({value}) => {
-                    console.log("value:", value);
                     // this.$message({
                     //     type: 'success',
                     //     message: '添加成功'
@@ -298,13 +291,11 @@
             },
 
             deletePicTap(item, index){
-                console.log("index", index);//debug
                 this.goodsDesc.splice(index, 1);
                 this.saveDisabled=false;
             },
 
             onMove(){
-                console.log("hello");//debug
                 this.saveDisabled=false;
             }
         },

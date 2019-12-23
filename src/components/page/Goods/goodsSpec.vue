@@ -55,7 +55,6 @@
 
         created(){
             pageBus.$on("goodId", (goodId)=>{
-                console.log("goodId", goodId);
                 this.goodId=goodId;
                 this.initData();
             });
@@ -80,7 +79,6 @@
             GoodsParamsForm:{
                 deep:true,
                 handler:function(val, oldVal){
-                    console.log("GoodsParamsForm", this.GoodsParamsForm);//debug
                     if(this.first!==true){
                         this.saveDisabled=false;
                     }else{
@@ -108,9 +106,7 @@
                             return false;
                         }
                         this.goodInfo=res.data;
-                        console.log("goodInfo", this.goodInfo);//debug
                         getGoodsParamsById(this, this.goodId).then((res) => {
-                            console.log("res:", res);
                             if (res.status === 400) {
                                 getCateParamByCateId(this, this.goodInfo.categoryId).then((res) => {
                                     if (res.status !== 200 && res.status !== 400) {
@@ -123,7 +119,6 @@
                                         return false;
                                     }
                                     let paramData = res.data.paramData;
-                                    console.log("paramData:", paramData);
                                     let Param = [];
                                     if (paramData) {
                                         Param = JSON.parse(paramData)
@@ -131,7 +126,7 @@
                                         that.$message.error('没有规格参数');
                                         return false;
                                     }
-                                    console.log("GoodsParamsForm:", Param);
+
                                     this.GoodsParamsForm = Param;
                                     this.paramDataId = '';
                                     // that.$store.commit('setGoodsTypeArray', res.data);
@@ -153,7 +148,6 @@
                                     that.$message.error('没有规格参数');
                                     return false;
                                 }
-                                console.log("GoodsParamsForm1:", Param);
                                 this.GoodsParamsForm = Param;
                                 this.paramDataId = res.data.id;
                             }
@@ -222,7 +216,6 @@
                     this.$message.error("请在基础设置先新增商品！");
                     return;
                 }
-                console.log("GoodsParamsForm:", this.GoodsParamsForm);
                 let urlParams = {};
                 let send = {};
                 urlParams.url = cfg.service.project + cfg.service.saveGoodsParams.url + '/' + cfg.service.saveGoodsParams.action;

@@ -476,11 +476,10 @@
             },
 
             onParamsTap(row) {
-                console.log("row:", row)
                 let that = this;
                 this.goodsId = row.goodsId;
                 getGoodsParamsById(this, row.goodsId).then((res) => {
-                    console.log("res:", res)
+                    // console.log("res:", res)
                     if (res.status === 400) {
                         getCateParamByCateId(this, row.categoryId).then((res) => {
                             if (res.status !== 200 && res.status !== 400) {
@@ -492,7 +491,6 @@
                                 return false;
                             }
                             let paramData = res.data.paramData;
-                            console.log("paramData:", paramData)
                             let Param = [];
                             if (paramData) {
                                 Param = JSON.parse(paramData)
@@ -500,7 +498,6 @@
                                 that.$message.error('没有规格参数');
                                 return false;
                             }
-                            console.log("Param:", Param)
                             this.GoodsParamsForm = Param;
                             this.GoodsParamsFlag = true;
                             this.paramDataId = '';
@@ -523,7 +520,6 @@
                             that.$message.error('没有规格参数');
                             return false;
                         }
-                        console.log("Param:", Param)
                         this.GoodsParamsForm = Param;
                         this.GoodsParamsFlag = true;
                         this.paramDataId = res.data.id;
@@ -536,7 +532,6 @@
 
             // 修改
             onEditTap(row) {
-                console.log("row:", row)
                 let that = this;
                 getMallCategory(this).then((res) => {
                     that.$store.commit('setGoodsTypeArray', res.data);
@@ -655,7 +650,6 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res);
                         that.tableDateArray = res.data.rows;
                         //后台很坑的设置了重量单位为克，下发单位“斤”，数量却是“克”
                         // this.tableDateArray.forEach(item=>{
@@ -712,7 +706,6 @@
             },
 
             saveParamTap() {
-                console.log("GoodsParamsForm:", this.GoodsParamsForm)
                 let urlParams = {};
                 let send = {};
                 urlParams.url = cfg.service.project + cfg.service.saveGoodsParams.url + '/' + cfg.service.saveGoodsParams.action;
@@ -801,13 +794,12 @@
             //expend展开事件
             expChange(row, expandedRows){
                 if(this.goodsSerialsArrays[row.goodsId]!=null){
-                    console.log("系列缓存", this.goodsSerialsArrays[row.goodsId]);
+                    // console.log("系列缓存", this.goodsSerialsArrays[row.goodsId]);
                     return;
                 }
                 //获取此行goodsId的系列信息
                 this.getGoodsSerials(row.goodsId);
-                console.log("row.goodsId", row.goodsId);
-                console.log("系列", this.goodsSerialsArrays[row.goodsId]);
+
             },
 
             //获取商品系列信息
@@ -828,7 +820,6 @@
                         }
                         if(res.data["isSerial"]!=null&&res.data["isSerial"]==="Y"){
                             //有系列信息，返回系列详细信息
-                            console.log("goodsId", goodsId);
                             that.goodsSerialsArrays[goodsId]=res.data["goodsSerials"];
                             //更新系列data信息
                             return res.data["goodsSerials"];
@@ -873,7 +864,6 @@
                             return false;
                         }
                         that.goodsTypeArray = res.data;
-                        console.log('goodsTypeArray', this.goodsTypeArray);//debug
                     }, (res) => {
                         // 失败
                         that.$message.error('请求失败');

@@ -853,7 +853,6 @@ util.CalDES = function (pszSource, pszKey, flag) {
     } else {
       util.TripleDES(szPartSource, szPartDest, pszKey, flag);
     }
-    console.log("szPartDest: " + szPartDest);
 
     result += szPartDest.join('');
     szPartSource.fill('\0');

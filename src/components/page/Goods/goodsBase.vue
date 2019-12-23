@@ -394,8 +394,6 @@
         },
 
         created(){
-            console.log("hello, goodsBase created");//debug
-
             pageBus.$on("goodId", this.goodId);
 
             pageBus.$on("change", ()=>{
@@ -432,7 +430,6 @@
 
         methods:{
             goodId(goodId){
-                console.log("goodId", goodId);//debug
                 this.goodId=goodId;
                 this.initData();
             },
@@ -517,7 +514,6 @@
                             }
                             let mallId = localStorage.getItem('mallId') || '';
                             this.uploadUrl = cfg.service.uploadUrl+'/' + mallId + '/' + this.AddForm.goodsId + '/';
-                            console.log("AddForm", this.AddForm);//debug
 
                         },
                         (res)=>{
@@ -638,8 +634,6 @@
             },
 
             handelPicturePost(param) {
-                console.log("param:", param);
-
                 let urlParams = {};
                 let index = 'B';
                 // let send = {};
@@ -651,8 +645,8 @@
                 // }
                 urlParams.txnId = cfg.service.sendGoodsFile.txnId;
 
-                let goodsFileNames = [];
-                goodsFileNames.push(param.file.name);
+                // let goodsFileNames = [];
+                // goodsFileNames.push(param.file.name);
 
                 // FormData 对象
                 let send = new FormData();
@@ -682,16 +676,14 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res)
+                        // console.log("res:", res)
                         that.$message.success("上传成功");
                         let filenames = res.data.filenames;
-                        console.log("filenames:",filenames)
                         if (filenames) {
                             let fileArray = res.data.filenames.split(',');
                             if (!fileArray[fileArray.length - 1]) {
                                 fileArray.splice(fileArray.length - 1, 1);
                             }
-                            console.log("fileArray:",fileArray);
                             that.AddForm.imgs = that.AddForm.imgs.concat(fileArray);
                             //如果这个是第一张图，而且主图没有设置，那么自动设置为主图
                             if(this.isFirstPic(filenames)&&this.AddForm.picture===''){
@@ -729,7 +721,6 @@
             },
 
             beforeAvatarUpload(file) {
-                console.log("file:", file);
                 // const isJPG = file.type === 'image/jpeg' || file.type === "video/mp4";
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 4;
@@ -752,7 +743,6 @@
 
 
             handelPicturePostMain(param) {
-                console.log("param:", param);
 
                 let urlParams = {};
                 let index = 'M';
@@ -776,7 +766,6 @@
                     operFlag='2';
                 }
                 //如果是新增商品，那么主图永远为新增
-                console.log("oper",this.oper);//debug
                 if(this.oper===1){
                     operFlag='1';
                 }
@@ -795,6 +784,7 @@
 
                 urlParams.send = send;
                 let that = this;
+
                 sendServer(urlParams, this).then(
                     (res) => {
                         // 成功
@@ -802,14 +792,12 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res);
                         if(operFlag==='1'){
                             that.$message.success("上传成功");
                         }else{
                             that.$message.success("修改成功");
                         }
                         let filenames = res.data.filenames;
-                        console.log("filenames:",filenames);
                         this.AddForm.picture=filenames;
                         this.time=this.getTime();
                         //使保存按钮可用
@@ -823,7 +811,6 @@
             },
 
             beforeAvatarUploadMain(file) {
-                console.log("file:", file);
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 4;
 
@@ -838,7 +825,6 @@
 
             handelPicturePostVideo(param) {
                 this.videoLoading=true;
-                console.log("param:", param);
 
                 let urlParams = {};
                 let index = 'V';
@@ -887,14 +873,12 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res);
                         if(operFlag==='1'){
                             that.$message.success("上传成功");
                         }else{
                             that.$message.success("修改成功");
                         }
                         let filenames = res.data.filenames;
-                        console.log("filenames:",filenames);
                         this.AddForm.videos='';//debug
                         this.videoTime=this.getTime();
                         this.AddForm.videos=filenames;
@@ -910,7 +894,6 @@
             },
 
             beforeAvatarUploadVideo(file) {
-                console.log("file:", file);
                 const isJPG = file.type === 'video/mp4';
                 const isLt2M = file.size / 1024 / 1024 < 64;
 
@@ -934,7 +917,6 @@
                         num++;
                     }
                 });
-                console.log("num", num);
                 if(num<1){
                     return true;
                 }else{
@@ -1059,7 +1041,6 @@
                 }
 
                 urlParams.send = send;
-                console.log("send", send);//debug
                 let that = this;
                 sendServer(urlParams, this).then(
                     (res) => {
@@ -1115,7 +1096,6 @@
                         }
                         that.$message.success("修改成功");
                         that.$store.commit('suppRefreshT');
-                        console.log("hello, update");//debug
                         this.$router.go(-1);
                     }, (res) => {
                         // 失败
@@ -1155,7 +1135,6 @@
                             return false;
                         }
                         that.goodsTypeArray = res.data;
-                        console.log("goodsTypeArray", this.goodsTypeArray);//debug
                     }, (res) => {
                         // 失败
                         that.$message.error('请求失败');
@@ -1164,12 +1143,10 @@
             },
 
             change: function (evt) {
-                console.log(evt)
             },
 
 
             onMove({ relatedContext, draggedContext }) {
-                console.log("hello, move");//debug
                 this.saveDisabled=false;
             },
 

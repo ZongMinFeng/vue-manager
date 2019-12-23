@@ -98,8 +98,7 @@
         },
         filters: {
             btnType(value, index) {
-                console.log("value:", value);
-                console.log("index:", index);
+
                 if (value === 'M') {
                     return '菜单'
                 } else if (value === 'B') {
@@ -146,7 +145,6 @@
                 this.$emit('addBtn', Id)
             },
             handleOpenStatus(Id) {
-                console.log("Id:",Id)
                 this.$emit('uptStatusBtn', Id, '1')
             },
             handleCloseStatus(Id) {

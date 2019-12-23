@@ -37,7 +37,6 @@
         methods:{
             //蓝色对勾被选中
             pictureSelected(item){
-                console.log("item", item);//debug
                 pageBus.$emit("PictureSelect", item);
             }
         }

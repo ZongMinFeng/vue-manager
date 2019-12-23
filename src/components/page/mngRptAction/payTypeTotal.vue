@@ -129,7 +129,6 @@
             },
             // 排序发生改变
             onSoreChange(options) {
-                console.log("options:", options);
                 let order = options.order;
                 let prop = options.prop;
                 switch(order)

@@ -7,8 +7,7 @@ import GwRegular from '@/Gw/GwRegular.js';
 var FormCheck={};
 
 FormCheck.stock=(rule, stockNum, callback, source) => {
-    console.log('stockNum', stockNum);//debug
-    console.log('source', source);//debug
+
     if (source.AddForm.stockNum==null||source.AddForm.unit==null){
         callback(new Error('请输入值'));
     }

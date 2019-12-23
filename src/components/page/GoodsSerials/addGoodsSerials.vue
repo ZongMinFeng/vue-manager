@@ -181,7 +181,6 @@
                         }
                         that.$message.success("新增成功");
 
-                        console.log("新增 goodsId", that.goodsId);//debug
                         that.$router.push({path:'/goodsInfos', query:{goodId:that.goodsId}});
                     }, (res) => {
                         // 失败
@@ -222,7 +221,6 @@
                             return false;
                         }
                         that.$message.success("修改成功");
-                        console.log("修改 goodsId", that.goodsId);//debug
                         that.$router.push({path:'/goodsInfos', query:{goodId:that.goodsId}});
                     }, (res) => {
                         // 失败

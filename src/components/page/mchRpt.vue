@@ -122,7 +122,6 @@
         computed: {
             data() {
                 return this.tableData.filter((d) => {
-                    console.log("d:",d);
                     let is_del = false;
                     for (let i = 0; i < this.del_list.length; i++) {
                         if (d.name === this.del_list[i].name) {
@@ -208,10 +207,9 @@
                 this.delVisible = false;
             },
             iptTest(val) {
-                console.log("iptTest:", val)
             },
             test(val) {
-                console.log("test:", val)
+
             }
         }
     }
