@@ -32,7 +32,7 @@
             <el-table-column label="商品信息" width="170">
                 <template slot-scope="props">
                     <div style="overflow-x: auto;">
-                        <div v-for="(item, index) in props.row.orderDetailList"
+                        <div v-for="(item, index) in props.row.orderDetailList" :key='item.goodsId'
                              style="width: 44px; margin-right: 5px; float: left; padding: 1px;">
                             <div style="width: 100%; float: left;">
                                 <img style="height: 40px; width: 40px;background-color: white;" :preview="index"
@@ -809,6 +809,5 @@
 </script>
 
 <style scoped>
-    .table {
-    }
+
 </style>
