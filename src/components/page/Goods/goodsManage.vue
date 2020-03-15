@@ -79,7 +79,7 @@
                           @expand-change="expChange"
                           @row-dblclick="rowDblclick">
                     <el-table-column prop="name" label="名称"></el-table-column>
-                    <!--<el-table-column prop="goodsId" label="商品ID" width="170"></el-table-column>-->
+                    <el-table-column prop="goodsId" label="商品ID" width="170"></el-table-column>
                     <el-table-column label="商品主图" width="120" align="center">
                         <template slot-scope="scope">
                             <img style="height: 80px; width: 80px;background-color: white;"  :preview="scope.$index" :src="uploadUrl + scope.row.goodsId + '/'+scope.row.picture" >

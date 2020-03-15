@@ -15,7 +15,7 @@ const formatData = date => {
   const month = date.getMonth() + 1
   const day = date.getDate()
 
-  return [year, month, day].map(formatNumber).join('-') 
+  return [year, month, day].map(formatNumber).join('-')
 }
 const ssformatTime = date => {
   const year = date.getFullYear()
@@ -25,7 +25,8 @@ const ssformatTime = date => {
   const minute = date.getMinutes()
   const second = date.getSeconds()
 
-  return [year, month, day].map(formatNumber).join('/') + '-' + [hour, minute, second].map(formatNumber).join(':')
+  // return [year, month, day].map(formatNumber).join('/') + '-' + [hour, minute, second].map(formatNumber).join(':')
+  return [year, month, day].map(formatNumber).join('-') + 'T' + [hour, minute, second].map(formatNumber).join(':')
 }
 
 const formatSelectDate = date => {
@@ -36,7 +37,7 @@ const formatSelectDate = date => {
   const minute = date.getMinutes()
   const second = date.getSeconds()
 
-  return [year, month, day].map(formatNumber).join('-') 
+  return [year, month, day].map(formatNumber).join('-')
 }
 
 const formatNumber = n => {
@@ -106,7 +107,7 @@ const isMoney = s => {
   } else {
     return false;
   }
-}  
+}
 const toMoney= num => {
   num = num.toFixed(2);
   num = parseFloat(num)

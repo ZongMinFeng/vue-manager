@@ -9,16 +9,17 @@ module.exports={
         // uploadUrl:'http://139.196.162.158:10081',//测试
         uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
 
-        project: "/mall/",//生产环境
-        // project: "/mallTest/",//测试环境
+        // project: "/mall/",//生产环境
+        project: "/apiTest/",//测试环境
+        // project: "/",//胡总测试
 
         genLoginId: {
-            url: "MallPcMng",
+            url: "pcMngLogin",
             action: "genLoginId",
             txnId: "30001"
         },
         getLoginStatus: {
-            url: "MallPcMng",
+            url: "pcMngLogin",
             action: "getLoginStatus",
             txnId: "30002"
         },

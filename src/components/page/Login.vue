@@ -53,28 +53,28 @@
         },
         methods: {
             login() { // 登录
-                let mallPcUuid = localStorage.getItem('mallPcUuid') || '';
-                console.log("login mallPcUuid", mallPcUuid);//debug
+                let reqUuid = localStorage.getItem('reqUuid') || '';
+                console.log("login reqUuid", reqUuid);//debug
                 let macKey = localStorage.getItem('macKey') || '';
                 let mallId = localStorage.getItem('mallId') || '';
                 let userId = localStorage.getItem('userId') || '';
 
 
-                if (!macKey || !mallPcUuid || !mallId || !userId) {
+                if (!macKey || !reqUuid || !mallId || !userId) {
                     localStorage.removeItem('mallId');
                     localStorage.removeItem('userId');
                     localStorage.removeItem('macKey');
-                    localStorage.removeItem('mallPcUuid');
+                    localStorage.removeItem('reqUuid');
                     localStorage.removeItem('mallName');
                     localStorage.removeItem('specNames');
-                    mallPcUuid='';
+                    reqUuid='';
                 }
 
 
                 var that = this;
-                if (mallPcUuid) {
+                if (reqUuid) {
                     // this.LoginStatus = '1';
-                    this.mallPcUuid = mallPcUuid;
+                    this.reqUuid = reqUuid;
                     // 检查登录状态
                     this.getLoginStatus().then((LoginStatus) => { // 回调成功
                         if (LoginStatus === '3') {
@@ -105,8 +105,8 @@
                 return new Promise((resolve, reject) => {
                     //登录次数+1
                     that.loginTimes++;
-                    console.log("getLoginStatus mallPcUuid", that.mallPcUuid );//debug
-                    if (that.LoginStatus > '2' || !that.mallPcUuid ) { // 无需登录查询
+                    console.log("getLoginStatus reqUuid", that.reqUuid );//debug
+                    if (that.LoginStatus > '2' || !that.reqUuid ) { // 无需登录查询
                         reject(true);
                         return true;
                     }
@@ -115,26 +115,26 @@
                     let send = {};
                     urlParams.url = cfg.service.project + cfg.service.getLoginStatus.url + '/' + cfg.service.getLoginStatus.action;
                     urlParams.txnId = cfg.service.getLoginStatus.txnId;
-                    // send.mallPcUuid = that.mallPcUuid;
+                    // send.reqUuid = that.reqUuid;
                     urlParams.send = send;
                     sendServer(urlParams, that).then(
                         (res) => {
                             // 成功
                             // LoginStatus: '0'   //1.未使用 2.已被扫码 3.登陆成功 4.登陆失败 5.登陆超时
-                            if (res.status !== 200 && res.status !== 601) {
+                            if (res.returnCode !== 200 && res.returnCode !== 601) {
                                 if(this.loginTimes!==1){
                                     that.$message.error(res.msg);
                                 }
                                 reject(false);
                                 return false;
                             }
-                            if(res.status === 601) {
+                            if(res.returnCode === 601) {
                                 that.LoginStatus = '1';
                             }
-                            if( res.status === 200) {
+                            if( res.returnCode === 200) {
                                 that.LoginStatus = '3'
                             }
-                            if( res.status === 503) {
+                            if( res.returnCode === 503) {
                                 that.LoginStatus = '6'
                             }
                             // that.LoginStatus = res.LoginStatus || '0';
@@ -142,17 +142,18 @@
                                 console.log('data', res.data);//debug
                                 that.$store.commit('loginIn');
                                 localStorage.setItem('macKey', res.data.macKey);
-                                localStorage.setItem('mallId', res.data.mallId);
-                                localStorage.setItem('mallPcUuid', res.data.mallPcUuid);
-                                localStorage.setItem('userId', res.data.userId);
-                                localStorage.setItem('mallName', res.data.mallName);
-                                if (res.data.indexConent.length > 0) {
-                                    res.data.indexConent.forEach((item)=>{
-                                        if (item.argName.startsWith('mall_spec_name')) {
-                                            localStorage.setItem('specNames', item.argValue);
-                                        }
-                                    });
-                                }
+                                // localStorage.setItem('mallId', res.data.mallId);
+                                localStorage.setItem('reqUuid', res.data.reqUuid);
+                                localStorage.setItem('tellerId', res.data.tellerId);
+                                // localStorage.setItem('userId', res.data.userId);
+                                // localStorage.setItem('mallName', res.data.mallName);
+                                // if (res.data.indexConent.length > 0) {
+                                //     res.data.indexConent.forEach((item)=>{
+                                //         if (item.argName.startsWith('mall_spec_name')) {
+                                //             localStorage.setItem('specNames', item.argValue);
+                                //         }
+                                //     });
+                                // }
                                 that.$router.push('/');
                             }
                             resolve(that.LoginStatus);
@@ -178,20 +179,20 @@
                     (res) => {
                         // 成功
                         console.log('成功', res);
-                        if (res.status !== 200) {
-                            this.$message.error(res.msg);
+                        if (res.returnCode !== 200) {
+                            this.$message.error(res.returnMsg);
                             return false;
                         }
-                        if (!res.data || !res.data.mallPcUuid) {
+                        if (!res.data) {
                             this.$message.error('LoginId错误');
                             return false;
                         }
 
-                        that.mallPcUuid = res.data.mallPcUuid;
-                        localStorage.setItem('mallPcUuid', that.mallPcUuid);
+                        that.reqUuid = res.data;
+                        localStorage.setItem('reqUuid', that.reqUuid);
 
                         that.LoginStatus = '1';
-                        that.qrcode(that.mallPcUuid);
+                        that.qrcode(that.reqUuid);
                         // this.$router.push('/');
                     }, (res) => {
                         // 失败

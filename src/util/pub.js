@@ -1,4 +1,4 @@
-/*! 
+/*!
 * gaozh v1
 */
 var packValue = require("./../config/packValue");
@@ -12,7 +12,7 @@ var pubRandom = function (urlParams) {
     for (var i = 0; i < 6; i++) {
         Num += Math.floor(Math.random() * 10);
     }
-    urlParams.reqCasher = Num;
+    urlParams.reqRandom = Num;
     return true;
 };
 var fmoney = function (s, n, f) {

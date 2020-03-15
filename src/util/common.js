@@ -12,7 +12,7 @@ let axios = require('axios');
 let base64 = require('./base64');
 
 const sendServer = (urlParams, me, flag) => {
-    let mallPcUuid = localStorage.getItem('mallPcUuid') || '';
+    let reqUuid = localStorage.getItem('reqUuid') || '';
     let macKey = localStorage.getItem('macKey') || '';
     let mallId = localStorage.getItem('mallId') || '';
     let userId = localStorage.getItem('userId') || '';
@@ -34,16 +34,17 @@ const sendServer = (urlParams, me, flag) => {
         let send = urlParams.send;
         let header = urlParams.header || {};
         header.txnId = urlParams.txnId;
-        header.channelFlag = '4';
+        header.chnFlag = '1';
         header.reqTime = ssDate;
+        header.reqRandom='123456';//debug
         if(urlParams.txnId !== cfg.service.genLoginId) {
-            header.mallPcUuid = mallPcUuid
+            header.reqUuid = reqUuid
         }
 
 
         if(urlParams.txnId !== cfg.service.genLoginId.txnId && urlParams.txnId !== cfg.service.getLoginStatus.txnId) {
             pub.pubRandom(header);
-            let headerStr = '1=4&2=' + header.reqCasher + '&3=' + ssDate + '&4=' + urlParams.txnId + '&5=' + header.mallPcUuid;
+            let headerStr = '1=4&2=' + header.reqRandom + '&3=' + ssDate + '&4=' + urlParams.txnId + '&5=' + header.reqUuid;
             let signArray = urlParams.signArray || {};
             header.mallId = mallId;
             if(urlParams.txnId!==cfg.service.saveGoodsSerials.txnId && urlParams.txnId!==cfg.service.getGoodsInfoById.txnId && urlParams.txnId!==cfg.serviceApi.qryOrders.txnId){
