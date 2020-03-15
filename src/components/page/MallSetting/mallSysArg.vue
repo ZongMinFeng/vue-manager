@@ -5,33 +5,46 @@
             </el-button>
             <el-button type="primary" style="margin-bottom: 10px; margin-left: 10px" @click="selectItem(null)">所有配置
             </el-button>
-            <div class="btn-div" v-for="(item) in items">
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('config_service_phone')"
-                           @click="selectItem('config_service_phone')">客服电话
-                </el-button>
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_closetime')"
-                           @click="selectItem('mall_order_closetime')">订单关闭时间
-                </el-button>
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_memos')"
-                           @click="selectItem('mall_order_memos')">备注标签设置
-                </el-button>
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_minamt')"
-                           @click="selectItem('mall_order_minamt')">每单最小金额
-                </el-button>
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_spec_name')"
-                           @click="selectItem('mall_spec_name')">系统参数名称
-                </el-button>
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_goods_defminamt')"
-                           @click="selectItem('mall_goods_defminamt')">默认起售金额
-                </el-button>
+            <div class="btn-div">
 
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_flag')"
-                           @click="selectItem('mall_open_flag')">商城营业标识
-                </el-button>
+                    筛选：<el-select v-model="argNameVal" placeholder="请选择类型" clearable @change="selectChange">
+                        <el-option v-for="item in items" :key="item.chnExplain" :label="item.chnExplain" :value="item.argName"></el-option>
+                    </el-select>
 
-                <el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_time')"
-                           @click="selectItem('mall_open_time')">商城营业时间
-                </el-button>
+
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('config_service_phone')"-->
+                           <!--@click="selectItem('config_service_phone')">客服电话-->
+                <!--</el-button>-->
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_closetime')"-->
+                           <!--@click="selectItem('mall_order_closetime')">订单关闭时间-->
+                <!--</el-button>-->
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_memos')"-->
+                           <!--@click="selectItem('mall_order_memos')">备注标签设置-->
+                <!--</el-button>-->
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_maxamt')"-->
+                           <!--@click="selectItem('mall_order_maxamt')">每单最大金额-->
+                <!--</el-button>-->
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_order_minamt')"-->
+                           <!--@click="selectItem('mall_order_minamt')">每单最小金额-->
+                <!--</el-button>-->
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_spec_name')"-->
+                           <!--@click="selectItem('mall_spec_name')">系统参数名称-->
+                <!--</el-button>-->
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_goods_defminamt')"-->
+                           <!--@click="selectItem('mall_goods_defminamt')">默认起售金额-->
+                <!--</el-button>-->
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_flag')"-->
+                           <!--@click="selectItem('mall_open_flag')">商城营业标识-->
+                <!--</el-button>-->
+
+                <!--<el-button type="primary" v-if="item.argName!=null&&item.argName.startsWith('mall_open_time')"-->
+                           <!--@click="selectItem('mall_open_time')">商城营业时间-->
+                <!--</el-button>-->
             </div>
         </div>
         <el-table :data="tableData" border stripe>
@@ -219,9 +232,17 @@
                     }
                 }
 
-                if (this.itemForm.argName.startsWith('mall_goods_defminamt')) {
+                if (this.itemForm.argName.startsWith('mall_order_minamt')) {
                     if (!GwRegular.numeric2.test(value)) {
                         callback(new Error('请输入金额，可以两位小数'));
+                        return false;
+                    }
+                }
+
+
+                if (this.itemForm.argName.startsWith('mall_order_maxamt')) {
+                    if (!GwRegular.numeric4.test(value)) {
+                        callback(new Error('请输入最大金额,不能超过9999.99，可以有两位小数'));
                         return false;
                     }
                 }
@@ -238,6 +259,7 @@
                 allItems: [],
                 items: [],
                 addItemVisible: false,
+                argNameVal:'',
                 itemForm: {
                     id: null,
                     argName: null,
@@ -326,7 +348,6 @@
                         item.signFlag = value.signFlag;
                         this.allItems.push(item);
                     });
-                    console.log("allItems", this.allItems);//debug
 
                     //获取已配置信息
                     getMallContent(this).then((res) => {
@@ -342,7 +363,6 @@
                                 }
                             }
                         });
-                        console.log("new allItems", this.allItems);//debug
 
                         this.allItems.forEach((value) => {
                             //过滤首页轮播图
@@ -370,6 +390,8 @@
                 switch (row.argName) {
                     case 'mall_order_minamt':
                     case 'mall_goods_defminamt':
+                    case 'mall_order_maxamt':
+
                         unit = '￥';
                         break;
                 }
@@ -387,6 +409,8 @@
                         break;
                     case 'mall_goods_defminamt':
                     case 'mall_order_minamt':
+                    case 'mall_order_maxamt':
+
                         valueDisplay = amtFormat(row.argValue, 2);
                         break;
                     case 'mall_open_flag':
@@ -416,6 +440,8 @@
                         break;
                     case 'mall_order_minamt':
                     case 'mall_goods_defminamt':
+                    case 'mall_order_maxamt':
+
                         unit = '元';
                         break;
                 }
@@ -484,17 +510,21 @@
                 })
             },
 
+            selectChange(argName){
+                this.selectItem(argName);
+            },
 
             selectItem(argName) {
                 this.argNameSelected = argName;
                 let tableDataNew = [];
-                if (argName != null) {
+                if (argName != null&&argName) {
                     this.items.forEach((item) => {
                         if (item.argName === this.argNameSelected) {
                             tableDataNew.push(item);
                         }
                     });
                 } else {
+                    this.argNameVal = '';
                     this.items.forEach((item) => {
                         tableDataNew.push(item);
                     });
@@ -568,7 +598,6 @@
                         this.itemForm.mallId = localStorage.getItem("mallId") || '';
                     }
                 });
-                console.log("this.itemForm", this.itemForm);//debug
             },
 
             // submitForm(formName){
@@ -636,7 +665,6 @@
                     }
                 }else if (this.itemForm.argName.startsWith('mall_open_time')) {
                     //多条目处理
-                    console.log('this.value1',this.value1)
                     if (this.value1 ==''||this.value1==null) {
                         this.$message.error('请添加营业时间！');
                         return;
@@ -644,7 +672,6 @@
                     // {"start":"09:30:00", "end":"20:00:00"}
 
                   let valueList =  this.dateChangeTime(this.value1);
-                    console.log('timeList',timeList)
 
                     let timeList = "{"+ "\"start" + "\":"+ "\""+ valueList[0]+ "\"" + ','+  "\"end" + "\":"+ "\""+ valueList[1]+ "\"" + "}";
                     this.itemForm.argValue = timeList;
@@ -736,7 +763,6 @@
             },
 
             sliderChange(data) {
-                console.log("hello, data", data);//debug
                 //默认1年
                 let minutes = 525600;
                 switch (data) {

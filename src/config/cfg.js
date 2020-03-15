@@ -6,12 +6,16 @@ module.exports={
     //	交易码，返回码定义
     service: {
         //图片地址
-        // uploadUrl:'http://139.196.162.158:10081',//测试
-        uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
+        uploadUrl:'http://139.196.162.158:10081',//测试
+        // uploadUrl:'http://139.196.162.158:10080',//生产 v-uu
 
         // project: "/mall/",//生产环境
+<<<<<<< HEAD
         project: "/apiTest/",//测试环境
         // project: "/",//胡总测试
+=======
+        project: "/mallTest/",//测试环境
+>>>>>>> 13e0c90539ecc48f6b396fb728397681b76dde15
 
         genLoginId: {
             url: "pcMngLogin",
@@ -259,8 +263,8 @@ module.exports={
 
     //公共处理模块
     serviceApi:{
-        project: "/api/",//生产环境
-        // project: "/apiTest/",//测试环境
+        // project: "/api/",//生产环境
+        project: "/apiTest/",//测试环境
 
         qryOrderById:{
             url: "UserWeChat",

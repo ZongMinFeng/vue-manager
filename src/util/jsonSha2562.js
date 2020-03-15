@@ -67,15 +67,15 @@ define(function(require) {
 			break;
 		}
 		var jsonstr1 = jsonstr.substring(0, jsonstr.length - 1);
-		
-		
+
+
 		if (jsonstrR.length > 0) {
 			var jsonstrR1 = jsonstrR.substring(0, jsonstrR.length - 1);
 			jsonstr1 = jsonstr1 + "&&" + jsonstrR1;
 		}
-		console.log("jsonstr1:" + jsonstr1);
+		// console.log("jsonstr1:" + jsonstr1);
 		// 去掉尾部的&符号
-		
+
 		// SHA256计算
 		var jsonstr2 = this.SHA256(jsonstr1);
 		return jsonstr2;

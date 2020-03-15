@@ -449,7 +449,6 @@
                 params.status = this.selectForm.status;
                 params.shopId = this.selectForm.shopId;
                 qryOrders(this, params).then(res => {
-                    console.log("res", res);//debug
                     this.orders = res.data.rows;
                     this.AllCount = parseInt(res.data.records);
                     this.tableLoading=false;
@@ -474,7 +473,6 @@
                 let params = {};
                 getMallShop(this, params).then(
                     (res) => {
-                        console.log("res", res);//debug
                         this.shops = res.data;
                     }
                 ).catch();
@@ -588,7 +586,6 @@
 
             //行被双击
             rowDblclick(row) {
-                console.log("row", row);
                 // this.order=row;
                 // this.orderItems=row.orderDetailList;
                 // this.dialogStatus=true;
@@ -596,7 +593,6 @@
                 let params = {};
                 params.orderId = row.orderId;
                 qryOrderById(this, params).then(res => {
-                    console.log("订单查询", res.data);
                     this.order = res.data.order;
                     this.orderDetail = res.data.orderDetail;
                     this.orderPays = res.data.orderPay;
@@ -612,7 +608,6 @@
                 this.flag=1;
                 this.shopForm={};
                 this.selectRow=row;
-                console.log('shops', this.shops);//debug
                 //如果没有分店铺，直接接单
                 if (this.shops.length === 0) {
                     this.$confirm('此操作将接单，是否确认？', '接单确认', {

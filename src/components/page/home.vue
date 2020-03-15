@@ -120,9 +120,7 @@
                 let params={};
                 qryMallDailyOrderRpt(this, params).then(
                     (res)=>{
-                        console.log('res', res);//debug
                         this.shopList=res.data.shopList;
-                        console.log('shopList', this.shopList);//debug
                         let orders=res.data.dayRpt;
                         orders.forEach((item)=>{
                             let unholderOrder={};
@@ -140,7 +138,6 @@
                             orderAmt.value=item.totalAmt;
                             this.orderAmts.push(orderAmt);
                         });
-                        console.log('unholderOrderOptions', this.unholderOrderOptions);//debug
                     },
                     (res)=>{
 

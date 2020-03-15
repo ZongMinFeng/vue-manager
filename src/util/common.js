@@ -69,7 +69,6 @@ const sendServer = (urlParams, me, flag) => {
             if (jsonstr) {
                 headerStr += jsonstr
             }
-            // console.log("签名原内容:", headerStr);//debug
             let signBase64 = base64.base64encode(headerStr);
             let signString1 = signBase64 + '&key=' + macKey;
             // console.log("签名内容：", signString1);//debug

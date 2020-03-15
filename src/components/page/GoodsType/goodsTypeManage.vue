@@ -236,7 +236,6 @@
             },
             // 添加分组参数
             addParamItemTap(i) {
-                console.log("i:", i)
                 let paramsInfo = {
                     name: ''
                 };
@@ -296,7 +295,6 @@
 
                 getCateParamByCateId(this, row.categoryId).then(
                     (res) => {
-                        console.log("getCateParamByCateId:", res);
                         if (!res.data) {
                             that.paramData = [];
                             that.paramOperFlag = '1';
@@ -374,7 +372,6 @@
                         }
                         that.tableDateArray = res.data;
                         that.AllCount = res.data.length;
-                        console.log("tableDateArray:", res.data);//debug
                         that.$store.commit('setGoodsTypeArray', res.data);
                     }, (res) => {
                         // 失败
@@ -546,7 +543,6 @@
                     clearTimeout(this.timeoutId);
                 }
                 this.timeoutId=setTimeout(() => {
-                    console.log("hello, 执行了定时器", this.timeoutId);
                     //更新商品分类序号
                     this.changeOrder();
                     this.timeoutId=0;
@@ -555,11 +551,11 @@
 
             //更新商品分类序号
             changeOrder(){
-                console.log("商品分类信息", this.tableDateArray);//debug
+                // console.log("商品分类信息", this.tableDateArray);//debug
                 this.tableDateArray.forEach((val, index)=>{
-                    console.log("val.sortOrder", val.sortOrder);//debug
-                    console.log("index", index+1);//debug
-                    console.log("------------------------");//debug
+                    // console.log("val.sortOrder", val.sortOrder);//debug
+                    // console.log("index", index+1);//debug
+                    // console.log("------------------------");//debug
                     if(val.sortOrder!==index+1){
                         this.typeUptIndex(val, index+1);
                     }

@@ -376,7 +376,6 @@
                 this.getGoodsSerials(this.goodId);
                 let mallId = localStorage.getItem('mallId') || '';
                 this.uploadUrl = cfg.service.uploadUrl + '/' + mallId + '/' + this.goodId;
-                console.log("this.uploadUrl", this.uploadUrl);//debug
             },
 
             showStock(unit, stock){
@@ -384,8 +383,7 @@
             },
 
             showStock5(unit, stock){
-                console.log('unit', unit);//debug
-                console.log('stock', stock);//debug
+
                 return String.unitNum5(unit, String.unitNumDown(unit, stock));
             },
 
@@ -421,7 +419,6 @@
             },
 
             checkStockUpdate(rule, stockNum, callback) {
-                console.log('输入stockNum', stockNum);//debug
                 if (stockNum == null || this.mastGoodInfo.unit == null) {
                     callback(new Error('请输入值'));
                 }
@@ -448,7 +445,6 @@
 
             //获取商品系列信息
             getGoodsSerials(goodsId) {
-                console.log("获取系列信息", goodsId);//debug
                 let that = this;
                 let urlParams = {};
                 let send = {};
@@ -500,7 +496,6 @@
 
             //编辑系列信息
             editSerial(serial) {
-                console.log("serial", serial);//debug
                 //serial有set和get信息，复制一个简单的对象发送到编辑界面
                 this.AddFormSerial.goodsId = serial.goodsId;
                 this.AddFormSerial.lockNum = serial.lockNum;
@@ -566,7 +561,6 @@
                         }
                         that.$message.success("删除成功");
 
-                        console.log("删除 goodsId", that.goodsId);//debug
                         //刷新数据
                         this.initDate();
                     }, (res) => {
@@ -633,7 +627,6 @@
                         this.initDate();
                     },
                     (res) => {
-                        console.log('res', res);//debug
                         if (res.msg != null) {
                             this.$message.error(res.msg);
                         }else{
@@ -699,7 +692,6 @@
                         }
                         that.$message.success("新增成功");
 
-                        console.log("新增 goodsId", that.goodsId);//debug
                         // that.$router.push({path:'/goodsInfos', query:{goodId:that.goodsId}});
                         this.initDate();
                     }, (res) => {
@@ -757,7 +749,6 @@
                             return false;
                         }
                         that.$message.success("修改成功");
-                        // console.log("修改 goodsId", that.goodsId);//debug
                         // that.$router.push({path:'/goodsInfos', query:{goodId:that.goodsId}});
                         this.initDate();
                     }, (res) => {
@@ -790,7 +781,6 @@
             },
 
             handelPicturePostSerials(param) {
-                console.log("param:", param);
 
                 let urlParams = {};
                 let index = 'S';
@@ -834,17 +824,14 @@
                             that.$message.error(res.msg);
                             return false;
                         }
-                        console.log("res:", res);
                         if (operFlag === '1') {
                             that.$message.success("上传成功");
                         } else {
                             that.$message.success("修改成功");
                         }
                         let filenames = res.data.filenames;
-                        console.log("filenames:", filenames);
                         this.AddFormSerial.specPic = filenames;
                         this.time = this.getTime();
-                        console.log("src", this.uploadUrl + '/' + this.AddFormSerial.specPic + '?' + this.time);//debug
 
                     }, (res) => {
                         // 失败
@@ -854,7 +841,6 @@
             },
 
             beforeAvatarUploadSerials(file) {
-                console.log("file:", file);
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 4;
 

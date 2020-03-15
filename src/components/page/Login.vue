@@ -53,8 +53,12 @@
         },
         methods: {
             login() { // 登录
+<<<<<<< HEAD
                 let reqUuid = localStorage.getItem('reqUuid') || '';
                 console.log("login reqUuid", reqUuid);//debug
+=======
+                let mallPcUuid = localStorage.getItem('mallPcUuid') || '';
+>>>>>>> 13e0c90539ecc48f6b396fb728397681b76dde15
                 let macKey = localStorage.getItem('macKey') || '';
                 let mallId = localStorage.getItem('mallId') || '';
                 let userId = localStorage.getItem('userId') || '';
@@ -105,8 +109,12 @@
                 return new Promise((resolve, reject) => {
                     //登录次数+1
                     that.loginTimes++;
+<<<<<<< HEAD
                     console.log("getLoginStatus reqUuid", that.reqUuid );//debug
                     if (that.LoginStatus > '2' || !that.reqUuid ) { // 无需登录查询
+=======
+                    if (that.LoginStatus > '2' || !that.mallPcUuid ) { // 无需登录查询
+>>>>>>> 13e0c90539ecc48f6b396fb728397681b76dde15
                         reject(true);
                         return true;
                     }
@@ -139,7 +147,6 @@
                             }
                             // that.LoginStatus = res.LoginStatus || '0';
                             if (that.LoginStatus === '3') {
-                                console.log('data', res.data);//debug
                                 that.$store.commit('loginIn');
                                 localStorage.setItem('macKey', res.data.macKey);
                                 // localStorage.setItem('mallId', res.data.mallId);
@@ -160,7 +167,6 @@
                             return true;
                         }, (res) => {
                             // 失败
-                            console.log('失败', res);
                             this.$message.error('请求失败');
                             reject(false);
                         }
@@ -178,9 +184,14 @@
                 sendServer(urlParams, this).then(
                     (res) => {
                         // 成功
+<<<<<<< HEAD
                         console.log('成功', res);
                         if (res.returnCode !== 200) {
                             this.$message.error(res.returnMsg);
+=======
+                        if (res.status !== 200) {
+                            this.$message.error(res.msg);
+>>>>>>> 13e0c90539ecc48f6b396fb728397681b76dde15
                             return false;
                         }
                         if (!res.data) {
@@ -196,7 +207,6 @@
                         // this.$router.push('/');
                     }, (res) => {
                         // 失败
-                        console.log('失败', res);
                         this.$message.error('请求失败');
                     }
                 );
@@ -215,7 +225,7 @@
             this.interval = setInterval(function () {
                 if (that.LoginStatus === '3' || that.loginTimes > 60) {
                     //二维码超时
-                    console.log("hello, LoginStatus", this.LoginStatus);//debug
+                    // console.log("hello, LoginStatus", this.LoginStatus);//debug
                     that.LoginStatus='6';
                     clearInterval(that.interval);
                 } else if (that.LoginStatus !== '0') {

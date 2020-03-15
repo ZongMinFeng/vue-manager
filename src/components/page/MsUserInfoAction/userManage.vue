@@ -181,7 +181,6 @@
                 this.rolesMngQry().then(
                     (res) => {
                         that.rolesData = res.Roles || [];
-                        console.log("that.rolesData:", that.rolesData)
                         that.addUserFlag = true;
                     }, () => {
 
@@ -380,7 +379,6 @@
                 send.SpcifyMobile = this.userAddForm.UserMobile;
                 send.UserName = this.userAddForm.UserName;
                 send.RolesNum = '0';
-                console.log("checkList:", this.checkList);
                 let Roles = [];
                 this.checkList.forEach(item => {
                     let role = {
@@ -429,7 +427,6 @@
                 });
                 send.Roles = Roles;
                 send.RolesNum = Roles.length.toString();
-                console.log("send:", send)
                 urlParams.send = send;
                 let that = this;
                 sendServer(urlParams, this).then(

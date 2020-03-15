@@ -115,7 +115,7 @@
                 params.pageSize=this.pageSize;
                 getOper(this, params).then(
                     (res)=>{
-                        console.log("res", res);//debug
+                        // console.log("res", res);//debug
                         this.tableData=res.data.rows;
                         this.AllCount=res.data.records;
                     },
